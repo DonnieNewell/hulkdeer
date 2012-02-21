@@ -1,0 +1,2679 @@
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=177210.295932
+Pyramid Size=2, Latency=125712.236720
+Pyramid Size=3, Latency=139430.088595
+Pyramid Height=1, time=4, Time per iteration=4.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 20 BestHeight 3 CalcHeight 2 %Slowdown 33.33 CalcSecond 3 %Slowdown 0.00 MinSlowdown 0.00
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=177210.295932
+Pyramid Size=2, Latency=125712.236720
+Pyramid Size=3, Latency=139430.088595
+pyramid=1, total time=302, normalized time=302.000000
+pyramid=2, total time=153, normalized time=76.500000
+pyramid=3, total time=105, normalized time=35.000000
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=197343.818105
+Pyramid Size=2, Latency=148061.444184
+Pyramid Size=3, Latency=172740.419327
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 22 BestHeight 3 CalcHeight 2 %Slowdown 33.33 CalcSecond 3 %Slowdown 0.00 MinSlowdown 0.00
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=197343.818105
+Pyramid Size=2, Latency=148061.444184
+Pyramid Size=3, Latency=172740.419327
+pyramid=1, total time=295, normalized time=295.000000
+pyramid=2, total time=150, normalized time=75.000000
+pyramid=3, total time=102, normalized time=34.000000
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=221491.879443
+Pyramid Size=2, Latency=174866.989089
+Pyramid Size=3, Latency=212692.689117
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 24 BestHeight 3 CalcHeight 2 %Slowdown 33.33 CalcSecond 3 %Slowdown 0.00 MinSlowdown 0.00
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=221491.879443
+Pyramid Size=2, Latency=174866.989089
+Pyramid Size=3, Latency=212692.689117
+pyramid=1, total time=300, normalized time=300.000000
+pyramid=2, total time=149, normalized time=74.500000
+pyramid=3, total time=102, normalized time=34.000000
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=250019.438052
+Pyramid Size=2, Latency=206533.993019
+Pyramid Size=3, Latency=259890.710607
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 26 BestHeight 3 CalcHeight 2 %Slowdown 33.33 CalcSecond 1 %Slowdown 66.67 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=250019.438052
+Pyramid Size=2, Latency=206533.993019
+Pyramid Size=3, Latency=259890.710607
+pyramid=1, total time=299, normalized time=299.000000
+pyramid=2, total time=151, normalized time=75.500000
+pyramid=3, total time=103, normalized time=34.333333
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=283291.452037
+Pyramid Size=2, Latency=243467.577559
+Pyramid Size=3, Latency=314938.296439
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 28 BestHeight 3 CalcHeight 2 %Slowdown 33.33 CalcSecond 1 %Slowdown 66.67 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=283291.452037
+Pyramid Size=2, Latency=243467.577559
+Pyramid Size=3, Latency=314938.296439
+pyramid=1, total time=304, normalized time=304.000000
+pyramid=2, total time=152, normalized time=76.000000
+pyramid=3, total time=103, normalized time=34.333333
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=321672.879504
+Pyramid Size=2, Latency=286072.864297
+Pyramid Size=3, Latency=378439.259254
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 30 BestHeight 3 CalcHeight 2 %Slowdown 33.33 CalcSecond 1 %Slowdown 66.67 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=321672.879504
+Pyramid Size=2, Latency=286072.864297
+Pyramid Size=3, Latency=378439.259254
+pyramid=1, total time=300, normalized time=300.000000
+pyramid=2, total time=151, normalized time=75.500000
+pyramid=3, total time=103, normalized time=34.333333
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=365528.678558
+Pyramid Size=2, Latency=334754.974816
+Pyramid Size=3, Latency=450997.411694
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 32 BestHeight 3 CalcHeight 2 %Slowdown 33.33 CalcSecond 1 %Slowdown 66.67 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=365528.678558
+Pyramid Size=2, Latency=334754.974816
+Pyramid Size=3, Latency=450997.411694
+pyramid=1, total time=300, normalized time=300.000000
+pyramid=2, total time=150, normalized time=75.000000
+pyramid=3, total time=103, normalized time=34.333333
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=415223.807307
+Pyramid Size=2, Latency=389919.030702
+Pyramid Size=3, Latency=533216.566400
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 34 BestHeight 3 CalcHeight 2 %Slowdown 33.33 CalcSecond 1 %Slowdown 66.67 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=415223.807307
+Pyramid Size=2, Latency=389919.030702
+Pyramid Size=3, Latency=533216.566400
+pyramid=1, total time=300, normalized time=300.000000
+pyramid=2, total time=150, normalized time=75.000000
+pyramid=3, total time=103, normalized time=34.333333
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=471123.223856
+Pyramid Size=2, Latency=451970.153541
+Pyramid Size=3, Latency=625700.536015
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 36 BestHeight 3 CalcHeight 2 %Slowdown 33.33 CalcSecond 1 %Slowdown 66.67 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=471123.223856
+Pyramid Size=2, Latency=451970.153541
+Pyramid Size=3, Latency=625700.536015
+pyramid=1, total time=306, normalized time=306.000000
+pyramid=2, total time=151, normalized time=75.500000
+pyramid=3, total time=103, normalized time=34.333333
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=533591.886310
+Pyramid Size=2, Latency=521313.464919
+Pyramid Size=3, Latency=729053.133180
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 38 BestHeight 3 CalcHeight 2 %Slowdown 33.33 CalcSecond 1 %Slowdown 66.67 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=533591.886310
+Pyramid Size=2, Latency=521313.464919
+Pyramid Size=3, Latency=729053.133180
+pyramid=1, total time=299, normalized time=299.000000
+pyramid=2, total time=151, normalized time=75.500000
+pyramid=3, total time=102, normalized time=34.000000
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=602994.752775
+Pyramid Size=2, Latency=598354.086420
+Pyramid Size=3, Latency=843878.170536
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 40 BestHeight 3 CalcHeight 2 %Slowdown 33.33 CalcSecond 1 %Slowdown 66.67 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=602994.752775
+Pyramid Size=2, Latency=598354.086420
+Pyramid Size=3, Latency=843878.170536
+pyramid=1, total time=299, normalized time=299.000000
+pyramid=2, total time=150, normalized time=75.000000
+pyramid=3, total time=103, normalized time=34.333333
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=679696.781358
+Pyramid Size=2, Latency=683497.139630
+Pyramid Size=3, Latency=970779.460726
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 42 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=679696.781358
+Pyramid Size=2, Latency=683497.139630
+Pyramid Size=3, Latency=970779.460726
+pyramid=1, total time=299, normalized time=299.000000
+pyramid=2, total time=151, normalized time=75.500000
+pyramid=3, total time=102, normalized time=34.000000
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=764062.930164
+Pyramid Size=2, Latency=777147.746135
+Pyramid Size=3, Latency=1110360.816390
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 44 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=764062.930164
+Pyramid Size=2, Latency=777147.746135
+Pyramid Size=3, Latency=1110360.816390
+pyramid=1, total time=304, normalized time=304.000000
+pyramid=2, total time=150, normalized time=75.000000
+pyramid=3, total time=102, normalized time=34.000000
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=856458.157299
+Pyramid Size=2, Latency=879711.027520
+Pyramid Size=3, Latency=1263226.050172
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 46 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=856458.157299
+Pyramid Size=2, Latency=879711.027520
+Pyramid Size=3, Latency=1263226.050172
+pyramid=1, total time=294, normalized time=294.000000
+pyramid=2, total time=148, normalized time=74.000000
+pyramid=3, total time=100, normalized time=33.333333
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=957247.420869
+Pyramid Size=2, Latency=991592.105370
+Pyramid Size=3, Latency=1429978.974711
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 48 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=957247.420869
+Pyramid Size=2, Latency=991592.105370
+Pyramid Size=3, Latency=1429978.974711
+pyramid=1, total time=295, normalized time=295.000000
+pyramid=2, total time=147, normalized time=73.500000
+pyramid=3, total time=101, normalized time=33.666667
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=1066795.678979
+Pyramid Size=2, Latency=1113196.101271
+Pyramid Size=3, Latency=1611223.402650
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 50 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=1066795.678979
+Pyramid Size=2, Latency=1113196.101271
+Pyramid Size=3, Latency=1611223.402650
+pyramid=1, total time=300, normalized time=300.000000
+pyramid=2, total time=149, normalized time=74.500000
+pyramid=3, total time=101, normalized time=33.666667
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=1185467.889737
+Pyramid Size=2, Latency=1244928.136809
+Pyramid Size=3, Latency=1807563.146631
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 52 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=1185467.889737
+Pyramid Size=2, Latency=1244928.136809
+Pyramid Size=3, Latency=1807563.146631
+pyramid=1, total time=296, normalized time=296.000000
+pyramid=2, total time=149, normalized time=74.500000
+pyramid=3, total time=102, normalized time=34.000000
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=1313629.011246
+Pyramid Size=2, Latency=1387193.333569
+Pyramid Size=3, Latency=2019602.019296
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 54 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=1313629.011246
+Pyramid Size=2, Latency=1387193.333569
+Pyramid Size=3, Latency=2019602.019296
+pyramid=1, total time=298, normalized time=298.000000
+pyramid=2, total time=149, normalized time=74.500000
+pyramid=3, total time=102, normalized time=34.000000
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=1451644.001615
+Pyramid Size=2, Latency=1540396.813136
+Pyramid Size=3, Latency=2247943.833285
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 56 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=1451644.001615
+Pyramid Size=2, Latency=1540396.813136
+Pyramid Size=3, Latency=2247943.833285
+pyramid=1, total time=297, normalized time=297.000000
+pyramid=2, total time=150, normalized time=75.000000
+pyramid=3, total time=102, normalized time=34.000000
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=1599877.818947
+Pyramid Size=2, Latency=1704943.697096
+Pyramid Size=3, Latency=2493192.401240
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 58 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=1599877.818947
+Pyramid Size=2, Latency=1704943.697096
+Pyramid Size=3, Latency=2493192.401240
+pyramid=1, total time=297, normalized time=297.000000
+pyramid=2, total time=149, normalized time=74.500000
+pyramid=3, total time=102, normalized time=34.000000
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=1758695.421350
+Pyramid Size=2, Latency=1881239.107034
+Pyramid Size=3, Latency=2755951.535804
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 60 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=1758695.421350
+Pyramid Size=2, Latency=1881239.107034
+Pyramid Size=3, Latency=2755951.535804
+pyramid=1, total time=302, normalized time=302.000000
+pyramid=2, total time=150, normalized time=75.000000
+pyramid=3, total time=102, normalized time=34.000000
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=1928461.766928
+Pyramid Size=2, Latency=2069688.164535
+Pyramid Size=3, Latency=3036825.049618
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 62 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=1928461.766928
+Pyramid Size=2, Latency=2069688.164535
+Pyramid Size=3, Latency=3036825.049618
+pyramid=1, total time=296, normalized time=296.000000
+pyramid=2, total time=149, normalized time=74.500000
+pyramid=3, total time=101, normalized time=33.666667
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=2109541.813789
+Pyramid Size=2, Latency=2270695.991186
+Pyramid Size=3, Latency=3336416.755324
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 64 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=2109541.813789
+Pyramid Size=2, Latency=2270695.991186
+Pyramid Size=3, Latency=3336416.755324
+pyramid=1, total time=302, normalized time=302.000000
+pyramid=2, total time=150, normalized time=75.000000
+pyramid=3, total time=102, normalized time=34.000000
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=2302300.520037
+Pyramid Size=2, Latency=2484667.708572
+Pyramid Size=3, Latency=3655330.465562
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 66 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=2302300.520037
+Pyramid Size=2, Latency=2484667.708572
+Pyramid Size=3, Latency=3655330.465562
+pyramid=1, total time=298, normalized time=298.000000
+pyramid=2, total time=149, normalized time=74.500000
+pyramid=3, total time=103, normalized time=34.333333
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=2507102.843778
+Pyramid Size=2, Latency=2712008.438277
+Pyramid Size=3, Latency=3994169.992976
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 68 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=2507102.843778
+Pyramid Size=2, Latency=2712008.438277
+Pyramid Size=3, Latency=3994169.992976
+pyramid=1, total time=300, normalized time=300.000000
+pyramid=2, total time=151, normalized time=75.500000
+pyramid=3, total time=102, normalized time=34.000000
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=2724313.743119
+Pyramid Size=2, Latency=2953123.301889
+Pyramid Size=3, Latency=4353539.150206
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 70 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=2724313.743119
+Pyramid Size=2, Latency=2953123.301889
+Pyramid Size=3, Latency=4353539.150206
+pyramid=1, total time=297, normalized time=297.000000
+pyramid=2, total time=149, normalized time=74.500000
+pyramid=3, total time=102, normalized time=34.000000
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=2954298.176166
+Pyramid Size=2, Latency=3208417.420991
+Pyramid Size=3, Latency=4734041.749894
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 72 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=2954298.176166
+Pyramid Size=2, Latency=3208417.420991
+Pyramid Size=3, Latency=4734041.749894
+pyramid=1, total time=297, normalized time=297.000000
+pyramid=2, total time=149, normalized time=74.500000
+pyramid=3, total time=102, normalized time=34.000000
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=3197421.101023
+Pyramid Size=2, Latency=3478295.917169
+Pyramid Size=3, Latency=5136281.604683
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 74 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=3197421.101023
+Pyramid Size=2, Latency=3478295.917169
+Pyramid Size=3, Latency=5136281.604683
+pyramid=1, total time=297, normalized time=297.000000
+pyramid=2, total time=150, normalized time=75.000000
+pyramid=3, total time=102, normalized time=34.000000
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=3454047.475798
+Pyramid Size=2, Latency=3763163.912010
+Pyramid Size=3, Latency=5560862.527212
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 76 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=3454047.475798
+Pyramid Size=2, Latency=3763163.912010
+Pyramid Size=3, Latency=5560862.527212
+pyramid=1, total time=298, normalized time=298.000000
+pyramid=2, total time=150, normalized time=75.000000
+pyramid=3, total time=102, normalized time=34.000000
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=3724542.258595
+Pyramid Size=2, Latency=4063426.527098
+Pyramid Size=3, Latency=6008388.330125
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 78 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=3724542.258595
+Pyramid Size=2, Latency=4063426.527098
+Pyramid Size=3, Latency=6008388.330125
+pyramid=1, total time=295, normalized time=295.000000
+pyramid=2, total time=148, normalized time=74.000000
+pyramid=3, total time=101, normalized time=33.666667
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=4009270.407521
+Pyramid Size=2, Latency=4379488.884019
+Pyramid Size=3, Latency=6479462.826063
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 80 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=4009270.407521
+Pyramid Size=2, Latency=4379488.884019
+Pyramid Size=3, Latency=6479462.826063
+pyramid=1, total time=297, normalized time=297.000000
+pyramid=2, total time=149, normalized time=74.500000
+pyramid=3, total time=102, normalized time=34.000000
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=4308596.880682
+Pyramid Size=2, Latency=4711756.104358
+Pyramid Size=3, Latency=6974689.827668
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 82 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=4308596.880682
+Pyramid Size=2, Latency=4711756.104358
+Pyramid Size=3, Latency=6974689.827668
+pyramid=1, total time=297, normalized time=297.000000
+pyramid=2, total time=149, normalized time=74.500000
+pyramid=3, total time=102, normalized time=34.000000
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=4622886.636183
+Pyramid Size=2, Latency=5060633.309700
+Pyramid Size=3, Latency=7494673.147580
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 84 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=4622886.636183
+Pyramid Size=2, Latency=5060633.309700
+Pyramid Size=3, Latency=7494673.147580
+pyramid=1, total time=297, normalized time=297.000000
+pyramid=2, total time=150, normalized time=75.000000
+pyramid=3, total time=102, normalized time=34.000000
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=4952504.632131
+Pyramid Size=2, Latency=5426525.621632
+Pyramid Size=3, Latency=8040016.598443
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 86 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=4952504.632131
+Pyramid Size=2, Latency=5426525.621632
+Pyramid Size=3, Latency=8040016.598443
+pyramid=1, total time=297, normalized time=297.000000
+pyramid=2, total time=149, normalized time=74.500000
+pyramid=3, total time=102, normalized time=34.000000
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=5297815.826631
+Pyramid Size=2, Latency=5809838.161739
+Pyramid Size=3, Latency=8611323.992897
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 88 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=5297815.826631
+Pyramid Size=2, Latency=5809838.161739
+Pyramid Size=3, Latency=8611323.992897
+pyramid=1, total time=304, normalized time=304.000000
+pyramid=2, total time=149, normalized time=74.500000
+pyramid=3, total time=102, normalized time=34.000000
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=5659185.177789
+Pyramid Size=2, Latency=6210976.051606
+Pyramid Size=3, Latency=9209199.143584
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 90 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=5659185.177789
+Pyramid Size=2, Latency=6210976.051606
+Pyramid Size=3, Latency=9209199.143584
+pyramid=1, total time=297, normalized time=297.000000
+pyramid=2, total time=149, normalized time=74.500000
+pyramid=3, total time=102, normalized time=34.000000
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=6036977.643711
+Pyramid Size=2, Latency=6630344.412818
+Pyramid Size=3, Latency=9834245.863146
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 92 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=6036977.643711
+Pyramid Size=2, Latency=6630344.412818
+Pyramid Size=3, Latency=9834245.863146
+pyramid=1, total time=298, normalized time=298.000000
+pyramid=2, total time=150, normalized time=75.000000
+pyramid=3, total time=102, normalized time=34.000000
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=6431558.182503
+Pyramid Size=2, Latency=7068348.366961
+Pyramid Size=3, Latency=10487067.964225
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 94 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=6431558.182503
+Pyramid Size=2, Latency=7068348.366961
+Pyramid Size=3, Latency=10487067.964225
+pyramid=1, total time=298, normalized time=298.000000
+pyramid=2, total time=150, normalized time=75.000000
+pyramid=3, total time=102, normalized time=34.000000
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=6843291.752270
+Pyramid Size=2, Latency=7525393.035621
+Pyramid Size=3, Latency=11168269.259462
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 96 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=6843291.752270
+Pyramid Size=2, Latency=7525393.035621
+Pyramid Size=3, Latency=11168269.259462
+pyramid=1, total time=298, normalized time=298.000000
+pyramid=2, total time=149, normalized time=74.500000
+pyramid=3, total time=102, normalized time=34.000000
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=7272543.311119
+Pyramid Size=2, Latency=8001883.540382
+Pyramid Size=3, Latency=11878453.561498
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 98 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=7272543.311119
+Pyramid Size=2, Latency=8001883.540382
+Pyramid Size=3, Latency=11878453.561498
+pyramid=1, total time=297, normalized time=297.000000
+pyramid=2, total time=149, normalized time=74.500000
+pyramid=3, total time=106, normalized time=35.333333
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=7719677.817156
+Pyramid Size=2, Latency=8498225.002832
+Pyramid Size=3, Latency=12618224.682977
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 100 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=7719677.817156
+Pyramid Size=2, Latency=8498225.002832
+Pyramid Size=3, Latency=12618224.682977
+pyramid=1, total time=296, normalized time=296.000000
+pyramid=2, total time=148, normalized time=74.000000
+pyramid=3, total time=101, normalized time=33.666667
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=8185060.228485
+Pyramid Size=2, Latency=9014822.544554
+Pyramid Size=3, Latency=13388186.436538
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 102 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=8185060.228485
+Pyramid Size=2, Latency=9014822.544554
+Pyramid Size=3, Latency=13388186.436538
+pyramid=1, total time=296, normalized time=296.000000
+pyramid=2, total time=150, normalized time=75.000000
+pyramid=3, total time=102, normalized time=34.000000
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=8669055.503214
+Pyramid Size=2, Latency=9552081.287134
+Pyramid Size=3, Latency=14188942.634824
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 104 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=8669055.503214
+Pyramid Size=2, Latency=9552081.287134
+Pyramid Size=3, Latency=14188942.634824
+pyramid=1, total time=293, normalized time=293.000000
+pyramid=2, total time=147, normalized time=73.500000
+pyramid=3, total time=101, normalized time=33.666667
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=9172028.599448
+Pyramid Size=2, Latency=10110406.352158
+Pyramid Size=3, Latency=15021097.090477
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 106 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=9172028.599448
+Pyramid Size=2, Latency=10110406.352158
+Pyramid Size=3, Latency=15021097.090477
+pyramid=1, total time=295, normalized time=295.000000
+pyramid=2, total time=149, normalized time=74.500000
+pyramid=3, total time=102, normalized time=34.000000
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=9694344.475293
+Pyramid Size=2, Latency=10690202.861211
+Pyramid Size=3, Latency=15885253.616138
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 108 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=9694344.475293
+Pyramid Size=2, Latency=10690202.861211
+Pyramid Size=3, Latency=15885253.616138
+pyramid=1, total time=297, normalized time=297.000000
+pyramid=2, total time=149, normalized time=74.500000
+pyramid=3, total time=102, normalized time=34.000000
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=10236368.088854
+Pyramid Size=2, Latency=11291875.935879
+Pyramid Size=3, Latency=16782016.024449
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 110 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=10236368.088854
+Pyramid Size=2, Latency=11291875.935879
+Pyramid Size=3, Latency=16782016.024449
+pyramid=1, total time=296, normalized time=296.000000
+pyramid=2, total time=148, normalized time=74.000000
+pyramid=3, total time=101, normalized time=33.666667
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=10798464.398239
+Pyramid Size=2, Latency=11915830.697747
+Pyramid Size=3, Latency=17711988.128051
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 112 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=10798464.398239
+Pyramid Size=2, Latency=11915830.697747
+Pyramid Size=3, Latency=17711988.128051
+pyramid=1, total time=298, normalized time=298.000000
+pyramid=2, total time=149, normalized time=74.500000
+pyramid=3, total time=101, normalized time=33.666667
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=11380998.361551
+Pyramid Size=2, Latency=12562472.268401
+Pyramid Size=3, Latency=18675773.739586
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 114 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=11380998.361551
+Pyramid Size=2, Latency=12562472.268401
+Pyramid Size=3, Latency=18675773.739586
+pyramid=1, total time=296, normalized time=296.000000
+pyramid=2, total time=148, normalized time=74.000000
+pyramid=3, total time=101, normalized time=33.666667
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=11984334.936898
+Pyramid Size=2, Latency=13232205.769425
+Pyramid Size=3, Latency=19673976.671696
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 116 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=11984334.936898
+Pyramid Size=2, Latency=13232205.769425
+Pyramid Size=3, Latency=19673976.671696
+pyramid=1, total time=297, normalized time=297.000000
+pyramid=2, total time=148, normalized time=74.000000
+pyramid=3, total time=102, normalized time=34.000000
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=12608839.082385
+Pyramid Size=2, Latency=13925436.322407
+Pyramid Size=3, Latency=20707200.737023
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 118 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=12608839.082385
+Pyramid Size=2, Latency=13925436.322407
+Pyramid Size=3, Latency=20707200.737023
+pyramid=1, total time=296, normalized time=296.000000
+pyramid=2, total time=150, normalized time=75.000000
+pyramid=3, total time=102, normalized time=34.000000
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=13254875.756118
+Pyramid Size=2, Latency=14642569.048930
+Pyramid Size=3, Latency=21776049.748208
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 120 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=13254875.756118
+Pyramid Size=2, Latency=14642569.048930
+Pyramid Size=3, Latency=21776049.748208
+pyramid=1, total time=297, normalized time=297.000000
+pyramid=2, total time=150, normalized time=75.000000
+pyramid=3, total time=102, normalized time=34.000000
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=13922809.916204
+Pyramid Size=2, Latency=15384009.070580
+Pyramid Size=3, Latency=22881127.517893
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 122 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=13922809.916204
+Pyramid Size=2, Latency=15384009.070580
+Pyramid Size=3, Latency=22881127.517893
+pyramid=1, total time=298, normalized time=298.000000
+pyramid=2, total time=149, normalized time=74.500000
+pyramid=3, total time=102, normalized time=34.000000
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=14613006.520747
+Pyramid Size=2, Latency=16150161.508944
+Pyramid Size=3, Latency=24023037.858719
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 124 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=14613006.520747
+Pyramid Size=2, Latency=16150161.508944
+Pyramid Size=3, Latency=24023037.858719
+pyramid=1, total time=296, normalized time=296.000000
+pyramid=2, total time=149, normalized time=74.500000
+pyramid=3, total time=101, normalized time=33.666667
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=15325830.527853
+Pyramid Size=2, Latency=16941431.485606
+Pyramid Size=3, Latency=25202384.583328
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 126 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=15325830.527853
+Pyramid Size=2, Latency=16941431.485606
+Pyramid Size=3, Latency=25202384.583328
+pyramid=1, total time=297, normalized time=297.000000
+pyramid=2, total time=149, normalized time=74.500000
+pyramid=3, total time=102, normalized time=34.000000
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=16061646.895629
+Pyramid Size=2, Latency=17758224.122151
+Pyramid Size=3, Latency=26419771.504362
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 128 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=16061646.895629
+Pyramid Size=2, Latency=17758224.122151
+Pyramid Size=3, Latency=26419771.504362
+pyramid=1, total time=296, normalized time=296.000000
+pyramid=2, total time=149, normalized time=74.500000
+pyramid=3, total time=102, normalized time=34.000000
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=16820820.582181
+Pyramid Size=2, Latency=18600944.540166
+Pyramid Size=3, Latency=27675802.434463
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 130 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=16820820.582181
+Pyramid Size=2, Latency=18600944.540166
+Pyramid Size=3, Latency=27675802.434463
+pyramid=1, total time=295, normalized time=295.000000
+pyramid=2, total time=149, normalized time=74.500000
+pyramid=3, total time=101, normalized time=33.666667
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=17603716.545614
+Pyramid Size=2, Latency=19469997.861235
+Pyramid Size=3, Latency=28971081.186272
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 132 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=17603716.545614
+Pyramid Size=2, Latency=19469997.861235
+Pyramid Size=3, Latency=28971081.186272
+pyramid=1, total time=297, normalized time=297.000000
+pyramid=2, total time=149, normalized time=74.500000
+pyramid=3, total time=101, normalized time=33.666667
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=18410699.744034
+Pyramid Size=2, Latency=20365789.206945
+Pyramid Size=3, Latency=30306211.572430
+Pyramid Height=1, time=4, Time per iteration=4.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 134 BestHeight 3 CalcHeight 1 %Slowdown 75.00 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=18410699.744034
+Pyramid Size=2, Latency=20365789.206945
+Pyramid Size=3, Latency=30306211.572430
+pyramid=1, total time=297, normalized time=297.000000
+pyramid=2, total time=149, normalized time=74.500000
+pyramid=3, total time=101, normalized time=33.666667
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=19242135.135547
+Pyramid Size=2, Latency=21288723.698881
+Pyramid Size=3, Latency=31681797.405580
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 136 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=19242135.135547
+Pyramid Size=2, Latency=21288723.698881
+Pyramid Size=3, Latency=31681797.405580
+pyramid=1, total time=302, normalized time=302.000000
+pyramid=2, total time=148, normalized time=74.000000
+pyramid=3, total time=101, normalized time=33.666667
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=20098387.678259
+Pyramid Size=2, Latency=22239206.458627
+Pyramid Size=3, Latency=33098442.498363
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 138 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=20098387.678259
+Pyramid Size=2, Latency=22239206.458627
+Pyramid Size=3, Latency=33098442.498363
+pyramid=1, total time=296, normalized time=296.000000
+pyramid=2, total time=147, normalized time=73.500000
+pyramid=3, total time=101, normalized time=33.666667
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=20979822.330275
+Pyramid Size=2, Latency=23217642.607770
+Pyramid Size=3, Latency=34556750.663421
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 140 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=20979822.330275
+Pyramid Size=2, Latency=23217642.607770
+Pyramid Size=3, Latency=34556750.663421
+pyramid=1, total time=303, normalized time=303.000000
+pyramid=2, total time=148, normalized time=74.000000
+pyramid=3, total time=101, normalized time=33.666667
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=21886804.049702
+Pyramid Size=2, Latency=24224437.267895
+Pyramid Size=3, Latency=36057325.713395
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 142 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=21886804.049702
+Pyramid Size=2, Latency=24224437.267895
+Pyramid Size=3, Latency=36057325.713395
+pyramid=1, total time=298, normalized time=298.000000
+pyramid=2, total time=150, normalized time=75.000000
+pyramid=3, total time=102, normalized time=34.000000
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=22819697.794646
+Pyramid Size=2, Latency=25259995.560587
+Pyramid Size=3, Latency=37600771.460928
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 144 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=22819697.794646
+Pyramid Size=2, Latency=25259995.560587
+Pyramid Size=3, Latency=37600771.460928
+pyramid=1, total time=295, normalized time=295.000000
+pyramid=2, total time=149, normalized time=74.500000
+pyramid=3, total time=102, normalized time=34.000000
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=23778868.523212
+Pyramid Size=2, Latency=26324722.607432
+Pyramid Size=3, Latency=39187691.718660
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 146 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=23778868.523212
+Pyramid Size=2, Latency=26324722.607432
+Pyramid Size=3, Latency=39187691.718660
+pyramid=1, total time=294, normalized time=294.000000
+pyramid=2, total time=148, normalized time=74.000000
+pyramid=3, total time=101, normalized time=33.666667
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=24764681.193506
+Pyramid Size=2, Latency=27419023.530016
+Pyramid Size=3, Latency=40818690.299234
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 148 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=24764681.193506
+Pyramid Size=2, Latency=27419023.530016
+Pyramid Size=3, Latency=40818690.299234
+pyramid=1, total time=294, normalized time=294.000000
+pyramid=2, total time=148, normalized time=74.000000
+pyramid=3, total time=101, normalized time=33.666667
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=25777500.763634
+Pyramid Size=2, Latency=28543303.449924
+Pyramid Size=3, Latency=42494371.015291
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 150 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=25777500.763634
+Pyramid Size=2, Latency=28543303.449924
+Pyramid Size=3, Latency=42494371.015291
+pyramid=1, total time=296, normalized time=296.000000
+pyramid=2, total time=148, normalized time=74.000000
+pyramid=3, total time=101, normalized time=33.666667
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=26817692.191703
+Pyramid Size=2, Latency=29697967.488740
+Pyramid Size=3, Latency=44215337.679472
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 152 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=26817692.191703
+Pyramid Size=2, Latency=29697967.488740
+Pyramid Size=3, Latency=44215337.679472
+pyramid=1, total time=297, normalized time=297.000000
+pyramid=2, total time=148, normalized time=74.000000
+pyramid=3, total time=100, normalized time=33.333333
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=27885620.435817
+Pyramid Size=2, Latency=30883420.768052
+Pyramid Size=3, Latency=45982194.104420
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 154 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=27885620.435817
+Pyramid Size=2, Latency=30883420.768052
+Pyramid Size=3, Latency=45982194.104420
+pyramid=1, total time=296, normalized time=296.000000
+pyramid=2, total time=155, normalized time=77.500000
+pyramid=3, total time=101, normalized time=33.666667
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=28981650.454082
+Pyramid Size=2, Latency=32100068.409443
+Pyramid Size=3, Latency=47795544.102776
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 156 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=28981650.454082
+Pyramid Size=2, Latency=32100068.409443
+Pyramid Size=3, Latency=47795544.102776
+pyramid=1, total time=296, normalized time=296.000000
+pyramid=2, total time=149, normalized time=74.500000
+pyramid=3, total time=101, normalized time=33.666667
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=30106147.204605
+Pyramid Size=2, Latency=33348315.534501
+Pyramid Size=3, Latency=49655991.487182
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 158 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=30106147.204605
+Pyramid Size=2, Latency=33348315.534501
+Pyramid Size=3, Latency=49655991.487182
+pyramid=1, total time=294, normalized time=294.000000
+pyramid=2, total time=148, normalized time=74.000000
+pyramid=3, total time=101, normalized time=33.666667
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=31259475.645492
+Pyramid Size=2, Latency=34628567.264809
+Pyramid Size=3, Latency=51564140.070279
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 160 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=31259475.645492
+Pyramid Size=2, Latency=34628567.264809
+Pyramid Size=3, Latency=51564140.070279
+pyramid=1, total time=295, normalized time=295.000000
+pyramid=2, total time=148, normalized time=74.000000
+pyramid=3, total time=101, normalized time=33.666667
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=32442000.734848
+Pyramid Size=2, Latency=35941228.721954
+Pyramid Size=3, Latency=53520593.664710
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 162 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=32442000.734848
+Pyramid Size=2, Latency=35941228.721954
+Pyramid Size=3, Latency=53520593.664710
+pyramid=1, total time=297, normalized time=297.000000
+pyramid=2, total time=149, normalized time=74.500000
+pyramid=3, total time=102, normalized time=34.000000
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=33654087.430778
+Pyramid Size=2, Latency=37286705.027521
+Pyramid Size=3, Latency=55525956.083115
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 164 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=33654087.430778
+Pyramid Size=2, Latency=37286705.027521
+Pyramid Size=3, Latency=55525956.083115
+pyramid=1, total time=299, normalized time=299.000000
+pyramid=2, total time=149, normalized time=74.500000
+pyramid=3, total time=102, normalized time=34.000000
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=34896100.691390
+Pyramid Size=2, Latency=38665401.303096
+Pyramid Size=3, Latency=57580831.138136
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 166 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=34896100.691390
+Pyramid Size=2, Latency=38665401.303096
+Pyramid Size=3, Latency=57580831.138136
+pyramid=1, total time=300, normalized time=300.000000
+pyramid=2, total time=151, normalized time=75.500000
+pyramid=3, total time=103, normalized time=34.333333
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=36168405.474789
+Pyramid Size=2, Latency=40077722.670263
+Pyramid Size=3, Latency=59685822.642416
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 168 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=36168405.474789
+Pyramid Size=2, Latency=40077722.670263
+Pyramid Size=3, Latency=59685822.642416
+pyramid=1, total time=298, normalized time=298.000000
+pyramid=2, total time=149, normalized time=74.500000
+pyramid=3, total time=102, normalized time=34.000000
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=37471366.739080
+Pyramid Size=2, Latency=41524074.250609
+Pyramid Size=3, Latency=61841534.408595
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 170 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=37471366.739080
+Pyramid Size=2, Latency=41524074.250609
+Pyramid Size=3, Latency=61841534.408595
+pyramid=1, total time=297, normalized time=297.000000
+pyramid=2, total time=150, normalized time=75.000000
+pyramid=3, total time=102, normalized time=34.000000
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=38805349.442370
+Pyramid Size=2, Latency=43004861.165718
+Pyramid Size=3, Latency=64048570.249316
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=4, Time per iteration=1.333333.
+Size 172 BestHeight 3 CalcHeight 1 %Slowdown 55.56 CalcSecond 2 %Slowdown 11.11 MinSlowdown 11.11
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=38805349.442370
+Pyramid Size=2, Latency=43004861.165718
+Pyramid Size=3, Latency=64048570.249316
+pyramid=1, total time=298, normalized time=298.000000
+pyramid=2, total time=150, normalized time=75.000000
+pyramid=3, total time=102, normalized time=34.000000
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=40170718.542765
+Pyramid Size=2, Latency=44520488.537177
+Pyramid Size=3, Latency=66307533.977220
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 174 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=40170718.542765
+Pyramid Size=2, Latency=44520488.537177
+Pyramid Size=3, Latency=66307533.977220
+pyramid=1, total time=298, normalized time=298.000000
+pyramid=2, total time=149, normalized time=74.500000
+pyramid=3, total time=102, normalized time=34.000000
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=41567838.998370
+Pyramid Size=2, Latency=46071361.486571
+Pyramid Size=3, Latency=68619029.404949
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 176 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=41567838.998370
+Pyramid Size=2, Latency=46071361.486571
+Pyramid Size=3, Latency=68619029.404949
+pyramid=1, total time=302, normalized time=302.000000
+pyramid=2, total time=149, normalized time=74.500000
+pyramid=3, total time=102, normalized time=34.000000
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=42997075.767291
+Pyramid Size=2, Latency=47657885.135485
+Pyramid Size=3, Latency=70983660.345143
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 178 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=42997075.767291
+Pyramid Size=2, Latency=47657885.135485
+Pyramid Size=3, Latency=70983660.345143
+pyramid=1, total time=301, normalized time=301.000000
+pyramid=2, total time=149, normalized time=74.500000
+pyramid=3, total time=102, normalized time=34.000000
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=44458793.807634
+Pyramid Size=2, Latency=49280464.605505
+Pyramid Size=3, Latency=73402030.610446
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 180 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=44458793.807634
+Pyramid Size=2, Latency=49280464.605505
+Pyramid Size=3, Latency=73402030.610446
+pyramid=1, total time=298, normalized time=298.000000
+pyramid=2, total time=148, normalized time=74.000000
+pyramid=3, total time=101, normalized time=33.666667
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=45953358.077505
+Pyramid Size=2, Latency=50939505.018215
+Pyramid Size=3, Latency=75874744.013499
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 182 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=45953358.077505
+Pyramid Size=2, Latency=50939505.018215
+Pyramid Size=3, Latency=75874744.013499
+pyramid=1, total time=296, normalized time=296.000000
+pyramid=2, total time=148, normalized time=74.000000
+pyramid=3, total time=101, normalized time=33.666667
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=47481133.535009
+Pyramid Size=2, Latency=52635411.495203
+Pyramid Size=3, Latency=78402404.366943
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 184 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=47481133.535009
+Pyramid Size=2, Latency=52635411.495203
+Pyramid Size=3, Latency=78402404.366943
+pyramid=1, total time=296, normalized time=296.000000
+pyramid=2, total time=149, normalized time=74.500000
+pyramid=3, total time=102, normalized time=34.000000
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=49042485.138254
+Pyramid Size=2, Latency=54368589.158052
+Pyramid Size=3, Latency=80985615.483421
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 186 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=49042485.138254
+Pyramid Size=2, Latency=54368589.158052
+Pyramid Size=3, Latency=80985615.483421
+pyramid=1, total time=296, normalized time=296.000000
+pyramid=2, total time=149, normalized time=74.500000
+pyramid=3, total time=101, normalized time=33.666667
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=50637777.845343
+Pyramid Size=2, Latency=56139443.128349
+Pyramid Size=3, Latency=83624981.175572
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 188 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=50637777.845343
+Pyramid Size=2, Latency=56139443.128349
+Pyramid Size=3, Latency=83624981.175572
+pyramid=1, total time=297, normalized time=297.000000
+pyramid=2, total time=150, normalized time=75.000000
+pyramid=3, total time=102, normalized time=34.000000
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=52267376.614385
+Pyramid Size=2, Latency=57948378.527679
+Pyramid Size=3, Latency=86321105.256041
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 190 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=52267376.614385
+Pyramid Size=2, Latency=57948378.527679
+Pyramid Size=3, Latency=86321105.256041
+pyramid=1, total time=295, normalized time=295.000000
+pyramid=2, total time=148, normalized time=74.000000
+pyramid=3, total time=101, normalized time=33.666667
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=53931646.403483
+Pyramid Size=2, Latency=59795800.477627
+Pyramid Size=3, Latency=89074591.537467
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 192 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=53931646.403483
+Pyramid Size=2, Latency=59795800.477627
+Pyramid Size=3, Latency=89074591.537467
+pyramid=1, total time=295, normalized time=295.000000
+pyramid=2, total time=148, normalized time=74.000000
+pyramid=3, total time=101, normalized time=33.666667
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=55630952.170745
+Pyramid Size=2, Latency=61682114.099779
+Pyramid Size=3, Latency=91886043.832493
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 194 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=55630952.170745
+Pyramid Size=2, Latency=61682114.099779
+Pyramid Size=3, Latency=91886043.832493
+pyramid=1, total time=297, normalized time=297.000000
+pyramid=2, total time=149, normalized time=74.500000
+pyramid=3, total time=102, normalized time=34.000000
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=57365658.874275
+Pyramid Size=2, Latency=63607724.515720
+Pyramid Size=3, Latency=94756065.953761
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 196 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=57365658.874275
+Pyramid Size=2, Latency=63607724.515720
+Pyramid Size=3, Latency=94756065.953761
+pyramid=1, total time=296, normalized time=296.000000
+pyramid=2, total time=149, normalized time=74.500000
+pyramid=3, total time=101, normalized time=33.666667
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=59136131.472181
+Pyramid Size=2, Latency=65573036.847037
+Pyramid Size=3, Latency=97685261.713911
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 198 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=59136131.472181
+Pyramid Size=2, Latency=65573036.847037
+Pyramid Size=3, Latency=97685261.713911
+pyramid=1, total time=296, normalized time=296.000000
+pyramid=2, total time=149, normalized time=74.500000
+pyramid=3, total time=102, normalized time=34.000000
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=60942734.922567
+Pyramid Size=2, Latency=67578456.215313
+Pyramid Size=3, Latency=100674234.925586
+Pyramid Height=1, time=4, Time per iteration=4.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 200 BestHeight 3 CalcHeight 1 %Slowdown 75.00 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=60942734.922567
+Pyramid Size=2, Latency=67578456.215313
+Pyramid Size=3, Latency=100674234.925586
+pyramid=1, total time=293, normalized time=293.000000
+pyramid=2, total time=149, normalized time=74.500000
+pyramid=3, total time=101, normalized time=33.666667
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=62785834.183539
+Pyramid Size=2, Latency=69624387.742135
+Pyramid Size=3, Latency=103723589.401428
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 202 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=62785834.183539
+Pyramid Size=2, Latency=69624387.742135
+Pyramid Size=3, Latency=103723589.401428
+pyramid=1, total time=297, normalized time=297.000000
+pyramid=2, total time=149, normalized time=74.500000
+pyramid=3, total time=102, normalized time=34.000000
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=64665794.213204
+Pyramid Size=2, Latency=71711236.549089
+Pyramid Size=3, Latency=106833928.954077
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 204 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=64665794.213204
+Pyramid Size=2, Latency=71711236.549089
+Pyramid Size=3, Latency=106833928.954077
+pyramid=1, total time=295, normalized time=295.000000
+pyramid=2, total time=149, normalized time=74.500000
+pyramid=3, total time=101, normalized time=33.666667
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=66582979.969668
+Pyramid Size=2, Latency=73839407.757759
+Pyramid Size=3, Latency=110005857.396176
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 206 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=66582979.969668
+Pyramid Size=2, Latency=73839407.757759
+Pyramid Size=3, Latency=110005857.396176
+pyramid=1, total time=299, normalized time=299.000000
+pyramid=2, total time=150, normalized time=75.000000
+pyramid=3, total time=102, normalized time=34.000000
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=68537756.411035
+Pyramid Size=2, Latency=76009306.489731
+Pyramid Size=3, Latency=113239978.540367
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 208 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=68537756.411035
+Pyramid Size=2, Latency=76009306.489731
+Pyramid Size=3, Latency=113239978.540367
+pyramid=1, total time=299, normalized time=299.000000
+pyramid=2, total time=148, normalized time=74.000000
+pyramid=3, total time=102, normalized time=34.000000
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=70530488.495413
+Pyramid Size=2, Latency=78221337.866590
+Pyramid Size=3, Latency=116536896.199291
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 210 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=70530488.495413
+Pyramid Size=2, Latency=78221337.866590
+Pyramid Size=3, Latency=116536896.199291
+pyramid=1, total time=298, normalized time=298.000000
+pyramid=2, total time=150, normalized time=75.000000
+pyramid=3, total time=102, normalized time=34.000000
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=72561541.180906
+Pyramid Size=2, Latency=80475907.009923
+Pyramid Size=3, Latency=119897214.185589
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 212 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=72561541.180906
+Pyramid Size=2, Latency=80475907.009923
+Pyramid Size=3, Latency=119897214.185589
+pyramid=1, total time=299, normalized time=299.000000
+pyramid=2, total time=150, normalized time=75.000000
+pyramid=3, total time=102, normalized time=34.000000
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=74631279.425622
+Pyramid Size=2, Latency=82773419.041314
+Pyramid Size=3, Latency=123321536.311903
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 214 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=74631279.425622
+Pyramid Size=2, Latency=82773419.041314
+Pyramid Size=3, Latency=123321536.311903
+pyramid=1, total time=297, normalized time=297.000000
+pyramid=2, total time=150, normalized time=75.000000
+pyramid=3, total time=102, normalized time=34.000000
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=76740068.187664
+Pyramid Size=2, Latency=85114279.082349
+Pyramid Size=3, Latency=126810466.390876
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 216 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=76740068.187664
+Pyramid Size=2, Latency=85114279.082349
+Pyramid Size=3, Latency=126810466.390876
+pyramid=1, total time=296, normalized time=296.000000
+pyramid=2, total time=150, normalized time=75.000000
+pyramid=3, total time=102, normalized time=34.000000
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=78888272.425141
+Pyramid Size=2, Latency=87498892.254613
+Pyramid Size=3, Latency=130364608.235148
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 218 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=78888272.425141
+Pyramid Size=2, Latency=87498892.254613
+Pyramid Size=3, Latency=130364608.235148
+pyramid=1, total time=297, normalized time=297.000000
+pyramid=2, total time=149, normalized time=74.500000
+pyramid=3, total time=102, normalized time=34.000000
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=81076257.096156
+Pyramid Size=2, Latency=89927663.679692
+Pyramid Size=3, Latency=133984565.657362
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 220 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=81076257.096156
+Pyramid Size=2, Latency=89927663.679692
+Pyramid Size=3, Latency=133984565.657362
+pyramid=1, total time=294, normalized time=294.000000
+pyramid=2, total time=148, normalized time=74.000000
+pyramid=3, total time=101, normalized time=33.666667
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=83304387.158817
+Pyramid Size=2, Latency=92400998.479171
+Pyramid Size=3, Latency=137670942.470158
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 222 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=83304387.158817
+Pyramid Size=2, Latency=92400998.479171
+Pyramid Size=3, Latency=137670942.470158
+pyramid=1, total time=295, normalized time=295.000000
+pyramid=2, total time=149, normalized time=74.500000
+pyramid=3, total time=101, normalized time=33.666667
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=85573027.571229
+Pyramid Size=2, Latency=94919301.774636
+Pyramid Size=3, Latency=141424342.486180
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 224 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=85573027.571229
+Pyramid Size=2, Latency=94919301.774636
+Pyramid Size=3, Latency=141424342.486180
+pyramid=1, total time=296, normalized time=296.000000
+pyramid=2, total time=149, normalized time=74.500000
+pyramid=3, total time=102, normalized time=34.000000
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=87882543.291498
+Pyramid Size=2, Latency=97482978.687673
+Pyramid Size=3, Latency=145245369.518067
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 226 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=87882543.291498
+Pyramid Size=2, Latency=97482978.687673
+Pyramid Size=3, Latency=145245369.518067
+pyramid=1, total time=2049, normalized time=2049.000000
+pyramid=2, total time=151, normalized time=75.500000
+pyramid=3, total time=102, normalized time=34.000000
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=90233299.277730
+Pyramid Size=2, Latency=100092434.339865
+Pyramid Size=3, Latency=149134627.378463
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 228 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=90233299.277730
+Pyramid Size=2, Latency=100092434.339865
+Pyramid Size=3, Latency=149134627.378463
+pyramid=1, total time=294, normalized time=294.000000
+pyramid=2, total time=147, normalized time=73.500000
+pyramid=3, total time=100, normalized time=33.333333
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=92625660.488031
+Pyramid Size=2, Latency=102748073.852800
+Pyramid Size=3, Latency=153092719.880008
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 230 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=92625660.488031
+Pyramid Size=2, Latency=102748073.852800
+Pyramid Size=3, Latency=153092719.880008
+pyramid=1, total time=298, normalized time=298.000000
+pyramid=2, total time=149, normalized time=74.500000
+pyramid=3, total time=102, normalized time=34.000000
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=95059991.880506
+Pyramid Size=2, Latency=105450302.348063
+Pyramid Size=3, Latency=157120250.835345
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 232 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=95059991.880506
+Pyramid Size=2, Latency=105450302.348063
+Pyramid Size=3, Latency=157120250.835345
+pyramid=1, total time=296, normalized time=296.000000
+pyramid=2, total time=150, normalized time=75.000000
+pyramid=3, total time=102, normalized time=34.000000
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=97536658.413261
+Pyramid Size=2, Latency=108199524.947239
+Pyramid Size=3, Latency=161217824.057114
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 234 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=97536658.413261
+Pyramid Size=2, Latency=108199524.947239
+Pyramid Size=3, Latency=161217824.057114
+pyramid=1, total time=303, normalized time=303.000000
+pyramid=2, total time=149, normalized time=74.500000
+pyramid=3, total time=102, normalized time=34.000000
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=100056025.044403
+Pyramid Size=2, Latency=110996146.771913
+Pyramid Size=3, Latency=165386043.357958
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 236 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=100056025.044403
+Pyramid Size=2, Latency=110996146.771913
+Pyramid Size=3, Latency=165386043.357958
+pyramid=1, total time=298, normalized time=298.000000
+pyramid=2, total time=150, normalized time=75.000000
+pyramid=3, total time=102, normalized time=34.000000
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=102618456.732037
+Pyramid Size=2, Latency=113840572.943671
+Pyramid Size=3, Latency=169625512.550519
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 238 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=102618456.732037
+Pyramid Size=2, Latency=113840572.943671
+Pyramid Size=3, Latency=169625512.550519
+pyramid=1, total time=293, normalized time=293.000000
+pyramid=2, total time=149, normalized time=74.500000
+pyramid=3, total time=101, normalized time=33.666667
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=105224318.434269
+Pyramid Size=2, Latency=116733208.584098
+Pyramid Size=3, Latency=173936835.447437
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 240 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=105224318.434269
+Pyramid Size=2, Latency=116733208.584098
+Pyramid Size=3, Latency=173936835.447437
+pyramid=1, total time=296, normalized time=296.000000
+pyramid=2, total time=149, normalized time=74.500000
+pyramid=3, total time=102, normalized time=34.000000
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=107873975.109204
+Pyramid Size=2, Latency=119674458.814780
+Pyramid Size=3, Latency=178320615.861355
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 242 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=107873975.109204
+Pyramid Size=2, Latency=119674458.814780
+Pyramid Size=3, Latency=178320615.861355
+pyramid=1, total time=297, normalized time=297.000000
+pyramid=2, total time=150, normalized time=75.000000
+pyramid=3, total time=102, normalized time=34.000000
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=110567791.714950
+Pyramid Size=2, Latency=122664728.757302
+Pyramid Size=3, Latency=182777457.604915
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 244 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=110567791.714950
+Pyramid Size=2, Latency=122664728.757302
+Pyramid Size=3, Latency=182777457.604915
+pyramid=1, total time=295, normalized time=295.000000
+pyramid=2, total time=149, normalized time=74.500000
+pyramid=3, total time=101, normalized time=33.666667
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=113306133.209611
+Pyramid Size=2, Latency=125704423.533251
+Pyramid Size=3, Latency=187307964.490757
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 246 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=113306133.209611
+Pyramid Size=2, Latency=125704423.533251
+Pyramid Size=3, Latency=187307964.490757
+pyramid=1, total time=297, normalized time=297.000000
+pyramid=2, total time=149, normalized time=74.500000
+pyramid=3, total time=101, normalized time=33.666667
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=116089364.551294
+Pyramid Size=2, Latency=128793948.264210
+Pyramid Size=3, Latency=191912740.331524
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 248 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=116089364.551294
+Pyramid Size=2, Latency=128793948.264210
+Pyramid Size=3, Latency=191912740.331524
+pyramid=1, total time=298, normalized time=298.000000
+pyramid=2, total time=149, normalized time=74.500000
+pyramid=3, total time=102, normalized time=34.000000
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=118917850.698104
+Pyramid Size=2, Latency=131933708.071766
+Pyramid Size=3, Latency=196592388.939857
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 250 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=118917850.698104
+Pyramid Size=2, Latency=131933708.071766
+Pyramid Size=3, Latency=196592388.939857
+pyramid=1, total time=298, normalized time=298.000000
+pyramid=2, total time=149, normalized time=74.500000
+pyramid=3, total time=102, normalized time=34.000000
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=121791956.608147
+Pyramid Size=2, Latency=135124108.077505
+Pyramid Size=3, Latency=201347514.128398
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 252 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=121791956.608147
+Pyramid Size=2, Latency=135124108.077505
+Pyramid Size=3, Latency=201347514.128398
+pyramid=1, total time=297, normalized time=297.000000
+pyramid=2, total time=148, normalized time=74.000000
+pyramid=3, total time=102, normalized time=34.000000
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=124712047.239529
+Pyramid Size=2, Latency=138365553.403010
+Pyramid Size=3, Latency=206178719.709789
+Pyramid Height=1, time=5, Time per iteration=5.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 254 BestHeight 3 CalcHeight 1 %Slowdown 80.00 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=124712047.239529
+Pyramid Size=2, Latency=138365553.403010
+Pyramid Size=3, Latency=206178719.709789
+pyramid=1, total time=299, normalized time=299.000000
+pyramid=2, total time=150, normalized time=75.000000
+pyramid=3, total time=103, normalized time=34.333333
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=127678487.550356
+Pyramid Size=2, Latency=141658449.169869
+Pyramid Size=3, Latency=211086609.496671
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 256 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=127678487.550356
+Pyramid Size=2, Latency=141658449.169869
+Pyramid Size=3, Latency=211086609.496671
+pyramid=1, total time=297, normalized time=297.000000
+pyramid=2, total time=149, normalized time=74.500000
+pyramid=3, total time=102, normalized time=34.000000
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=130691642.498734
+Pyramid Size=2, Latency=145003200.499667
+Pyramid Size=3, Latency=216071787.301686
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 258 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=130691642.498734
+Pyramid Size=2, Latency=145003200.499667
+Pyramid Size=3, Latency=216071787.301686
+pyramid=1, total time=296, normalized time=296.000000
+pyramid=2, total time=149, normalized time=74.500000
+pyramid=3, total time=101, normalized time=33.666667
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=133751877.042769
+Pyramid Size=2, Latency=148400212.513988
+Pyramid Size=3, Latency=221134856.937476
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 260 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=133751877.042769
+Pyramid Size=2, Latency=148400212.513988
+Pyramid Size=3, Latency=221134856.937476
+pyramid=1, total time=295, normalized time=295.000000
+pyramid=2, total time=149, normalized time=74.500000
+pyramid=3, total time=102, normalized time=34.000000
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=136859556.140566
+Pyramid Size=2, Latency=151849890.334419
+Pyramid Size=3, Latency=226276422.216682
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 262 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=136859556.140566
+Pyramid Size=2, Latency=151849890.334419
+Pyramid Size=3, Latency=226276422.216682
+pyramid=1, total time=299, normalized time=299.000000
+pyramid=2, total time=149, normalized time=74.500000
+pyramid=3, total time=102, normalized time=34.000000
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=140015044.750232
+Pyramid Size=2, Latency=155352639.082544
+Pyramid Size=3, Latency=231497086.951946
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 264 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=140015044.750232
+Pyramid Size=2, Latency=155352639.082544
+Pyramid Size=3, Latency=231497086.951946
+pyramid=1, total time=296, normalized time=296.000000
+pyramid=2, total time=149, normalized time=74.500000
+pyramid=3, total time=102, normalized time=34.000000
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=143218707.829872
+Pyramid Size=2, Latency=158908863.879950
+Pyramid Size=3, Latency=236797454.955909
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 266 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=143218707.829872
+Pyramid Size=2, Latency=158908863.879950
+Pyramid Size=3, Latency=236797454.955909
+pyramid=1, total time=297, normalized time=297.000000
+pyramid=2, total time=149, normalized time=74.500000
+pyramid=3, total time=102, normalized time=34.000000
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=146470910.337592
+Pyramid Size=2, Latency=162518969.848222
+Pyramid Size=3, Latency=242178130.041214
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 268 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=146470910.337592
+Pyramid Size=2, Latency=162518969.848222
+Pyramid Size=3, Latency=242178130.041214
+pyramid=1, total time=296, normalized time=296.000000
+pyramid=2, total time=148, normalized time=74.000000
+pyramid=3, total time=101, normalized time=33.666667
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=149772017.231498
+Pyramid Size=2, Latency=166183362.108945
+Pyramid Size=3, Latency=247639716.020502
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 270 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=149772017.231498
+Pyramid Size=2, Latency=166183362.108945
+Pyramid Size=3, Latency=247639716.020502
+pyramid=1, total time=297, normalized time=297.000000
+pyramid=2, total time=149, normalized time=74.500000
+pyramid=3, total time=102, normalized time=34.000000
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=153122393.469695
+Pyramid Size=2, Latency=169902445.783705
+Pyramid Size=3, Latency=253182816.706414
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 272 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=153122393.469695
+Pyramid Size=2, Latency=169902445.783705
+Pyramid Size=3, Latency=253182816.706414
+pyramid=1, total time=297, normalized time=297.000000
+pyramid=2, total time=149, normalized time=74.500000
+pyramid=3, total time=101, normalized time=33.666667
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=156522404.010291
+Pyramid Size=2, Latency=173676625.994086
+Pyramid Size=3, Latency=258808035.911592
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 274 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=156522404.010291
+Pyramid Size=2, Latency=173676625.994086
+Pyramid Size=3, Latency=258808035.911592
+pyramid=1, total time=296, normalized time=296.000000
+pyramid=2, total time=149, normalized time=74.500000
+pyramid=3, total time=101, normalized time=33.666667
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=159972413.811390
+Pyramid Size=2, Latency=177506307.861676
+Pyramid Size=3, Latency=264515977.448679
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 276 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=159972413.811390
+Pyramid Size=2, Latency=177506307.861676
+Pyramid Size=3, Latency=264515977.448679
+pyramid=1, total time=299, normalized time=299.000000
+pyramid=2, total time=150, normalized time=75.000000
+pyramid=3, total time=102, normalized time=34.000000
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=163472787.831099
+Pyramid Size=2, Latency=181391896.508058
+Pyramid Size=3, Latency=270307245.130315
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 278 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=163472787.831099
+Pyramid Size=2, Latency=181391896.508058
+Pyramid Size=3, Latency=270307245.130315
+pyramid=1, total time=298, normalized time=298.000000
+pyramid=2, total time=149, normalized time=74.500000
+pyramid=3, total time=102, normalized time=34.000000
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=167023891.027523
+Pyramid Size=2, Latency=185333797.054819
+Pyramid Size=3, Latency=276182442.769142
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 280 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=167023891.027523
+Pyramid Size=2, Latency=185333797.054819
+Pyramid Size=3, Latency=276182442.769142
+pyramid=1, total time=298, normalized time=298.000000
+pyramid=2, total time=149, normalized time=74.500000
+pyramid=3, total time=103, normalized time=34.333333
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=170626088.358768
+Pyramid Size=2, Latency=189332414.623544
+Pyramid Size=3, Latency=282142174.177802
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 282 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=170626088.358768
+Pyramid Size=2, Latency=189332414.623544
+Pyramid Size=3, Latency=282142174.177802
+pyramid=1, total time=296, normalized time=296.000000
+pyramid=2, total time=149, normalized time=74.500000
+pyramid=3, total time=102, normalized time=34.000000
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=174279744.782940
+Pyramid Size=2, Latency=193388154.335819
+Pyramid Size=3, Latency=288187043.168936
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 284 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=174279744.782940
+Pyramid Size=2, Latency=193388154.335819
+Pyramid Size=3, Latency=288187043.168936
+pyramid=1, total time=298, normalized time=298.000000
+pyramid=2, total time=149, normalized time=74.500000
+pyramid=3, total time=102, normalized time=34.000000
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=177985225.258146
+Pyramid Size=2, Latency=197501421.313228
+Pyramid Size=3, Latency=294317653.555187
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 286 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=177985225.258146
+Pyramid Size=2, Latency=197501421.313228
+Pyramid Size=3, Latency=294317653.555187
+pyramid=1, total time=298, normalized time=298.000000
+pyramid=2, total time=150, normalized time=75.000000
+pyramid=3, total time=102, normalized time=34.000000
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=181742894.742490
+Pyramid Size=2, Latency=201672620.677358
+Pyramid Size=3, Latency=300534609.149196
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 288 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=181742894.742490
+Pyramid Size=2, Latency=201672620.677358
+Pyramid Size=3, Latency=300534609.149196
+pyramid=1, total time=297, normalized time=297.000000
+pyramid=2, total time=149, normalized time=74.500000
+pyramid=3, total time=102, normalized time=34.000000
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=185553118.194078
+Pyramid Size=2, Latency=205902157.549793
+Pyramid Size=3, Latency=306838513.763604
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 290 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=185553118.194078
+Pyramid Size=2, Latency=205902157.549793
+Pyramid Size=3, Latency=306838513.763604
+pyramid=1, total time=297, normalized time=297.000000
+pyramid=2, total time=149, normalized time=74.500000
+pyramid=3, total time=102, normalized time=34.000000
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=189416260.571017
+Pyramid Size=2, Latency=210190437.052120
+Pyramid Size=3, Latency=313229971.211054
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 292 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=189416260.571017
+Pyramid Size=2, Latency=210190437.052120
+Pyramid Size=3, Latency=313229971.211054
+pyramid=1, total time=300, normalized time=300.000000
+pyramid=2, total time=156, normalized time=78.000000
+pyramid=3, total time=102, normalized time=34.000000
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=193332686.831413
+Pyramid Size=2, Latency=214537864.305924
+Pyramid Size=3, Latency=319709585.304187
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 294 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=193332686.831413
+Pyramid Size=2, Latency=214537864.305924
+Pyramid Size=3, Latency=319709585.304187
+pyramid=1, total time=296, normalized time=296.000000
+pyramid=2, total time=149, normalized time=74.500000
+pyramid=3, total time=102, normalized time=34.000000
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=197302761.933371
+Pyramid Size=2, Latency=218944844.432789
+Pyramid Size=3, Latency=326277959.855644
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 296 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=197302761.933371
+Pyramid Size=2, Latency=218944844.432789
+Pyramid Size=3, Latency=326277959.855644
+pyramid=1, total time=297, normalized time=297.000000
+pyramid=2, total time=149, normalized time=74.500000
+pyramid=3, total time=101, normalized time=33.666667
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=201326850.834997
+Pyramid Size=2, Latency=223411782.554302
+Pyramid Size=3, Latency=332935698.678067
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 298 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=201326850.834997
+Pyramid Size=2, Latency=223411782.554302
+Pyramid Size=3, Latency=332935698.678067
+pyramid=1, total time=297, normalized time=297.000000
+pyramid=2, total time=149, normalized time=74.500000
+pyramid=3, total time=102, normalized time=34.000000
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=205405318.494396
+Pyramid Size=2, Latency=227939083.792049
+Pyramid Size=3, Latency=339683405.584098
+Pyramid Height=1, time=3, Time per iteration=3.000000.
+Pyramid Height=2, time=3, Time per iteration=1.500000.
+Pyramid Height=3, time=3, Time per iteration=1.000000.
+Size 300 BestHeight 3 CalcHeight 1 %Slowdown 66.67 CalcSecond 2 %Slowdown 33.33 MinSlowdown 33.33
+changed setup and full.
+Total instructions per warp=35.000000.
+Setup instructions per warp=16.660000.
+Pyramid Size=1, Latency=205405318.494396
+Pyramid Size=2, Latency=227939083.792049
+Pyramid Size=3, Latency=339683405.584098
+pyramid=1, total time=305, normalized time=305.000000
+pyramid=2, total time=150, normalized time=75.000000
+pyramid=3, total time=105, normalized time=35.000000

@@ -1,0 +1,117 @@
+\begin{thebibliography}{10}
+
+\bibitem{cm2}
+Ralph Brickner, William George, S.~Lennart Johnsson, and Alan Ruttenberg.
+\newblock {A Stencil Compiler for the Connection Machine Models CM-2/200}.
+\newblock In {\em Fourth Workshop on Compilers for Parallel Computers}, 1993.
+
+\bibitem{OpenMP}
+Barbara Chapman, Gabriele Jost, and Ruud van~der Pas.
+\newblock {\em {Using OpenMP: Portable Shared Memory Parallel Programming
+  (Scientific and Engineering Computation)}}.
+\newblock The MIT Press, 2007.
+
+\bibitem{AutoTuning}
+Kaushik Datta, Mark Murphy, Vasily Volkov, Samuel Williams, Jonathan Carter,
+  Leonid Oliker, David Patterson, John Shalf, and Katherine Yelick.
+\newblock {Stencil Computation Optimization and Auto-tuning on State-of-the-art
+  Multicore Architectures}.
+\newblock In {\em Conference on Supercomputing}, pages 1--12, Piscataway, NJ,
+  2008.
+
+\bibitem{kamil}
+Shoaib Kamil, Kaushik Datta, Samuel Williams, Leonid Oliker, John Shalf, and
+  Katherine Yelick.
+\newblock {Implicit and Explicit Optimizations for Stencil Computations}.
+\newblock In {\em Workshop on Memory System Performance and Correctness}, pages
+  51--60, 2006.
+
+\bibitem{openmp2gpu}
+Seyong Lee, Seung-Jai Min, and Rudolf Eigenmann.
+\newblock {OpenMP to GPGPU: A Compiler Framework for Automatic Translation and
+  Optimization}.
+\newblock {\em SIGPLAN Notices}, 44(4):101--110, 2009.
+
+\bibitem{li}
+Zhiyuan Li and Yonghong Song.
+\newblock {Automatic Tiling of Iterative Stencil Loops}.
+\newblock {\em ACM TOPLAS}, 26(6):975--1028, 2004.
+
+\bibitem{CUDA1}
+E.~Lindholm, J.~Nickolls, S.~Oberman, and J.~Montrym.
+\newblock {NVIDIA Tesla: A Unified Graphics and Computing Architecture}.
+\newblock {\em IEEE Micro}, 28(2):39--55, 2008.
+
+\bibitem{Mashey}
+John~R. Mashey.
+\newblock {War of the Benchmark Means: Time for a Truce}.
+\newblock {\em SIGARCH Computer Architecture News}, 32(4):1--14, 2004.
+
+\bibitem{meng}
+Jiayuan Meng and Kevin Skadron.
+\newblock {Performance Modeling and Automatic Ghost Zone Optimization for
+  Iterative Stencil Loops on GPUs}.
+\newblock In {\em 23rd International Conference on Supercomputing}, pages
+  256--265, 2009.
+
+\bibitem{Micikevicius}
+Paulius Micikevicius.
+\newblock {3D Finite Difference Computation on GPUs using CUDA}.
+\newblock In {\em 2nd Workshop on General Purpose Processing on Graphics
+  Processing Units}, pages 79--84, 2009.
+
+\bibitem{pthreads}
+Bradford Nichols, Dick Buttlar, and Jacqueline~Proulx Farrell.
+\newblock {\em {Pthreads Programming}}.
+\newblock O'Reilly \& Associates, Inc., Sebastopol, CA, 1996.
+
+\bibitem{Fermi}
+J.~Nickolls and W.J. Dally.
+\newblock {The GPU Computing Era}.
+\newblock {\em IEEE Micro}, 30(2):56 --69, March-April 2010.
+
+\bibitem{CUDA2}
+John Nickolls, Ian Buck, Michael Garland, and Kevin Skadron.
+\newblock {Scalable Parallel Programming with CUDA}.
+\newblock {\em Queue}, 6(2):40--53, 2008.
+
+\bibitem{ypnos}
+Dominic~A. Orchard, Max Bolingbroke, and Alan Mycroft.
+\newblock {Ypnos: Declarative, Parallel Structured Grid Programming}.
+\newblock In {\em 5th Workshop on Declarative Aspects of Multicore
+  Programming}, pages 15--24, New York, 2010.
+
+\bibitem{Ryoo}
+Shane Ryoo, Christopher~I. Rodrigues, Sara~S. Baghsorkhi, Sam~S. Stone,
+  David~B. Kirk, and Wen-mei~W. Hwu.
+\newblock {Optimization Principles and Application Performance Evaluation of a
+  Multithreaded GPU using CUDA}.
+\newblock In {\em Principles and Practice of Parallel Programming}, pages
+  73--82, New York, 2008.
+
+\bibitem{hotspot}
+Kevin Skadron, Mircea~R. Stan, Karthik Sankaranarayanan, Wei Huang, Sivakumar
+  Velusamy, and David Tarjan.
+\newblock {Temperature-Aware Microarchitecture: Modeling and Implementation}.
+\newblock {\em ACM TACO}, 1(1):94--125, 2004.
+
+\bibitem{OpenCL}
+J.E. Stone, D.~Gohara, and Guochun Shi.
+\newblock {OpenCL: A Parallel Programming Standard for Heterogeneous Computing
+  Systems}.
+\newblock {\em Computing in Science Engineering}, 12(3):66--73, May-June 2010.
+
+\bibitem{cudalite}
+Sain-Zee Ueng, Melvin Lathara, Sara~S. Baghsorkhi, and Wen-Mei~W. Hwu.
+\newblock {CUDA-Lite: Reducing GPU Programming Complexity}.
+\newblock In {\em {21st Workshop on Languages and Compilers for Parallel
+  Computing}}, pages 1--15, Berlin, Heidelberg, 2008.
+
+\bibitem{volkov}
+{Volkov, Vasily and Demmel, James}.
+\newblock {LU, QR and Cholesky Factorizations using Vector Capabilities of
+  GPUs}.
+\newblock Technical Report {UCB/EECS-2008-49}, {University of California at
+  Berkeley}, May 2008.
+
+\end{thebibliography}

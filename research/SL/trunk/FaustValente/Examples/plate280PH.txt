@@ -1,0 +1,100 @@
+Total instructions per warp=16.588800.
+Setup instructions per warp=5.572800.
+Model Pyramid Size=1, Model Latency=403660.440825
+Model Pyramid Size=2, Model Latency=345774.330046
+Model Pyramid Size=3, Model Latency=346598.655874
+Model Pyramid Size=4, Model Latency=365937.419158
+Model Pyramid Size=5, Model Latency=396737.105044
+Model Pyramid Size=6, Model Latency=437797.531895
+Model Pyramid Size=7, Model Latency=490013.061482
+Model Pyramid Size=8, Model Latency=555628.702373
+Model Pyramid Size=9, Model Latency=638279.230407
+Model Pyramid Size=10, Model Latency=743445.336264
+Size 500 BestHeight 2 CalcHeight 2 %Slowdown 0.00 CalcSecond 3 %Slowdown 5.98 MinSlowdown 0.00
+***********************************Start of a new Run****************************************
+Data Size=500, Tile Size=22 Iteration Count=300
+Actual pyramid=1, Actual total time=42926
+Actual pyramid=2, Actual total time=33069
+Actual pyramid=3, Actual total time=35161
+Actual pyramid=4, Actual total time=38080
+Actual pyramid=5, Actual total time=46137
+Actual pyramid=6, Actual total time=60009
+Actual pyramid=7, Actual total time=87721
+Actual pyramid=8, Actual total time=142770
+Actual pyramid=9, Actual total time=297423
+Actual pyramid=10, Actual total time=1105091
+Total instructions per warp=15.519600.
+Setup instructions per warp=5.670000.
+Model Pyramid Size=1, Model Latency=1469102.315630
+Model Pyramid Size=2, Model Latency=1263841.677982
+Model Pyramid Size=3, Model Latency=1269334.684744
+Model Pyramid Size=4, Model Latency=1341606.855533
+Model Pyramid Size=5, Model Latency=1455482.633885
+Model Pyramid Size=6, Model Latency=1606796.371846
+Model Pyramid Size=7, Model Latency=1798935.205301
+Model Pyramid Size=8, Model Latency=2040193.603024
+Model Pyramid Size=9, Model Latency=2343945.490292
+Model Pyramid Size=10, Model Latency=2730330.216616
+Size 1000 BestHeight 2 CalcHeight 2 %Slowdown 0.00 CalcSecond 3 %Slowdown 7.87 MinSlowdown 0.00
+***********************************Start of a new Run****************************************
+Data Size=1000, Tile Size=22 Iteration Count=300
+Actual pyramid=1, Actual total time=153706
+Actual pyramid=2, Actual total time=122245
+Actual pyramid=3, Actual total time=132755
+Actual pyramid=4, Actual total time=145568
+Actual pyramid=5, Actual total time=179477
+Actual pyramid=6, Actual total time=234178
+Actual pyramid=7, Actual total time=337561
+Actual pyramid=8, Actual total time=560552
+Actual pyramid=9, Actual total time=1182404
+Actual pyramid=10, Actual total time=4413680
+Total instructions per warp=15.508800.
+Setup instructions per warp=5.745600.
+Model Pyramid Size=1, Model Latency=3273761.222617
+Model Pyramid Size=2, Model Latency=2820613.724541
+Model Pyramid Size=3, Model Latency=2834837.373673
+Model Pyramid Size=4, Model Latency=2997409.249490
+Model Pyramid Size=5, Model Latency=3252616.965112
+Model Pyramid Size=6, Model Latency=3591338.709265
+Model Pyramid Size=7, Model Latency=4021229.597379
+Model Pyramid Size=8, Model Latency=4560875.376217
+Model Pyramid Size=9, Model Latency=5240199.986549
+Model Pyramid Size=10, Model Latency=6104244.017202
+Size 1500 BestHeight 2 CalcHeight 2 %Slowdown 0.00 CalcSecond 3 %Slowdown 1.58 MinSlowdown 0.00
+***********************************Start of a new Run****************************************
+Data Size=1500, Tile Size=22 Iteration Count=300
+Actual pyramid=1, Actual total time=343412
+Actual pyramid=2, Actual total time=273141
+Actual pyramid=3, Actual total time=278162
+Actual pyramid=4, Actual total time=324322
+Actual pyramid=5, Actual total time=396328
+Actual pyramid=6, Actual total time=531959
+Actual pyramid=7, Actual total time=758686
+Actual pyramid=8, Actual total time=1256873
+Actual pyramid=9, Actual total time=2659717
+Actual pyramid=10, Actual total time=9943115
+Total instructions per warp=14.742000.
+Setup instructions per warp=4.584600.
+Model Pyramid Size=1, Model Latency=5565935.937298
+Model Pyramid Size=2, Model Latency=4933303.069725
+Model Pyramid Size=3, Model Latency=5023291.764213
+Model Pyramid Size=4, Model Latency=5351331.267697
+Model Pyramid Size=5, Model Latency=5835255.005301
+Model Pyramid Size=6, Model Latency=6464895.481651
+Model Pyramid Size=7, Model Latency=7256973.494859
+Model Pyramid Size=8, Model Latency=8246750.552565
+Model Pyramid Size=9, Model Latency=9489542.600836
+Model Pyramid Size=10, Model Latency=11067917.738022
+Size 2000 BestHeight 2 CalcHeight 2 %Slowdown 0.00 CalcSecond 3 %Slowdown 4.53 MinSlowdown 0.00
+***********************************Start of a new Run****************************************
+Data Size=2000, Tile Size=22 Iteration Count=300
+Actual pyramid=1, Actual total time=579397
+Actual pyramid=2, Actual total time=477297
+Actual pyramid=3, Actual total time=499776
+Actual pyramid=4, Actual total time=565992
+Actual pyramid=5, Actual total time=702876
+Actual pyramid=6, Actual total time=927493
+Actual pyramid=7, Actual total time=1341023
+Actual pyramid=8, Actual total time=2236714
+Actual pyramid=9, Actual total time=4719343
+Actual pyramid=10, Actual total time=17642074

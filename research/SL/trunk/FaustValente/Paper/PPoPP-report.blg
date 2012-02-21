@@ -1,0 +1,45 @@
+This is BibTeX, Version 0.99c (Web2C 7.5.4)
+The top-level auxiliary file: PPoPP-report.aux
+The style file: abbrvnat.bst
+Database file #1: PPoPP-report.bib
+You've used 19 entries,
+            2774 wiz_defined-function locations,
+            717 strings with 8074 characters,
+and the built_in function-call counts, 10028 in all, are:
+= -- 892
+> -- 654
+< -- 14
++ -- 220
+- -- 201
+* -- 818
+:= -- 1540
+add.period$ -- 57
+call.type$ -- 19
+change.case$ -- 103
+chr.to.int$ -- 19
+cite$ -- 38
+duplicate$ -- 441
+empty$ -- 773
+format.name$ -- 226
+if$ -- 2129
+int.to.chr$ -- 1
+int.to.str$ -- 1
+missing$ -- 20
+newline$ -- 103
+num.names$ -- 76
+pop$ -- 262
+preamble$ -- 1
+purify$ -- 86
+quote$ -- 0
+skip$ -- 335
+stack$ -- 0
+substring$ -- 370
+swap$ -- 73
+text.length$ -- 8
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 199
+warning$ -- 0
+while$ -- 93
+width$ -- 0
+write$ -- 256

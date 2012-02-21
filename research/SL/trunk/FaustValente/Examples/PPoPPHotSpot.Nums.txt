@@ -1,0 +1,94 @@
+***********************************Start of a new Run****************************************
+Data Size=500, Tile Size=22 Iteration Count=300
+changed setup and full.
+Model Pyramid Size=1, Model Latency=389499.488444
+Model Pyramid Size=2, Model Latency=335752.080046
+Model Pyramid Size=3, Model Latency=337558.378866
+Model Pyramid Size=4, Model Latency=357015.011751
+Model Pyramid Size=5, Model Latency=387507.859370
+Model Pyramid Size=6, Model Latency=427960.891270
+Model Pyramid Size=7, Model Latency=479294.394816
+Model Pyramid Size=8, Model Latency=543731.559516
+Model Pyramid Size=9, Model Latency=624848.895102
+Model Pyramid Size=10, Model Latency=728028.419597
+Size 500 BestHeight 2 CalcHeight 2 %Slowdown 0.00 CalcSecond 3 %Slowdown 49.50 MinSlowdown 0.00
+Actual pyramid=1, Actual iteration time=38361, Actual Total time=39764
+Actual pyramid=2, Actual iteration time=33829, Actual Total time=35232
+Actual pyramid=3, Actual iteration time=37304, Actual Total time=38707
+Actual pyramid=4, Actual iteration time=41130, Actual Total time=42533
+Actual pyramid=5, Actual iteration time=50966, Actual Total time=52369
+Actual pyramid=6, Actual iteration time=66815, Actual Total time=68218
+Actual pyramid=7, Actual iteration time=101446, Actual Total time=102849
+Actual pyramid=8, Actual iteration time=163516, Actual Total time=164919
+Actual pyramid=9, Actual iteration time=339495, Actual Total time=340898
+Actual pyramid=10, Actual iteration time=1278965, Actual Total time=1280368
+***********************************Start of a new Run****************************************
+Data Size=1000, Tile Size=22 Iteration Count=300
+Model Pyramid Size=1, Model Latency=1435061.363249
+Model Pyramid Size=2, Model Latency=1413329.127982
+Model Pyramid Size=3, Model Latency=1504045.654273
+Model Pyramid Size=4, Model Latency=1641602.225903
+Model Pyramid Size=5, Model Latency=1817694.412431
+Model Pyramid Size=6, Model Latency=2035180.512471
+Model Pyramid Size=7, Model Latency=2302173.338634
+Model Pyramid Size=8, Model Latency=2631521.460167
+Model Pyramid Size=9, Model Latency=3042041.545519
+Model Pyramid Size=10, Model Latency=3561167.799949
+Size 1000 BestHeight 2 CalcHeight 2 %Slowdown 0.00 CalcSecond 1 %Slowdown 10.31 MinSlowdown 0.00
+Actual pyramid=1, Actual iteration time=142981, Actual Total time=147311
+Actual pyramid=2, Actual iteration time=129937, Actual Total time=134267
+Actual pyramid=3, Actual iteration time=140914, Actual Total time=145244
+Actual pyramid=4, Actual iteration time=162516, Actual Total time=166846
+Actual pyramid=5, Actual iteration time=203415, Actual Total time=207745
+Actual pyramid=6, Actual iteration time=266554, Actual Total time=270884
+Actual pyramid=7, Actual iteration time=387701, Actual Total time=392031
+Actual pyramid=8, Actual iteration time=646639, Actual Total time=650969
+Actual pyramid=9, Actual iteration time=1360336, Actual Total time=1364666
+Actual pyramid=10, Actual iteration time=5111964, Actual Total time=5116294
+***********************************Start of a new Run****************************************
+Data Size=1500, Tile Size=22 Iteration Count=300
+Model Pyramid Size=1, Model Latency=3176459.589964
+Model Pyramid Size=2, Model Latency=3154383.674541
+Model Pyramid Size=3, Model Latency=3367563.080044
+Model Pyramid Size=4, Model Latency=3681720.916157
+Model Pyramid Size=5, Model Latency=4080848.037777
+Model Pyramid Size=6, Model Latency=4572276.131140
+Model Pyramid Size=7, Model Latency=5174655.540236
+Model Pyramid Size=8, Model Latency=5917107.417033
+Model Pyramid Size=9, Model Latency=6842105.193650
+Model Pyramid Size=10, Model Latency=8011482.767202
+Size 1500 BestHeight 2 CalcHeight 2 %Slowdown 0.00 CalcSecond 1 %Slowdown 8.82 MinSlowdown 0.00
+Actual pyramid=1, Actual iteration time=319215, Actual Total time=328528
+Actual pyramid=2, Actual iteration time=289201, Actual Total time=298514
+Actual pyramid=3, Actual iteration time=307279, Actual Total time=316592
+Actual pyramid=4, Actual iteration time=367922, Actual Total time=377235
+Actual pyramid=5, Actual iteration time=450513, Actual Total time=459826
+Actual pyramid=6, Actual iteration time=600044, Actual Total time=609357
+Actual pyramid=7, Actual iteration time=874851, Actual Total time=884164
+Actual pyramid=8, Actual iteration time=1447495, Actual Total time=1456808
+Actual pyramid=9, Actual iteration time=3058952, Actual Total time=3068265
+Actual pyramid=10, Actual iteration time=11503897, Actual Total time=11513210
+***********************************Start of a new Run****************************************
+Data Size=2000, Tile Size=22 Iteration Count=300
+Model Pyramid Size=1, Model Latency=5630255.937298
+Model Pyramid Size=2, Model Latency=5596522.969725
+Model Pyramid Size=3, Model Latency=5976926.778063
+Model Pyramid Size=4, Model Latency=6535742.934364
+Model Pyramid Size=5, Model Latency=7245087.752706
+Model Pyramid Size=6, Model Latency=8118163.137901
+Model Pyramid Size=7, Model Latency=9188167.094859
+Model Pyramid Size=8, Model Latency=10506853.052565
+Model Pyramid Size=9, Model Latency=12149668.517996
+Model Pyramid Size=10, Model Latency=14226433.238022
+Size 2000 BestHeight 2 CalcHeight 2 %Slowdown 0.00 CalcSecond 1 %Slowdown 7.97 MinSlowdown 0.00
+Actual pyramid=1, Actual iteration time=562899, Actual Total time=579213
+Actual pyramid=2, Actual iteration time=516511, Actual Total time=532825
+Actual pyramid=3, Actual iteration time=541782, Actual Total time=558096
+Actual pyramid=4, Actual iteration time=642370, Actual Total time=658684
+Actual pyramid=5, Actual iteration time=803920, Actual Total time=820234
+Actual pyramid=6, Actual iteration time=1067501, Actual Total time=1083815
+Actual pyramid=7, Actual iteration time=1546539, Actual Total time=1562853
+Actual pyramid=8, Actual iteration time=2577043, Actual Total time=2593357
+Actual pyramid=9, Actual iteration time=5435491, Actual Total time=5451805
+Cuda error in file 'hotspot.cu' in line 283 : the launch timed out and was terminated.
+Actual pyramid=10, Actual iteration time=18368202, Actual Total time=18384516

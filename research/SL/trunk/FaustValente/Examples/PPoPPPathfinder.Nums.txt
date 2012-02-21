@@ -1,0 +1,1520 @@
+***********************************Start of a new Run****************************************
+Data Size=100000, Tile Size=512 Iteration Count=256
+changed setup and full.
+Model Pyramid Size=1, Model Latency=117606.275527
+Model Pyramid Size=2, Model Latency=71033.683152
+Model Pyramid Size=3, Model Latency=55541.523796
+Model Pyramid Size=4, Model Latency=47819.614596
+Model Pyramid Size=5, Model Latency=43205.919874
+Model Pyramid Size=6, Model Latency=40146.428492
+Model Pyramid Size=7, Model Latency=37975.136329
+Model Pyramid Size=8, Model Latency=36359.041901
+Model Pyramid Size=9, Model Latency=35113.144901
+Model Pyramid Size=10, Model Latency=34126.445615
+Model Pyramid Size=11, Model Latency=33328.308294
+Model Pyramid Size=12, Model Latency=32671.642838
+Model Pyramid Size=13, Model Latency=32123.848782
+Model Pyramid Size=14, Model Latency=31661.640429
+Model Pyramid Size=15, Model Latency=31267.941931
+Model Pyramid Size=16, Model Latency=30929.946713
+Model Pyramid Size=17, Model Latency=30637.861811
+Model Pyramid Size=18, Model Latency=30384.070756
+Model Pyramid Size=19, Model Latency=30162.560818
+Model Pyramid Size=20, Model Latency=29968.522073
+Model Pyramid Size=21, Model Latency=29798.061024
+Model Pyramid Size=22, Model Latency=29647.992323
+Model Pyramid Size=23, Model Latency=29515.684828
+Model Pyramid Size=24, Model Latency=29398.946148
+Model Pyramid Size=25, Model Latency=29295.934892
+Model Pyramid Size=26, Model Latency=29205.093173
+Model Pyramid Size=27, Model Latency=29125.094109
+Model Pyramid Size=28, Model Latency=29054.800574
+Model Pyramid Size=29, Model Latency=28993.232483
+Model Pyramid Size=30, Model Latency=28939.540623
+Model Pyramid Size=31, Model Latency=28892.985543
+Model Pyramid Size=32, Model Latency=28852.920407
+Model Pyramid Size=33, Model Latency=28818.776965
+Model Pyramid Size=34, Model Latency=28790.053993
+Model Pyramid Size=35, Model Latency=28766.307728
+Model Pyramid Size=36, Model Latency=28747.143881
+Model Pyramid Size=37, Model Latency=28732.210957
+Model Pyramid Size=38, Model Latency=28721.194625
+Model Pyramid Size=39, Model Latency=28713.812956
+Model Pyramid Size=40, Model Latency=28709.812374
+Model Pyramid Size=41, Model Latency=28708.964199
+Model Pyramid Size=42, Model Latency=28711.061686
+Model Pyramid Size=43, Model Latency=28715.917474
+Model Pyramid Size=44, Model Latency=28723.361389
+Model Pyramid Size=45, Model Latency=28733.238531
+Model Pyramid Size=46, Model Latency=28745.407621
+Model Pyramid Size=47, Model Latency=28759.739546
+Model Pyramid Size=48, Model Latency=28776.116101
+Model Pyramid Size=49, Model Latency=28794.428872
+Model Pyramid Size=50, Model Latency=28814.578262
+Model Pyramid Size=51, Model Latency=28836.472624
+Model Pyramid Size=52, Model Latency=28860.027504
+Model Pyramid Size=53, Model Latency=28885.164957
+Model Pyramid Size=54, Model Latency=28911.812952
+Model Pyramid Size=55, Model Latency=28939.904832
+Model Pyramid Size=56, Model Latency=28969.378837
+Model Pyramid Size=57, Model Latency=29000.177675
+Model Pyramid Size=58, Model Latency=29032.248140
+Model Pyramid Size=59, Model Latency=29065.540765
+Model Pyramid Size=60, Model Latency=29100.009515
+Model Pyramid Size=61, Model Latency=29135.611504
+Model Pyramid Size=62, Model Latency=29172.306742
+Model Pyramid Size=63, Model Latency=29210.057911
+Model Pyramid Size=64, Model Latency=29248.830153
+Model Pyramid Size=65, Model Latency=29288.590885
+Model Pyramid Size=66, Model Latency=29329.309627
+Model Pyramid Size=67, Model Latency=29370.957847
+Model Pyramid Size=68, Model Latency=29413.508818
+Model Pyramid Size=69, Model Latency=29456.937490
+Model Pyramid Size=70, Model Latency=29501.220371
+Model Pyramid Size=71, Model Latency=29546.335419
+Model Pyramid Size=72, Model Latency=29592.261942
+Model Pyramid Size=73, Model Latency=29638.980508
+Model Pyramid Size=74, Model Latency=29686.472861
+Model Pyramid Size=75, Model Latency=29734.721842
+Model Pyramid Size=76, Model Latency=29783.711323
+Model Pyramid Size=77, Model Latency=29833.426136
+Model Pyramid Size=78, Model Latency=29883.852016
+Model Pyramid Size=79, Model Latency=29934.975545
+Model Pyramid Size=80, Model Latency=29986.784100
+Model Pyramid Size=81, Model Latency=30039.265805
+Model Pyramid Size=82, Model Latency=30092.409488
+Model Pyramid Size=83, Model Latency=30146.204638
+Model Pyramid Size=84, Model Latency=30200.641371
+Model Pyramid Size=85, Model Latency=30255.710390
+Model Pyramid Size=86, Model Latency=30311.402954
+Model Pyramid Size=87, Model Latency=30367.710849
+Model Pyramid Size=88, Model Latency=30424.626358
+Model Pyramid Size=89, Model Latency=30482.142234
+Model Pyramid Size=90, Model Latency=30540.251677
+Model Pyramid Size=91, Model Latency=30598.948310
+Model Pyramid Size=92, Model Latency=30658.226158
+Model Pyramid Size=93, Model Latency=30718.079625
+Model Pyramid Size=94, Model Latency=30778.503481
+Model Pyramid Size=95, Model Latency=30839.492839
+Model Pyramid Size=96, Model Latency=30901.043140
+Model Pyramid Size=97, Model Latency=30963.150139
+Model Pyramid Size=98, Model Latency=31025.809890
+Model Pyramid Size=99, Model Latency=31089.018732
+Model Pyramid Size=100, Model Latency=31152.773275
+Model Pyramid Size=101, Model Latency=31217.070389
+Model Pyramid Size=102, Model Latency=31281.907197
+Model Pyramid Size=103, Model Latency=31347.281054
+Model Pyramid Size=104, Model Latency=31413.189550
+Model Pyramid Size=105, Model Latency=31479.630491
+Model Pyramid Size=106, Model Latency=31546.601892
+Model Pyramid Size=107, Model Latency=31614.101974
+Model Pyramid Size=108, Model Latency=31682.129150
+Model Pyramid Size=109, Model Latency=31750.682020
+Model Pyramid Size=110, Model Latency=31819.759365
+Model Pyramid Size=111, Model Latency=31889.360139
+Model Pyramid Size=112, Model Latency=31959.483464
+Model Pyramid Size=113, Model Latency=32030.128622
+Model Pyramid Size=114, Model Latency=32101.295055
+Model Pyramid Size=115, Model Latency=32172.982351
+Model Pyramid Size=116, Model Latency=32245.190249
+Model Pyramid Size=117, Model Latency=32317.918626
+Model Pyramid Size=118, Model Latency=32391.167498
+Model Pyramid Size=119, Model Latency=32464.937014
+Model Pyramid Size=120, Model Latency=32539.227452
+Model Pyramid Size=121, Model Latency=32614.039216
+Model Pyramid Size=122, Model Latency=32689.372833
+Model Pyramid Size=123, Model Latency=32765.228947
+Model Pyramid Size=124, Model Latency=32841.608319
+Model Pyramid Size=125, Model Latency=32918.511823
+Model Pyramid Size=126, Model Latency=32995.940445
+Model Pyramid Size=127, Model Latency=33073.895275
+Model Pyramid Size=128, Model Latency=33152.377513
+Model Pyramid Size=129, Model Latency=33231.388458
+Model Pyramid Size=130, Model Latency=33310.929512
+Model Pyramid Size=131, Model Latency=33391.002175
+Model Pyramid Size=132, Model Latency=33471.608046
+Model Pyramid Size=133, Model Latency=33552.748817
+Model Pyramid Size=134, Model Latency=33634.426274
+Model Pyramid Size=135, Model Latency=33716.642296
+Model Pyramid Size=136, Model Latency=33799.398852
+Model Pyramid Size=137, Model Latency=33882.697999
+Model Pyramid Size=138, Model Latency=33966.541884
+Model Pyramid Size=139, Model Latency=34050.932740
+Model Pyramid Size=140, Model Latency=34135.872883
+Model Pyramid Size=141, Model Latency=34221.364719
+Model Pyramid Size=142, Model Latency=34307.410731
+Model Pyramid Size=143, Model Latency=34394.013490
+Model Pyramid Size=144, Model Latency=34481.175646
+Model Pyramid Size=145, Model Latency=34568.899932
+Model Pyramid Size=146, Model Latency=34657.189159
+Model Pyramid Size=147, Model Latency=34746.046220
+Model Pyramid Size=148, Model Latency=34835.474086
+Model Pyramid Size=149, Model Latency=34925.475807
+Model Pyramid Size=150, Model Latency=35016.054512
+Model Pyramid Size=151, Model Latency=35107.213407
+Model Pyramid Size=152, Model Latency=35198.955775
+Model Pyramid Size=153, Model Latency=35291.284979
+Model Pyramid Size=154, Model Latency=35384.204456
+Model Pyramid Size=155, Model Latency=35477.717721
+Model Pyramid Size=156, Model Latency=35571.828366
+Model Pyramid Size=157, Model Latency=35666.540058
+Model Pyramid Size=158, Model Latency=35761.856543
+Model Pyramid Size=159, Model Latency=35857.781641
+Model Pyramid Size=160, Model Latency=35954.319251
+Model Pyramid Size=161, Model Latency=36051.473345
+Model Pyramid Size=162, Model Latency=36149.247976
+Model Pyramid Size=163, Model Latency=36247.647270
+Model Pyramid Size=164, Model Latency=36346.675433
+Model Pyramid Size=165, Model Latency=36446.336745
+Model Pyramid Size=166, Model Latency=36546.635565
+Model Pyramid Size=167, Model Latency=36647.576332
+Model Pyramid Size=168, Model Latency=36749.163558
+Model Pyramid Size=169, Model Latency=36851.401839
+Model Pyramid Size=170, Model Latency=36954.295845
+Model Pyramid Size=171, Model Latency=37057.850327
+Model Pyramid Size=172, Model Latency=37162.070117
+Model Pyramid Size=173, Model Latency=37266.960125
+Model Pyramid Size=174, Model Latency=37372.525343
+Model Pyramid Size=175, Model Latency=37478.770844
+Model Pyramid Size=176, Model Latency=37585.701781
+Model Pyramid Size=177, Model Latency=37693.323393
+Model Pyramid Size=178, Model Latency=37801.640998
+Model Pyramid Size=179, Model Latency=37910.660000
+Model Pyramid Size=180, Model Latency=38020.385887
+Model Pyramid Size=181, Model Latency=38130.824233
+Model Pyramid Size=182, Model Latency=38241.980697
+Model Pyramid Size=183, Model Latency=38353.861024
+Model Pyramid Size=184, Model Latency=38466.471048
+Model Pyramid Size=185, Model Latency=38579.816691
+Model Pyramid Size=186, Model Latency=38693.903964
+Model Pyramid Size=187, Model Latency=38808.738968
+Model Pyramid Size=188, Model Latency=38924.327896
+Model Pyramid Size=189, Model Latency=39040.677033
+Model Pyramid Size=190, Model Latency=39157.792757
+Model Pyramid Size=191, Model Latency=39275.681539
+Model Pyramid Size=192, Model Latency=39394.349949
+Model Pyramid Size=193, Model Latency=39513.804650
+Model Pyramid Size=194, Model Latency=39634.052404
+Model Pyramid Size=195, Model Latency=39755.100072
+Model Pyramid Size=196, Model Latency=39876.954614
+Model Pyramid Size=197, Model Latency=39999.623092
+Model Pyramid Size=198, Model Latency=40123.112672
+Model Pyramid Size=199, Model Latency=40247.430620
+Model Pyramid Size=200, Model Latency=40372.584312
+Model Pyramid Size=201, Model Latency=40498.581227
+Model Pyramid Size=202, Model Latency=40625.428954
+Model Pyramid Size=203, Model Latency=40753.135191
+Model Pyramid Size=204, Model Latency=40881.707747
+Model Pyramid Size=205, Model Latency=41011.154543
+Model Pyramid Size=206, Model Latency=41141.483615
+Model Pyramid Size=207, Model Latency=41272.703116
+Model Pyramid Size=208, Model Latency=41404.821312
+Model Pyramid Size=209, Model Latency=41537.846594
+Model Pyramid Size=210, Model Latency=41671.787469
+Model Pyramid Size=211, Model Latency=41806.652569
+Model Pyramid Size=212, Model Latency=41942.450650
+Model Pyramid Size=213, Model Latency=42079.190594
+Model Pyramid Size=214, Model Latency=42216.881411
+Model Pyramid Size=215, Model Latency=42355.532243
+Model Pyramid Size=216, Model Latency=42495.152362
+Model Pyramid Size=217, Model Latency=42635.751174
+Model Pyramid Size=218, Model Latency=42777.338224
+Model Pyramid Size=219, Model Latency=42919.923192
+Model Pyramid Size=220, Model Latency=43063.515901
+Model Pyramid Size=221, Model Latency=43208.126316
+Model Pyramid Size=222, Model Latency=43353.764547
+Model Pyramid Size=223, Model Latency=43500.440851
+Model Pyramid Size=224, Model Latency=43648.165637
+Model Pyramid Size=225, Model Latency=43796.949463
+Model Pyramid Size=226, Model Latency=43946.803045
+Model Pyramid Size=227, Model Latency=44097.737254
+Model Pyramid Size=228, Model Latency=44249.763122
+Model Pyramid Size=229, Model Latency=44402.891843
+Model Pyramid Size=230, Model Latency=44557.134778
+Model Pyramid Size=231, Model Latency=44712.503454
+Model Pyramid Size=232, Model Latency=44869.009571
+Model Pyramid Size=233, Model Latency=45026.665002
+Model Pyramid Size=234, Model Latency=45185.481796
+Model Pyramid Size=235, Model Latency=45345.472184
+Model Pyramid Size=236, Model Latency=45506.648579
+Model Pyramid Size=237, Model Latency=45669.023580
+Model Pyramid Size=238, Model Latency=45832.609978
+Model Pyramid Size=239, Model Latency=45997.420753
+Model Pyramid Size=240, Model Latency=46163.469086
+Model Pyramid Size=241, Model Latency=46330.768354
+Model Pyramid Size=242, Model Latency=46499.332139
+Model Pyramid Size=243, Model Latency=46669.174231
+Model Pyramid Size=244, Model Latency=46840.308631
+Model Pyramid Size=245, Model Latency=47012.749553
+Model Pyramid Size=246, Model Latency=47186.511432
+Model Pyramid Size=247, Model Latency=47361.608923
+Model Pyramid Size=248, Model Latency=47538.056911
+Model Pyramid Size=249, Model Latency=47715.870510
+Model Pyramid Size=250, Model Latency=47895.065071
+Model Pyramid Size=251, Model Latency=48075.656182
+Model Pyramid Size=252, Model Latency=48257.659679
+Model Pyramid Size=253, Model Latency=48441.091645
+Model Pyramid Size=254, Model Latency=48625.968416
+Model Pyramid Size=255, Model Latency=48812.306588
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Cuda error in file 'pathfinder.cu' in line 204 : unspecified launch failure.
+Size 100000 Pyramid1Time 39 BestHeight 255 BestTime 0.05 CalcHeight 41 %Slowdown 83.92 CalcSecond 40 %Slowdown 84.31 MinSlowdown 83.92
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=1, Actual iteration time=1709, Actual Total time=3083
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=2, Actual iteration time=851, Actual Total time=2225
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=3, Actual iteration time=584, Actual Total time=1958
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=4, Actual iteration time=431, Actual Total time=1805
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=5, Actual iteration time=364, Actual Total time=1738
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=6, Actual iteration time=293, Actual Total time=1667
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=7, Actual iteration time=254, Actual Total time=1628
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=8, Actual iteration time=226, Actual Total time=1600
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=9, Actual iteration time=201, Actual Total time=1575
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=10, Actual iteration time=181, Actual Total time=1555
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=11, Actual iteration time=167, Actual Total time=1541
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=12, Actual iteration time=154, Actual Total time=1528
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=13, Actual iteration time=141, Actual Total time=1515
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=14, Actual iteration time=141, Actual Total time=1515
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=15, Actual iteration time=127, Actual Total time=1501
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=16, Actual iteration time=114, Actual Total time=1488
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=17, Actual iteration time=114, Actual Total time=1488
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=18, Actual iteration time=108, Actual Total time=1482
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=19, Actual iteration time=102, Actual Total time=1476
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=20, Actual iteration time=99, Actual Total time=1473
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=21, Actual iteration time=95, Actual Total time=1469
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=22, Actual iteration time=89, Actual Total time=1463
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=23, Actual iteration time=94, Actual Total time=1468
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=24, Actual iteration time=81, Actual Total time=1455
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=25, Actual iteration time=81, Actual Total time=1455
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=26, Actual iteration time=75, Actual Total time=1449
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=27, Actual iteration time=75, Actual Total time=1449
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=28, Actual iteration time=75, Actual Total time=1449
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=29, Actual iteration time=68, Actual Total time=1442
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=30, Actual iteration time=68, Actual Total time=1442
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=31, Actual iteration time=68, Actual Total time=1442
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=32, Actual iteration time=61, Actual Total time=1435
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=33, Actual iteration time=62, Actual Total time=1436
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=34, Actual iteration time=61, Actual Total time=1435
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=35, Actual iteration time=62, Actual Total time=1436
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=36, Actual iteration time=62, Actual Total time=1436
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=37, Actual iteration time=64, Actual Total time=1438
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=38, Actual iteration time=55, Actual Total time=1429
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=39, Actual iteration time=55, Actual Total time=1429
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=40, Actual iteration time=55, Actual Total time=1429
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=41, Actual iteration time=55, Actual Total time=1429
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=42, Actual iteration time=55, Actual Total time=1429
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=43, Actual iteration time=48, Actual Total time=1422
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=44, Actual iteration time=48, Actual Total time=1422
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=45, Actual iteration time=49, Actual Total time=1423
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=46, Actual iteration time=48, Actual Total time=1422
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=47, Actual iteration time=48, Actual Total time=1422
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=48, Actual iteration time=52, Actual Total time=1426
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=49, Actual iteration time=49, Actual Total time=1423
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=50, Actual iteration time=48, Actual Total time=1422
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=51, Actual iteration time=48, Actual Total time=1422
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=52, Actual iteration time=42, Actual Total time=1416
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=53, Actual iteration time=41, Actual Total time=1415
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=54, Actual iteration time=42, Actual Total time=1416
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=55, Actual iteration time=42, Actual Total time=1416
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=56, Actual iteration time=49, Actual Total time=1423
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=57, Actual iteration time=42, Actual Total time=1416
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=58, Actual iteration time=42, Actual Total time=1416
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=59, Actual iteration time=42, Actual Total time=1416
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=60, Actual iteration time=43, Actual Total time=1417
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=61, Actual iteration time=42, Actual Total time=1416
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=62, Actual iteration time=42, Actual Total time=1416
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=63, Actual iteration time=41, Actual Total time=1415
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=64, Actual iteration time=35, Actual Total time=1409
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=65, Actual iteration time=35, Actual Total time=1409
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=66, Actual iteration time=35, Actual Total time=1409
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=67, Actual iteration time=36, Actual Total time=1410
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=68, Actual iteration time=36, Actual Total time=1410
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=69, Actual iteration time=35, Actual Total time=1409
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=70, Actual iteration time=35, Actual Total time=1409
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=71, Actual iteration time=35, Actual Total time=1409
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=72, Actual iteration time=35, Actual Total time=1409
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=73, Actual iteration time=35, Actual Total time=1409
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=74, Actual iteration time=36, Actual Total time=1410
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=75, Actual iteration time=35, Actual Total time=1409
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=76, Actual iteration time=35, Actual Total time=1409
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=77, Actual iteration time=36, Actual Total time=1410
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=78, Actual iteration time=35, Actual Total time=1409
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=79, Actual iteration time=35, Actual Total time=1409
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=80, Actual iteration time=38, Actual Total time=1412
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=81, Actual iteration time=40, Actual Total time=1414
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=82, Actual iteration time=35, Actual Total time=1409
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=83, Actual iteration time=35, Actual Total time=1409
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=84, Actual iteration time=35, Actual Total time=1409
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=85, Actual iteration time=35, Actual Total time=1409
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=86, Actual iteration time=28, Actual Total time=1402
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=87, Actual iteration time=28, Actual Total time=1402
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=88, Actual iteration time=29, Actual Total time=1403
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=89, Actual iteration time=29, Actual Total time=1403
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=90, Actual iteration time=28, Actual Total time=1402
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=91, Actual iteration time=28, Actual Total time=1402
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=92, Actual iteration time=28, Actual Total time=1402
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=93, Actual iteration time=28, Actual Total time=1402
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=94, Actual iteration time=28, Actual Total time=1402
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=95, Actual iteration time=29, Actual Total time=1403
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=96, Actual iteration time=28, Actual Total time=1402
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=97, Actual iteration time=28, Actual Total time=1402
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=98, Actual iteration time=29, Actual Total time=1403
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=99, Actual iteration time=29, Actual Total time=1403
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=100, Actual iteration time=29, Actual Total time=1403
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=101, Actual iteration time=28, Actual Total time=1402
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=102, Actual iteration time=28, Actual Total time=1402
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=103, Actual iteration time=28, Actual Total time=1402
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=104, Actual iteration time=28, Actual Total time=1402
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=105, Actual iteration time=29, Actual Total time=1403
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=106, Actual iteration time=28, Actual Total time=1402
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=107, Actual iteration time=28, Actual Total time=1402
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=108, Actual iteration time=29, Actual Total time=1403
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=109, Actual iteration time=29, Actual Total time=1403
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=110, Actual iteration time=29, Actual Total time=1403
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=111, Actual iteration time=35, Actual Total time=1409
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=112, Actual iteration time=29, Actual Total time=1403
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=113, Actual iteration time=29, Actual Total time=1403
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=114, Actual iteration time=29, Actual Total time=1403
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=115, Actual iteration time=29, Actual Total time=1403
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=116, Actual iteration time=29, Actual Total time=1403
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=117, Actual iteration time=28, Actual Total time=1402
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=118, Actual iteration time=29, Actual Total time=1403
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=119, Actual iteration time=28, Actual Total time=1402
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=120, Actual iteration time=28, Actual Total time=1402
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=121, Actual iteration time=28, Actual Total time=1402
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=122, Actual iteration time=28, Actual Total time=1402
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=123, Actual iteration time=29, Actual Total time=1403
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=124, Actual iteration time=28, Actual Total time=1402
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=125, Actual iteration time=28, Actual Total time=1402
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=126, Actual iteration time=28, Actual Total time=1402
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=127, Actual iteration time=28, Actual Total time=1402
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=128, Actual iteration time=21, Actual Total time=1395
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=129, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=130, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=131, Actual iteration time=21, Actual Total time=1395
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=132, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=133, Actual iteration time=23, Actual Total time=1397
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=134, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=135, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=136, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=137, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=138, Actual iteration time=21, Actual Total time=1395
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=139, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=140, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=141, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=142, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=143, Actual iteration time=21, Actual Total time=1395
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=144, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=145, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=146, Actual iteration time=21, Actual Total time=1395
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=147, Actual iteration time=33, Actual Total time=1407
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=148, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=149, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=150, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=151, Actual iteration time=21, Actual Total time=1395
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=152, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=153, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=154, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=155, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=156, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=157, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=158, Actual iteration time=21, Actual Total time=1395
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=159, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=160, Actual iteration time=21, Actual Total time=1395
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=161, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=162, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=163, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=164, Actual iteration time=21, Actual Total time=1395
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=165, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=166, Actual iteration time=21, Actual Total time=1395
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=167, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=168, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=169, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=170, Actual iteration time=21, Actual Total time=1395
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=171, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=172, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=173, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=174, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=175, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=176, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=177, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=178, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=179, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=180, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=181, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=182, Actual iteration time=21, Actual Total time=1395
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=183, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=184, Actual iteration time=21, Actual Total time=1395
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=185, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=186, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=187, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=188, Actual iteration time=31, Actual Total time=1405
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=189, Actual iteration time=23, Actual Total time=1397
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=190, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=191, Actual iteration time=21, Actual Total time=1395
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=192, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=193, Actual iteration time=21, Actual Total time=1395
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=194, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=195, Actual iteration time=21, Actual Total time=1395
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=196, Actual iteration time=21, Actual Total time=1395
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=197, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=198, Actual iteration time=21, Actual Total time=1395
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=199, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=200, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=201, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=202, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=203, Actual iteration time=21, Actual Total time=1395
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=204, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=205, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=206, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=207, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=208, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=209, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=210, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=211, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=212, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=213, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=214, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=215, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=216, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=217, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=218, Actual iteration time=21, Actual Total time=1395
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=219, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=220, Actual iteration time=21, Actual Total time=1395
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=221, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=222, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=223, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=224, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=225, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=226, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=227, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=228, Actual iteration time=35, Actual Total time=1409
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=229, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=230, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=231, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=232, Actual iteration time=21, Actual Total time=1395
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=233, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=234, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=235, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=236, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=237, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=238, Actual iteration time=21, Actual Total time=1395
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=239, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=240, Actual iteration time=21, Actual Total time=1395
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=241, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=242, Actual iteration time=23, Actual Total time=1397
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=243, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=244, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=245, Actual iteration time=25, Actual Total time=1399
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=246, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=247, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=248, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=249, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=250, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=251, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=252, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=253, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=254, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'pathfinder.cu' in line 268 : unspecified launch failure.
+Actual pyramid=255, Actual iteration time=22, Actual Total time=1396
+Cuda error in file 'Model.cu' in line 194 : unspecified launch failure.

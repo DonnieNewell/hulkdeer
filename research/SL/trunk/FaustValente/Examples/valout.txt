@@ -1,0 +1,2494 @@
+==4081== Memcheck, a memory error detector.
+==4081== Copyright (C) 2002-2007, and GNU GPL'd, by Julian Seward et al.
+==4081== Using LibVEX rev 1804, a library for dynamic binary translation.
+==4081== Copyright (C) 2004-2007, and GNU GPL'd, by OpenWorks LLP.
+==4081== Using valgrind-3.3.0-Debian, a dynamic binary instrumentation framework.
+==4081== Copyright (C) 2000-2007, and GNU GPL'd, by Julian Seward et al.
+==4081== 
+--4081-- Command line
+--4081--    pathfinder
+--4081--    30
+--4081--    20
+--4081--    1
+--4081-- Startup, with flags:
+--4081--    --suppressions=/usr/lib/valgrind/debian-libc6-dbg.supp
+--4081--    -v
+--4081-- Contents of /proc/version:
+--4081--   Linux version 2.6.24-24-generic (buildd@palmer) (gcc version 4.2.4 (Ubuntu 4.2.4-1ubuntu4)) #1 SMP Fri Sep 18 16:49:39 UTC 2009
+--4081-- Arch and hwcaps: X86, x86-sse1-sse2
+--4081-- Page sizes: currently 4096, max supported 4096
+--4081-- Valgrind library directory: /usr/lib/valgrind
+--4081-- Reading syms from /lib/ld-2.7.so (0x4000000)
+--4081-- Reading debug info from /lib/ld-2.7.so...
+--4081-- ... CRC mismatch (computed 621c3ad3 wanted 002931db)
+--4081--    object doesn't have a symbol table
+--4081-- Reading syms from /net/af20/gf4ea/Greg/6620/TermProject/Sal/research/Examples/pathfinder (0x8048000)
+--4081-- Reading syms from /usr/lib/valgrind/x86-linux/memcheck (0x38000000)
+--4081--    object doesn't have a dynamic symbol table
+--4081-- Reading suppressions file: /usr/lib/valgrind/debian-libc6-dbg.supp
+--4081-- Reading suppressions file: /usr/lib/valgrind/default.supp
+--4081-- Reading syms from /usr/lib/valgrind/x86-linux/vgpreload_core.so (0x401E000)
+--4081-- Reading syms from /usr/lib/valgrind/x86-linux/vgpreload_memcheck.so (0x4020000)
+--4081-- Reading syms from /usr/local/cuda/lib/libcudart.so.2.3 (0x4027000)
+--4081--    object doesn't have a symbol table
+--4081-- Reading syms from /usr/lib/libstdc++.so.6.0.9 (0x4087000)
+--4081-- Reading debug info from /usr/lib/libstdc++.so.6.0.9...
+--4081-- ... CRC mismatch (computed b24bea06 wanted 69349987)
+--4081--    object doesn't have a symbol table
+--4081-- Reading syms from /lib/tls/i686/cmov/libm-2.7.so (0x417B000)
+--4081-- Reading debug info from /lib/tls/i686/cmov/libm-2.7.so...
+--4081-- ... CRC mismatch (computed a35b3de9 wanted 4dd52e16)
+--4081--    object doesn't have a symbol table
+--4081-- Reading syms from /lib/libgcc_s.so.1 (0x41A0000)
+--4081-- Reading debug info from /lib/libgcc_s.so.1...
+--4081-- ... CRC mismatch (computed f32b6bb2 wanted ef5e2665)
+--4081--    object doesn't have a symbol table
+--4081-- Reading syms from /lib/tls/i686/cmov/libc-2.7.so (0x41AB000)
+--4081-- Reading debug info from /lib/tls/i686/cmov/libc-2.7.so...
+--4081-- ... CRC mismatch (computed c2fa52fa wanted ca2b0f8f)
+--4081--    object doesn't have a symbol table
+--4081-- Reading syms from /lib/tls/i686/cmov/libdl-2.7.so (0x42FA000)
+--4081-- Reading debug info from /lib/tls/i686/cmov/libdl-2.7.so...
+--4081-- ... CRC mismatch (computed fac4a183 wanted 83d3211b)
+--4081--    object doesn't have a symbol table
+--4081-- Reading syms from /lib/tls/i686/cmov/libpthread-2.7.so (0x42FE000)
+--4081-- Reading debug info from /lib/tls/i686/cmov/libpthread-2.7.so...
+--4081-- ... CRC mismatch (computed ad1a7762 wanted effcce0a)
+--4081-- Reading syms from /lib/tls/i686/cmov/librt-2.7.so (0x4316000)
+--4081-- Reading debug info from /lib/tls/i686/cmov/librt-2.7.so...
+--4081-- ... CRC mismatch (computed 65551da2 wanted bcad3d9f)
+--4081--    object doesn't have a symbol table
+--4081-- REDIR: 0x421e4b0 (memset) redirected to 0x4023d50 (memset)
+--4081-- REDIR: 0x421e9a0 (memcpy) redirected to 0x4024aa0 (memcpy)
+--4081-- REDIR: 0x421d620 (rindex) redirected to 0x4023710 (rindex)
+--4081-- REDIR: 0x4218930 (calloc) redirected to 0x4021b70 (calloc)
+--4081-- REDIR: 0x421a650 (realloc) redirected to 0x4022b10 (realloc)
+--4081-- REDIR: 0x4218da0 (memalign) redirected to 0x4021a20 (memalign)
+--4081-- REDIR: 0x4218c20 (malloc) redirected to 0x4022a50 (malloc)
+--4081-- REDIR: 0x4140420 (operator new(unsigned)) redirected to 0x4023230 (operator new(unsigned))
+--4081-- REDIR: 0x4140560 (operator new[](unsigned)) redirected to 0x4022eb0 (operator new[](unsigned))
+--4081-- REDIR: 0x421f3a0 (strchrnul) redirected to 0x4023df0 (strchrnul)
+--4081-- Reading syms from /usr/lib/libcuda.so.190.29 (0x473B000)
+==4081== Invalid read of size 4
+==4081==    at 0x4015223: (within /lib/ld-2.7.so)
+==4081==    by 0x4005C99: (within /lib/ld-2.7.so)
+==4081==    by 0x4007AC7: (within /lib/ld-2.7.so)
+==4081==    by 0x400BC46: (within /lib/ld-2.7.so)
+==4081==    by 0x400D605: (within /lib/ld-2.7.so)
+==4081==    by 0x400BE29: (within /lib/ld-2.7.so)
+==4081==    by 0x40115D3: (within /lib/ld-2.7.so)
+==4081==    by 0x400D605: (within /lib/ld-2.7.so)
+==4081==    by 0x4010F8D: (within /lib/ld-2.7.so)
+==4081==    by 0x42FAC18: (within /lib/tls/i686/cmov/libdl-2.7.so)
+==4081==    by 0x400D605: (within /lib/ld-2.7.so)
+==4081==    by 0x42FB2BB: (within /lib/tls/i686/cmov/libdl-2.7.so)
+==4081==  Address 0x43221a8 is 16 bytes inside a block of size 19 alloc'd
+==4081==    at 0x4022AB8: malloc (vg_replace_malloc.c:207)
+==4081==    by 0x4008061: (within /lib/ld-2.7.so)
+==4081==    by 0x400BC46: (within /lib/ld-2.7.so)
+==4081==    by 0x400D605: (within /lib/ld-2.7.so)
+==4081==    by 0x400BE29: (within /lib/ld-2.7.so)
+==4081==    by 0x40115D3: (within /lib/ld-2.7.so)
+==4081==    by 0x400D605: (within /lib/ld-2.7.so)
+==4081==    by 0x4010F8D: (within /lib/ld-2.7.so)
+==4081==    by 0x42FAC18: (within /lib/tls/i686/cmov/libdl-2.7.so)
+==4081==    by 0x400D605: (within /lib/ld-2.7.so)
+==4081==    by 0x42FB2BB: (within /lib/tls/i686/cmov/libdl-2.7.so)
+==4081==    by 0x42FAB50: dlopen (in /lib/tls/i686/cmov/libdl-2.7.so)
+--4081-- Reading syms from /usr/lib/libz.so.1.2.3.3 (0x406E000)
+--4081-- Reading debug info from /usr/lib/libz.so.1.2.3.3...
+--4081-- ... CRC mismatch (computed 25027216 wanted 76420f5a)
+--4081--    object doesn't have a symbol table
+--4081-- REDIR: 0x421dfb0 (memchr) redirected to 0x4023bf0 (memchr)
+--4081-- REDIR: 0x421a460 (free) redirected to 0x40225f0 (free)
+--4081-- REDIR: 0x421d550 (strncpy) redirected to 0x4024bf0 (strncpy)
+--4081-- REDIR: 0x421d250 (strlen) redirected to 0x40239d0 (strlen)
+--4081-- REDIR: 0x421f2d0 (rawmemchr) redirected to 0x4023e20 (rawmemchr)
+--4081-- REDIR: 0x413eaf0 (operator delete(void*)) redirected to 0x4022280 (operator delete(void*))
+--4081-- REDIR: 0x421e440 (memmove) redirected to 0x4023da0 (memmove)
+--4081-- REDIR: 0x421cd20 (strcmp) redirected to 0x4023aa0 (strcmp)
+--4081-- REDIR: 0x421cbb0 (index) redirected to 0x4023800 (index)
+--4081-- REDIR: 0x421e510 (mempcpy) redirected to 0x4024490 (mempcpy)
+--4081-- REDIR: 0x421cd90 (strcpy) redirected to 0x4024d10 (strcpy)
+--4081-- REDIR: 0x421d450 (strncmp) redirected to 0x4023a30 (strncmp)
+--4081-- REDIR: 0x413eb50 (operator delete[](void*)) redirected to 0x4021e60 (operator delete[](void*))
+==4081== 
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x804A93B: runPathFinder(int*, int, int) (pathfinder.cu:199)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x804A990: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41E829B: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EA209: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x41E82A3: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EA209: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x41E9F2D: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x41EBCDE: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x41E9FD1: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x41EDE4F: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x41EDEC1: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x41E7A4F: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EDEF1: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x41EDF59: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x41EDF6E: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41EF0CB: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41E69C0: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41E69C8: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x41EF113: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41EF120: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x41EE00F: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41EE024: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x41EE03B: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41EE03B: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x41EE084: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x4024AC5: memcpy (mc_replace_strmem.c:77)
+==4081==    by 0x41EE771: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x4024ADA: memcpy (mc_replace_strmem.c:402)
+==4081==    by 0x41EE771: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x4024B1B: memcpy (mc_replace_strmem.c:402)
+==4081==    by 0x41EE771: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x4024B36: memcpy (mc_replace_strmem.c:402)
+==4081==    by 0x41EE771: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x41EE775: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x4024AC5: memcpy (mc_replace_strmem.c:77)
+==4081==    by 0x41EE387: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x4024B7C: memcpy (mc_replace_strmem.c:80)
+==4081==    by 0x41EE387: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x4024ADA: memcpy (mc_replace_strmem.c:402)
+==4081==    by 0x41EE387: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x4024B1B: memcpy (mc_replace_strmem.c:402)
+==4081==    by 0x41EE387: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x4024B96: memcpy (mc_replace_strmem.c:402)
+==4081==    by 0x41EE387: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x4024BA2: memcpy (mc_replace_strmem.c:402)
+==4081==    by 0x41EE387: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x4024BA8: memcpy (mc_replace_strmem.c:402)
+==4081==    by 0x41EE387: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41EE3A1: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41E6C25: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE0C9: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41E6B02: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE0C9: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41E6400: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E6B39: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE0C9: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41E640A: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E6B39: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE0C9: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41E6413: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E6B39: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE0C9: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41E6B3D: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE0C9: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x41EE0DE: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41E6E30: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E6AF5: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE0C9: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41E6E37: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E6AF5: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE0C9: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41E6E40: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E6AF5: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE0C9: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x41EE0E4: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41E6435: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE35C: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41E6438: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE35C: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x41E643D: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE35C: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x41EE35F: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41EE3EC: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41EE405: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41EE43A: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41EE421: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41EF08B: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41E69FC: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x41E6A05: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x41E6A0B: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41E6A10: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41E6A16: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41E6A1A: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41E6A20: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x41E6A24: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41E6A24: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41E6A28: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41EF64A: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x41ED817: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE68D: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41E655A: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED88B: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE68D: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41E6569: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED88B: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE68D: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41E656D: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED88B: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE68D: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x41E657A: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED88B: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE68D: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x41E6888: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED88B: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE68D: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41E796F: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED88B: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE68D: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41E7972: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED88B: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE68D: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41E7975: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED88B: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE68D: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41E7960: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED88B: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE68D: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41E7962: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED88B: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE68D: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41E7964: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED88B: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE68D: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x41E6594: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED88B: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE68D: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41ED89C: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE68D: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41ED89F: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE68D: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41ED8AE: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE68D: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x41ED8B4: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE68D: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41E6E30: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED840: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE68D: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41E6E37: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED840: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE68D: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41E6E40: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED840: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE68D: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x41ED845: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE68D: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41ED84D: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE68D: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x41E65E5: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED88B: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE68D: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41E65EF: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED88B: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE68D: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x41E6628: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED88B: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE68D: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x41E662A: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED88B: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE68D: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41E79E0: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E666E: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED88B: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE68D: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41E79EA: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E666E: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED88B: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE68D: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41E79F3: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E666E: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED88B: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE68D: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x41E6672: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED88B: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE68D: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41E669C: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED88B: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE68D: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41E66A5: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED88B: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE68D: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41E6635: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED88B: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE68D: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== More than 100 errors detected.  Subsequent errors
+==4081== will still be recorded, but in less detail than before.
+==4081== 
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x41E6639: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED88B: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE68D: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41ED8C6: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE68D: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x41ED8CF: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE68D: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x41ED845: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EFEDF: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x41ED845: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE79D: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x41EE94E: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x41EE9FC: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x41EEB04: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x41EEAE6: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== Syscall param write(buf) points to uninitialised byte(s)
+==4081==    at 0x40007F2: (within /lib/ld-2.7.so)
+==4081==    by 0x4210254: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x4210505: _IO_file_xsputn (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED60C: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081==  Address 0xbede1281 is on thread 1's stack
+Size 30 BestHeight 253 CalcHeight 12 %Slowdown 90.97 CalcSecond 67425380 %Slowdown -122530035347604254652399808512975921300345408963478971776953792863218575153917583615535892295129445320027863344520710719645285709200610472912580950150184509226979569823890942115748692619412083113035475391010789241927233458671698464581793032052030856104390091209539737332412489892614117523456.00 MinSlowdown -122530035347604254652399808512975921300345408963478971776953792863218575153917583615535892295129445320027863344520710719645285709200610472912580950150184509226979569823890942115748692619412083113035475391010789241927233458671698464581793032052030856104390091209539737332412489892614117523456.00
+==4081== 
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x41E9F2D: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2362: printf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x8048F40: main (pathfinder-main.cpp:91)
+==4081== 
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x41EBCDE: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2362: printf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x8048F40: main (pathfinder-main.cpp:91)
+==4081== 
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x41E9FD1: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2362: printf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x8048F40: main (pathfinder-main.cpp:91)
+==4081== 
+==4081== Invalid read of size 4
+==4081==    at 0x404440D: __cudaUnregisterFatBinary (in /usr/local/cuda/lib/libcudart.so.2.3)
+==4081==    by 0x8049652: __cudaUnregisterBinaryUtil (host_runtime.h:224)
+==4081==    by 0x41D9083: exit (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41C1457: (below main) (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==  Address 0x415c56f5 is not stack'd, malloc'd or (recently) free'd
+==4081== 
+==4081== Process terminating with default action of signal 11 (SIGSEGV)
+==4081==  Access not within mapped region at address 0x415C56F5
+==4081==    at 0x404440D: __cudaUnregisterFatBinary (in /usr/local/cuda/lib/libcudart.so.2.3)
+==4081==    by 0x8049652: __cudaUnregisterBinaryUtil (host_runtime.h:224)
+==4081==    by 0x41D9083: exit (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41C1457: (below main) (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081== 
+==4081== ERROR SUMMARY: 58247 errors from 114 contexts (suppressed: 37 from 1)
+==4081== 
+==4081== 1 errors in context 1 of 114:
+==4081== Invalid read of size 4
+==4081==    at 0x404440D: __cudaUnregisterFatBinary (in /usr/local/cuda/lib/libcudart.so.2.3)
+==4081==    by 0x8049652: __cudaUnregisterBinaryUtil (host_runtime.h:224)
+==4081==    by 0x41D9083: exit (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41C1457: (below main) (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==  Address 0x415c56f5 is not stack'd, malloc'd or (recently) free'd
+==4081== 
+==4081== 1 errors in context 2 of 114:
+==4081== Syscall param write(buf) points to uninitialised byte(s)
+==4081==    at 0x40007F2: (within /lib/ld-2.7.so)
+==4081==    by 0x4210254: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x4210505: _IO_file_xsputn (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED60C: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081==  Address 0xbede1281 is on thread 1's stack
+==4081== 
+==4081== 1 errors in context 3 of 114:
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x41E9FD1: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 1 errors in context 4 of 114:
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x41EBCDE: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 1 errors in context 5 of 114:
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x41E9F2D: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 1 errors in context 6 of 114:
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x804A990: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 1 errors in context 7 of 114:
+==4081== Invalid read of size 4
+==4081==    at 0x4015223: (within /lib/ld-2.7.so)
+==4081==    by 0x4005C99: (within /lib/ld-2.7.so)
+==4081==    by 0x4007AC7: (within /lib/ld-2.7.so)
+==4081==    by 0x400BC46: (within /lib/ld-2.7.so)
+==4081==    by 0x400D605: (within /lib/ld-2.7.so)
+==4081==    by 0x400BE29: (within /lib/ld-2.7.so)
+==4081==    by 0x40115D3: (within /lib/ld-2.7.so)
+==4081==    by 0x400D605: (within /lib/ld-2.7.so)
+==4081==    by 0x4010F8D: (within /lib/ld-2.7.so)
+==4081==    by 0x42FAC18: (within /lib/tls/i686/cmov/libdl-2.7.so)
+==4081==    by 0x400D605: (within /lib/ld-2.7.so)
+==4081==    by 0x42FB2BB: (within /lib/tls/i686/cmov/libdl-2.7.so)
+==4081==  Address 0x43221a8 is 16 bytes inside a block of size 19 alloc'd
+==4081==    at 0x4022AB8: malloc (vg_replace_malloc.c:207)
+==4081==    by 0x4008061: (within /lib/ld-2.7.so)
+==4081==    by 0x400BC46: (within /lib/ld-2.7.so)
+==4081==    by 0x400D605: (within /lib/ld-2.7.so)
+==4081==    by 0x400BE29: (within /lib/ld-2.7.so)
+==4081==    by 0x40115D3: (within /lib/ld-2.7.so)
+==4081==    by 0x400D605: (within /lib/ld-2.7.so)
+==4081==    by 0x4010F8D: (within /lib/ld-2.7.so)
+==4081==    by 0x42FAC18: (within /lib/tls/i686/cmov/libdl-2.7.so)
+==4081==    by 0x400D605: (within /lib/ld-2.7.so)
+==4081==    by 0x42FB2BB: (within /lib/tls/i686/cmov/libdl-2.7.so)
+==4081==    by 0x42FAB50: dlopen (in /lib/tls/i686/cmov/libdl-2.7.so)
+==4081== 
+==4081== 2 errors in context 8 of 114:
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x41EE9FC: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 2 errors in context 9 of 114:
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x41EE94E: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 2 errors in context 10 of 114:
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x41ED845: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE79D: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 2 errors in context 11 of 114:
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x41E6639: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED88B: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE68D: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 2 errors in context 12 of 114:
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41E6635: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED88B: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE68D: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 2 errors in context 13 of 114:
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x41E6594: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED88B: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE68D: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 2 errors in context 14 of 114:
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x41ED817: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE68D: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 2 errors in context 15 of 114:
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41EF64A: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 2 errors in context 16 of 114:
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41E6A28: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 2 errors in context 17 of 114:
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x41E6A0B: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 2 errors in context 18 of 114:
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x41E6A05: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 2 errors in context 19 of 114:
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41E69FC: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 2 errors in context 20 of 114:
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41EF08B: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 2 errors in context 21 of 114:
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41EE405: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 2 errors in context 22 of 114:
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41EE3EC: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 2 errors in context 23 of 114:
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x41EE35F: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 2 errors in context 24 of 114:
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x41E643D: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE35C: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 2 errors in context 25 of 114:
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41E6438: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE35C: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 2 errors in context 26 of 114:
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41E6435: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE35C: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 2 errors in context 27 of 114:
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x41EE0E4: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 2 errors in context 28 of 114:
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x41EE775: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 2 errors in context 29 of 114:
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x4024B36: memcpy (mc_replace_strmem.c:402)
+==4081==    by 0x41EE771: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 2 errors in context 30 of 114:
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x4024B1B: memcpy (mc_replace_strmem.c:402)
+==4081==    by 0x41EE771: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 2 errors in context 31 of 114:
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x4024ADA: memcpy (mc_replace_strmem.c:402)
+==4081==    by 0x41EE771: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 2 errors in context 32 of 114:
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x4024AC5: memcpy (mc_replace_strmem.c:77)
+==4081==    by 0x41EE771: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 2 errors in context 33 of 114:
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x41EE00F: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 2 errors in context 34 of 114:
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41EF120: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 2 errors in context 35 of 114:
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x41EF113: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 2 errors in context 36 of 114:
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41E69C8: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 2 errors in context 37 of 114:
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41E69C0: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 2 errors in context 38 of 114:
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41EF0CB: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 2 errors in context 39 of 114:
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x41EDF6E: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 2 errors in context 40 of 114:
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x41EDF59: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 2 errors in context 41 of 114:
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x41E7A4F: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EDEF1: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 2 errors in context 42 of 114:
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x41EDEC1: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 2 errors in context 43 of 114:
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x41EDE4F: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 4 errors in context 44 of 114:
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x41ED845: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EFEDF: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 4 errors in context 45 of 114:
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x41EE0DE: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 4 errors in context 46 of 114:
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41E6B02: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE0C9: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 6 errors in context 47 of 114:
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41EE3A1: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 6 errors in context 48 of 114:
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x4024BA8: memcpy (mc_replace_strmem.c:402)
+==4081==    by 0x41EE387: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 6 errors in context 49 of 114:
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x4024BA2: memcpy (mc_replace_strmem.c:402)
+==4081==    by 0x41EE387: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 6 errors in context 50 of 114:
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x4024B96: memcpy (mc_replace_strmem.c:402)
+==4081==    by 0x41EE387: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 6 errors in context 51 of 114:
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x4024B1B: memcpy (mc_replace_strmem.c:402)
+==4081==    by 0x41EE387: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 6 errors in context 52 of 114:
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x4024ADA: memcpy (mc_replace_strmem.c:402)
+==4081==    by 0x41EE387: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 6 errors in context 53 of 114:
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x4024B7C: memcpy (mc_replace_strmem.c:80)
+==4081==    by 0x41EE387: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 6 errors in context 54 of 114:
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x4024AC5: memcpy (mc_replace_strmem.c:77)
+==4081==    by 0x41EE387: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 6 errors in context 55 of 114:
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41E6B3D: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE0C9: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 10 errors in context 56 of 114:
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41E6A24: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 12 errors in context 57 of 114:
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41E6A10: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 20 errors in context 58 of 114:
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41EE421: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 22 errors in context 59 of 114:
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x41E6A24: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 22 errors in context 60 of 114:
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41E6A20: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 22 errors in context 61 of 114:
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41E6A1A: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 22 errors in context 62 of 114:
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41E6A16: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 22 errors in context 63 of 114:
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41EE43A: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 26 errors in context 64 of 114:
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x41EE084: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 28 errors in context 65 of 114:
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41EE03B: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 30 errors in context 66 of 114:
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x41E9FD1: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2362: printf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x8048F40: main (pathfinder-main.cpp:91)
+==4081== 
+==4081== 30 errors in context 67 of 114:
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x41EBCDE: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2362: printf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x8048F40: main (pathfinder-main.cpp:91)
+==4081== 
+==4081== 30 errors in context 68 of 114:
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x41E9F2D: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2362: printf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x8048F40: main (pathfinder-main.cpp:91)
+==4081== 
+==4081== 30 errors in context 69 of 114:
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41E6E40: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E6AF5: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE0C9: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 32 errors in context 70 of 114:
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41EE024: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 34 errors in context 71 of 114:
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41E6E30: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E6AF5: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE0C9: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 38 errors in context 72 of 114:
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x41E82A3: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EA209: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 38 errors in context 73 of 114:
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41E829B: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EA209: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 42 errors in context 74 of 114:
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x41ED8CF: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE68D: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 42 errors in context 75 of 114:
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41ED8C6: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE68D: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 42 errors in context 76 of 114:
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41E7964: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED88B: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE68D: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 42 errors in context 77 of 114:
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41E7962: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED88B: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE68D: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 42 errors in context 78 of 114:
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41E7960: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED88B: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE68D: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 42 errors in context 79 of 114:
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41E7975: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED88B: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE68D: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 42 errors in context 80 of 114:
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41E7972: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED88B: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE68D: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 42 errors in context 81 of 114:
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41E796F: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED88B: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE68D: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 42 errors in context 82 of 114:
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x41E6888: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED88B: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE68D: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 58 errors in context 83 of 114:
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41E6C25: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE0C9: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 60 errors in context 84 of 114:
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x41EE03B: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 64 errors in context 85 of 114:
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41E6E37: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E6AF5: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE0C9: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 84 errors in context 86 of 114:
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41E6413: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E6B39: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE0C9: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 90 errors in context 87 of 114:
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41E6400: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E6B39: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE0C9: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 174 errors in context 88 of 114:
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41E640A: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E6B39: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE0C9: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 254 errors in context 89 of 114:
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x804A93B: runPathFinder(int*, int, int) (pathfinder.cu:199)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 476 errors in context 90 of 114:
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x41EEAE6: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 476 errors in context 91 of 114:
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x41EEB04: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 476 errors in context 92 of 114:
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41E66A5: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED88B: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE68D: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 476 errors in context 93 of 114:
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41E669C: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED88B: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE68D: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 476 errors in context 94 of 114:
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x41E6672: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED88B: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE68D: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 476 errors in context 95 of 114:
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x41E662A: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED88B: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE68D: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 476 errors in context 96 of 114:
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x41E6628: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED88B: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE68D: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 476 errors in context 97 of 114:
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41E65EF: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED88B: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE68D: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 476 errors in context 98 of 114:
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x41E65E5: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED88B: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE68D: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 476 errors in context 99 of 114:
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41ED84D: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE68D: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 580 errors in context 100 of 114:
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x41ED845: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE68D: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 582 errors in context 101 of 114:
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x41ED8B4: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE68D: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 582 errors in context 102 of 114:
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41ED8AE: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE68D: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 582 errors in context 103 of 114:
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41ED89F: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE68D: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 582 errors in context 104 of 114:
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41ED89C: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE68D: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 582 errors in context 105 of 114:
+==4081== Conditional jump or move depends on uninitialised value(s)
+==4081==    at 0x41E657A: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED88B: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE68D: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 582 errors in context 106 of 114:
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41E656D: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED88B: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE68D: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 582 errors in context 107 of 114:
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41E6569: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED88B: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE68D: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 582 errors in context 108 of 114:
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41E655A: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED88B: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE68D: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 4760 errors in context 109 of 114:
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41E79F3: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E666E: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED88B: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE68D: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 5712 errors in context 110 of 114:
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41E79E0: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E666E: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED88B: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE68D: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 5800 errors in context 111 of 114:
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41E6E40: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED840: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE68D: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 6966 errors in context 112 of 114:
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41E6E30: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED840: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE68D: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 10472 errors in context 113 of 114:
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41E79EA: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E666E: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED88B: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE68D: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+==4081== 
+==4081== 12766 errors in context 114 of 114:
+==4081== Use of uninitialised value of size 4
+==4081==    at 0x41E6E37: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED840: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41EE68D: __printf_fp (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9563: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41ED581: (within /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41E9229: vfprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x41F2321: fprintf (in /lib/tls/i686/cmov/libc-2.7.so)
+==4081==    by 0x804A9D1: runPathFinder(int*, int, int) (pathfinder.cu:211)
+==4081==    by 0x8048EDE: main (pathfinder-main.cpp:84)
+--4081-- 
+--4081-- supp:     37 dl-hack3-1
+==4081== 
+==4081== IN SUMMARY: 58247 errors from 114 contexts (suppressed: 37 from 1)
+==4081== 
+==4081== malloc/free: in use at exit: 122,587 bytes in 421 blocks.
+==4081== malloc/free: 11,209 allocs, 10,788 frees, 8,999,323 bytes allocated.
+==4081== 
+==4081== searching for pointers to 421 not-freed blocks.
+==4081== checked 448,308 bytes.
+==4081== 
+==4081== LEAK SUMMARY:
+==4081==    definitely lost: 56 bytes in 1 blocks.
+==4081==      possibly lost: 122 bytes in 4 blocks.
+==4081==    still reachable: 122,409 bytes in 416 blocks.
+==4081==         suppressed: 0 bytes in 0 blocks.
+==4081== Rerun with --leak-check=full to see details of leaked memory.
+--4081--  memcheck: sanity checks: 236 cheap, 10 expensive
+--4081--  memcheck: auxmaps: 0 auxmap entries (0k, 0M) in use
+--4081--  memcheck: auxmaps_L1: 0 searches, 0 cmps, ratio 0:10
+--4081--  memcheck: auxmaps_L2: 0 searches, 0 nodes
+--4081--  memcheck: SMs: n_issued      = 228 (3648k, 3M)
+--4081--  memcheck: SMs: n_deissued    = 0 (0k, 0M)
+--4081--  memcheck: SMs: max_noaccess  = 65535 (1048560k, 1023M)
+--4081--  memcheck: SMs: max_undefined = 15 (240k, 0M)
+--4081--  memcheck: SMs: max_defined   = 128 (2048k, 2M)
+--4081--  memcheck: SMs: max_non_DSM   = 228 (3648k, 3M)
+--4081--  memcheck: max sec V bit nodes:    23 (1k, 0M)
+--4081--  memcheck: set_sec_vbits8 calls: 8318 (new: 23, updates: 8295)
+--4081--  memcheck: max shadow mem size:   3953k, 3M
+--4081-- translate:            fast SP updates identified: 10,413 ( 87.9%)
+--4081-- translate:   generic_known SP updates identified: 1,015 (  8.5%)
+--4081-- translate: generic_unknown SP updates identified: 413 (  3.4%)
+--4081--     tt/tc: 20,051 tt lookups requiring 21,481 probes
+--4081--     tt/tc: 20,051 fast-cache updates, 2 flushes
+--4081--  transtab: new        8,189 (195,214 -> 2,865,536; ratio 146:10) [0 scs]
+--4081--  transtab: dumped     0 (0 -> ??)
+--4081--  transtab: discarded  0 (0 -> ??)
+--4081-- scheduler: 2,342,922 jumps (bb entries).
+--4081-- scheduler: 236/53,623 major/minor sched events.
+--4081--    sanity: 237 cheap, 10 expensive checks.
+--4081--    exectx: 3,079 lists, 1,559 contexts (avg 0 per list)
+--4081--    exectx: 80,281 searches, 79,733 full compares (993 per 1000)
+--4081--    exectx: 143,805 cmp2, 138,306 cmp4, 0 cmpAll
+--4081--  errormgr: 127 supplist searches, 8,518 comparisons during search
+--4081--  errormgr: 58,284 errlist searches, 409,089 comparisons during search

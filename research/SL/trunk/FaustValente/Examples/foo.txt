@@ -1,0 +1,56 @@
+Max Threads per block in runHotspotKernel=512, register count=15, sharedMemUsage=2024.
+Block Length=22.
+kernel time=620.
+kernel time=331.
+kernel time=327.
+Pyramid Height=1, time=327, Time per iteration=327.000000.
+kernel time=596.
+Pyramid Height=2, time=596, Time per iteration=298.000000.
+kernel time=946.
+Pyramid Height=3, time=946, Time per iteration=315.333333.
+kernel time=1456.
+Pyramid Height=4, time=1456, Time per iteration=364.000000.
+kernel time=2297.
+Pyramid Height=5, time=2297, Time per iteration=459.400000.
+kernel time=3618.
+Pyramid Height=6, time=3618, Time per iteration=603.000000.
+kernel time=6196.
+Pyramid Height=7, time=6196, Time per iteration=885.142857.
+kernel time=11771.
+Pyramid Height=8, time=11771, Time per iteration=1471.375000.
+kernel time=27651.
+Pyramid Height=9, time=27651, Time per iteration=3072.333333.
+kernel time=31.
+Empty Kernel time=31.
+One iter=331, Two iter=620.
+One iter=300, Two iter=589.
+Setup Time=11
+Full Time=300
+Setup Time=11
+Full Time=300
+Number of warps=38808.000000
+Total instructions per warp=10.018553.
+Setup instructions per warp=0.367347.
+Pyramid size = 1.  Starting lat=625208.149708
+Pyramid Size=2, New upward lat=591037.198828
+SACL avgLoadLat=10806.880734, total=21613.761468
+SACL avgStoreLat=51094.157110, total=102188.314220
+SACL avgEmbedMemLat=112487.213303, total=224974.426606
+SACL avgCompLat=388447.527273, total=776895.054545
+SACL avgSetupCompLat=8113.420408, total=16226.840816
+SACL avgGlobalSynchLat=20088.000000, total=40176.000000
+SACL TotalLat=591037.198828, total=1182074.397655
+Pyramid Size=3, New upward lat=587164.547754
+SACL avgLoadLat=7204.587156, total=21613.761468
+SACL avgStoreLat=32484.480122, total=97453.440367
+SACL avgEmbedMemLat=118649.770642, total=355949.311927
+SACL avgCompLat=409728.436364, total=1229185.309091
+SACL avgSetupCompLat=5705.273469, total=17115.820408
+SACL avgGlobalSynchLat=13392.000000, total=40176.000000
+SACL TotalLat=587164.547754, total=1761493.643261
+Pyramid Size=4, New upward lat=661037.232497
+Pyramid Size=5, New upward lat=713385.968046
+Pyramid Size=6, New upward lat=805756.599636
+Pyramid Size=7, New upward lat=906038.847897
+Pyramid Size=8, New upward lat=1013736.594244
+BlockSize=22, Pyramid=3, Latency==587164.547754
