@@ -3,10 +3,10 @@
 #include "cell.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include "Model.cu"
+#include "../Model.cu"
 #ifndef WIN32
 	#include <sys/time.h>
-#elif
+#else
 	#include<time.h>
 #endif
 #define DTYPE int
@@ -21,7 +21,7 @@
 #define TILE_DEPTH  10
 
 //texture<int, cudaTextureType1D> input_tex; 
-surface<DTYPE, cudaSurfaceType1D> surfRef; 
+//surface<void, cudaSurfaceType1D> surfRef; 
 
 /**
  * Block of memory shared by threads working on a single tile.
@@ -118,8 +118,8 @@ void runCellKernel(dim3 input_size, dim3 stencil_size,
     // Get current cell value or edge value.
     // uidx = ez + input_size.y * (ey * input_size.x + ex);
     uidx = ex + input_size.x * (ey + ez * input_size.y);
-    value = surf1Dread(surfRef,sizeof(DTYPE)*uidx);   // USING SURFACES********** 
-    //value = input[uidx];
+    //value = surf1Dread(surfRef,sizeof(DTYPE)*uidx);   // USING SURFACES********** 
+    value = input[uidx];
     inside = ((x == ex) && (y == ey) && (z == ez));
 
     // Store value in shared memory for stencil calculations, and go.
@@ -148,8 +148,8 @@ void runCellKernel(dim3 input_size, dim3 stencil_size,
         if (iter >= pyramid_height)
         {
             if (inside){
-                surf1Dwrite(value, surfRef);
-                //output[uidx] = value;
+                //surf1Dwrite(value, surfRef);
+                output[uidx] = value;
             
             }
             break;
@@ -180,13 +180,14 @@ void runCell(DTYPE *host_data, int x_max, int y_max, int z_max, int iterations
     // Host to device
     DTYPE *device_input, *device_output;
     int num_bytes = input_size.x * input_size.y * input_size.z * sizeof(DTYPE);
-    cudaMalloc((void **) &cuArray, num_bytes);
-//    cudaMalloc((void **) &device_output, num_bytes);
+    //cudaMalloc((void **) &cuArray, num_bytes);
+    cudaMalloc((void **) &device_output, num_bytes);
+    cudaMalloc((void **) &device_input, num_bytes);
     cudaMemcpy(device_input, host_data, num_bytes, cudaMemcpyHostToDevice);
-    cudaChannelFormatDesc channelDesc = cudaCreateChannelDesc<DTYPE>(); 
-    cudaArray* cuArray; 
-    cudaMallocArray(&cuArray, &channelDesc, input_size.x * input_size.y * input_size.z, 1, cudaArraySurfaceLoadStore);
-    cudaBindSurfaceToArray(surfRef, cuArray);
+    //cudaChannelFormatDesc channelDesc = cudaCreateChannelDesc<DTYPE>(); 
+    //cudaArray* cuArray; 
+    //cudaMallocArray(&cuArray, &channelDesc, input_size.x * input_size.y * input_size.z, 1, cudaArraySurfaceLoadStore);
+    //cudaBindSurfaceToArray(surfRef, cuArray);
 
 	
 #ifdef STATISTICS

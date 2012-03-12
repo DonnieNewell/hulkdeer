@@ -48,44 +48,38 @@ void Decomposition::decompose1D(const int numElementsX){
 void Decomposition::decompose2D(const int numElementsX,const int numElementsY){
    if(0<numElementsX&&0<numElementsY){
     int numLeftX=numElementsX;
-    int numLeftY=numElementsY;
     for(int i=0; i < domain.size(); ++i){
       Node& n = domain.at(i);
       double weight = n.getWeight();
       SubDomain3D s;
       s.setLength(0, weight*numElementsX);
       s.setOffset(0, numElementsX - numLeftX);
-      s.setLength(1, weight*numElementsY);
-      s.setOffset(1, numElementsY - numLeftY);
+      s.setLength(1, numElementsY);
+      s.setOffset(1, 0);
       
       n.setSubDomain(s);
 
       numLeftX -= s.getLength(0);
-      numLeftY -= s.getLength(1);
     } 
   }
 }//end decompose2D
 
 void Decomposition::decompose3D(const int numElementsX,const int numElementsY,const int numElementsZ){
     if(0<numElementsX){
-    int numLeftX=numElementsX;
-    int numLeftY=numElementsY;
     int numLeftZ=numElementsZ;
     for(int i=0; i < domain.size(); ++i){
       Node& n = domain.at(i);
       SubDomain3D s;
       double weight = n.getWeight();
-      s.setLength(0, weight*numElementsX);
-      s.setOffset(0, numElementsX - numLeftX);
-      s.setLength(1, weight*numElementsY);
-      s.setOffset(1, numElementsY - numLeftY);
+      s.setLength(0, numElementsX);
+      s.setOffset(0, 0);
+      s.setLength(1, numElementsY);
+      s.setOffset(1, 0);
       s.setLength(2, weight*numElementsZ);
       s.setOffset(2, numElementsZ - numLeftZ);
       
       n.setSubDomain(s);
 
-      numLeftX -= s.getLength(0);
-      numLeftY -= s.getLength(1);
       numLeftZ -= s.getLength(2);
     }
   }
@@ -102,6 +96,12 @@ void Decomposition::decompose(const int numDimensions, const int numElements[]){
 }
 
 void Decomposition::normalize(){
-
-    
+	double sum = 0.0;
+	for(int i=0; i<domain.size(); ++i){
+		sum+=domain.at(i).getWeight();
+	}
+	//divide each node's weight by total weight
+	for(int i=0; i<domain.size(); ++i){
+		domain.at(i).setWeight(domain.at(i).getWeight()/sum);
+	}
 }

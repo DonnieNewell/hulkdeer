@@ -12,8 +12,9 @@
 #include <stdio.h>
 #include <time.h>
 #include "cell.h"
-#include "Model.h"
-
+#include "Decomposition.h"
+#include "../Model.h"
+#include "mpi.h"
 
 /* define timer macros */
 #define pin_stats_reset()   startCycle()
@@ -28,6 +29,11 @@ int*** space3D;
 int pyramid_height;
 int timesteps;
 
+const int dim_tag = 0;
+const int size_x_tag = 1;
+const int size_y_tag = 2;
+const int size_z_tag = 3;
+const int data_tag = 4;
 // #define BENCH_PRINT
 
 void
@@ -59,6 +65,8 @@ init(int argc, char** argv)
 
 }
 
+
+
 void printResults(int* data, int J, int K, int L)
 {
     int total = J*K*L;
@@ -68,34 +76,113 @@ void printResults(int* data, int J, int K, int L)
     printf("\n");
 }
 
+void sendDataToNode(int rank, Node n, int* buf, int size){
+  
+	//first send number of dimensions
+	int numDim = 0;
+	MPI_Request reqs[5];
+	int length[3];
+	int offset[3];
+	for(int i=0;i<3;++i){
+		length[i]=n.getSubDomain().getLength(i);
+		offset[i]=n.getSubDomain().getOffset(i);
+		if(length[i]>0) numDim++;
+	}  
+	#ifdef DEBUG
+		printf("[%d] sending %dD data to Node %d.\n",0,numDim,rank);
+	#endif
+	MPI_Isend((void*)&numDim, 1, MPI_INT, rank,dim_tag, MPI_COMM_WORLD, &reqs[0]);
+        //second send size of each dimension
+	#ifdef DEBUG
+		printf("[%d] sending [%d][%d][%d] data to Node %d.\n",0,length[0],length[1],length[2],rank);
+		printf("[%d] sending %dX%dX%d offsets to Node %d.\n",0,offset[0],offset[1],offset[2],rank);
+	#endif
+
+	//third send data  
+
+	//wait for everything to finish
+	MPI_Waitall(1,reqs,MPI_STATUSES_IGNORE);
+}
+
+void send_data(Decomposition& d, int* buf, int size){
+	for(int i=1; i< d.getNumNodes(); ++i){
+		#ifdef DEBUG
+			printf("[%d] sending data to node[%d].\n",0,i);
+		#endif
+		sendDataToNode(i,d.getNode(i), buf, size);
+	}
+}
+/* output variables: buf, size */
+void receive_data(int rank, int* buf, int *size){
+	MPI_Request reqs[5];
+	int numDim = 0;
+	MPI_Irecv((void*)&numDim, 1, MPI_INT, 0, dim_tag, MPI_COMM_WORLD,  &reqs[0]);
+
+	//wait for everything to finish
+	MPI_Waitall(1,reqs,MPI_STATUSES_IGNORE);
+	#ifdef DEBUG
+		printf("[%d] is going to receive %dD data from %d.\n",rank,numDim,0); 
+	#endif
+}
 int bornMin = 5, bornMax = 8;
 int dieMax = 3, dieMin = 10;
 
 int main(int argc, char** argv)
 {
-    init(argc, argv);
+	int numTasks, rank, rc, *buffer, buffSize;
+	rc = MPI_Init(&argc, &argv);
+	if (rc != MPI_SUCCESS){
+		fprintf(stderr, "Error initializing MPI.\n");
+		MPI_Abort(MPI_COMM_WORLD, rc);
+	}
 
-    //SL_MPI_Init();
+	MPI_Comm_size(MPI_COMM_WORLD, &numTasks);
+	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+	if(0==rank){
+	
+ 		#ifdef  DEBUG
+			printf("[%d] initializing data.\n",rank);
+		#endif
+
+  		init(argc, argv); //initialize data
+
+		#ifdef DEBUG
+  			printf("[%d] decomposing data.\n",rank);
+		#endif
+
+		Decomposition decomp(numTasks);
+		decomp.normalize();
+		int numElements[3] = {J,K,L};
+		decomp.decompose(3,numElements);
+
+		#ifdef DEBUG
+ 			printf("[%d] sending data.",rank);
+		#endif
+		send_data(decomp, data, J*K*L);
+	}
+	else{
+		receive_data(rank, buffer,&buffSize);
+	}
 #ifdef STATISTICS
-    for (int i=40; i<=J; i += 20)
-    {
-        // Set iteration count so that kernel is called at least 30 times.
-        // The maximum pyramid height is 3, so iterations = 90.
-        runCell(data, i, i, i, 90, bornMin, bornMax, dieMin, dieMax);
-    }
+	for (int i=40; i<=J; i += 20)
+	{
+		// Set iteration count so that kernel is called at least 30 times.
+		// The maximum pyramid height is 3, so iterations = 90.
+		runCell(data, i, i, i, 90, bornMin, bornMax, dieMin, dieMax);
+	}
 #else
-    runCell(data, J, K, L, timesteps, bornMin, bornMax, dieMin, dieMax);
-    //SL_Finalize();
+	runCell(data, J, K, L, timesteps, bornMin, bornMax, dieMin, dieMax);
 
 #ifdef BENCH_PRINT
-    printResults(data, J, K, L);
+	printResults(data, J, K, L);
 #endif
 #endif
 
-    delete [] data;
-    delete [] space2D;
-    delete [] space3D;
+	MPI_Finalize();
+	delete [] data;
+	delete [] space2D;
+	delete [] space3D;
 
-    return 0;
+	return 0;
 }
 

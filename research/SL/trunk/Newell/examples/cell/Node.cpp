@@ -1,6 +1,6 @@
 #include "Node.h"
 
-Node::Node():weight(0.0){
+Node::Node():weight(1.0){
 }
 
 Node::Node(double wt, const SubDomain3D& sd):weight(wt),subD(sd){
