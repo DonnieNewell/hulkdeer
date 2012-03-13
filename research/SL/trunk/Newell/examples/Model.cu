@@ -23,7 +23,7 @@
 #include <cutil.h>
 #ifndef WIN32
 	#include <sys/time.h>
-#elif
+#else
 	#include <time.h>
 #endif
 #include "Model.h"
@@ -223,7 +223,7 @@ void disposeSAProps(SAProps_t * SAPs)
 // NOTE: I tried calling the kernel 3 times and averaging, but it did not materially improve things.
 #ifndef WIN32
 static struct timeval starttime, endtime;
-#elif
+#else
 //define windows timing stuff here
 clock_t startclock, endclock;
 #endif
@@ -244,7 +244,7 @@ static cudaError_t cudaerr;
             (endtime.tv_usec - starttime.tv_usec));                       \
     var = usec/3;                                                           \
     })
-#elif
+#else
 #define timeInMicroSeconds(var, funcall)                                  \
     ({                                                                    \
     startclock = clock();                                       \

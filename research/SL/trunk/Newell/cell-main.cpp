@@ -11,7 +11,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
-#include "cell.h"
+#include "1dmpi.h"
 #include "Model.h"
 
 
