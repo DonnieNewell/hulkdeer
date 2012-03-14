@@ -1,1 +1,1 @@
-mpirun -n 2 ./cell 80 80 80 120 1
+mpirun -np 2 -machinefile ../../machinefile.tesla /localtmp/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/cell 80 80 80 120 1
