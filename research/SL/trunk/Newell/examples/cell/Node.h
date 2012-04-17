@@ -1,19 +1,22 @@
 #ifndef NODE_H 
 #define NODE_H
 #include "SubDomain3D.h"
+#include <vector>
+using namespace std;
 
 class Node{
   double weight;
-  SubDomain3D subD;
+  vector<SubDomain3D> subD;
 
   public: 
     Node();
-    Node(double,const SubDomain3D&);
+    Node(double);
     ~Node();
-    void setSubDomain(const SubDomain3D&);	
+    void addSubDomain(const SubDomain3D&);	
     void setWeight(double);
-    SubDomain3D getSubDomain() const;	
-    double getWeight();
+    SubDomain3D getSubDomain(int index) const;	
+    const int numSubDomains() const;
+    const double getWeight() const;
 };
 
 #endif

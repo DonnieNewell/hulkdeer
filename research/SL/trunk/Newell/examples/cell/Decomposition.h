@@ -6,7 +6,7 @@
 using namespace std;
 
 class Decomposition{
-  vector<Node> domain;
+  vector<SubDomain3D> domain;
   void decompose1D(const int);
   void decompose2D(const int, const int);
   void decompose3D(const int, const int, const int);
@@ -17,11 +17,10 @@ class Decomposition{
     Decomposition(const Decomposition&);
     ~Decomposition();
     Decomposition& operator=(const Decomposition&);
-    void addNode(Node&);
-    Node getNode(const int )const;
-    int getNumNodes()const; 
+    void addSubDomain(SubDomain3D&);
+    SubDomain3D getSubDomain(const int )const;
+    int getNumSubDomains()const; 
     void decompose(const int numDimensions, const int numElements[]);
-    void normalize();	
 };
 
 #endif
