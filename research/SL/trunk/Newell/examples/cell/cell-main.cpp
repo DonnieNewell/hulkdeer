@@ -135,19 +135,19 @@ void sendDataToNode(int rank, Node n, int* buf, int size){
 
 	//third send data  
 	//first we have to stage the data into contiguous memory
-	//int total_size=1;
-	//for(int i=0; i<numDim; ++i){
-	//	total_size *= length[i];
-	//}
-	//int *staged_data = new int[total_size];
-	//for(int i=0; i<total_size; ++i){
-	//	staged_data[i] = space3D[offset[2]+i/(K*J)][offset[1]+(i%(J*K))/J][offset[0]+(i%J)];
-	//}//end for
-//	MPI_Isend((void*)staged_data, total_size, MPI_INT, rank,data_tag, MPI_COMM_WORLD, &reqs[2]);
+	int total_size=1;
+	for(int i=0; i<numDim; ++i){
+		total_size *= length[i];
+	}
+	int *staged_data = new int[total_size];
+	for(int i=0; i<total_size; ++i){
+		staged_data[i] = space3D[offset[2]+i/(K*J)][offset[1]+(i%(J*K))/J][offset[0]+(i%J)];
+	}//end for
+	MPI_Isend((void*)staged_data, total_size, MPI_INT, rank,data_tag, MPI_COMM_WORLD, &reqs[2]);
 	
 	
 	//wait for everything to finish
-	MPI_Waitall(2,reqs,MPI_STATUSES_IGNORE);
+	MPI_Waitall(3,reqs,MPI_STATUSES_IGNORE);
 	//clean up memory
 	//delete staged_data;
 }
@@ -184,15 +184,15 @@ void receiveData(int rank, int* buf, int *size){
 
 	MPI_Waitall(2,reqs,MPI_STATUSES_IGNORE);
 	//allocates data memory and sets up 2d and 3d data pointers
-	//initData(length);
+	initData(length);
 
-	//#ifdef DEBUG
-	//	fprintf(stderr,"[%d] about to receive data from Node %d.\n",rank,0);
-	//#endif
-	//MPI_Irecv((void*)buf, *size, MPI_INT, 0, data_tag, MPI_COMM_WORLD,  &reqs[2]);
+	#ifdef DEBUG
+		fprintf(stderr,"[%d] about to receive data from Node %d.\n",rank,0);
+	#endif
+	MPI_Irecv((void*)buf, *size, MPI_INT, 0, data_tag, MPI_COMM_WORLD,  &reqs[2]);
 
 	//wait for everything to finish
-	//MPI_Waitall(1,reqs,MPI_STATUSES_IGNORE);
+	MPI_Waitall(1,reqs,MPI_STATUSES_IGNORE);
 	#ifdef DEBUG
 		printf("[%d] received %dD data from %d.\n",rank,numDim,0); 
 		printf("[%d] received [%d][%d][%d] length data from  %d.\n",rank,length[0],length[1],length[2],0); 
