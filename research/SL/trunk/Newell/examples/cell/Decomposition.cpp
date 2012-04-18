@@ -1,8 +1,8 @@
 #include "Decomposition.h"
 #include <stdio.h>
-Decomposition::Decomposition():domain(2){
+Decomposition::Decomposition(){
 }
-Decomposition::Decomposition(const int numSubDomains):domain(numSubDomains){
+Decomposition::Decomposition(const int numSubDomains){
 }
 
 Decomposition::Decomposition(const Decomposition &d){
@@ -69,11 +69,14 @@ void Decomposition::decompose2D(const int numElementsX,const int numElementsY){
 }//end decompose2D
 
 void Decomposition::decompose3D(const int numElementsX,const int numElementsY,const int numElementsZ){
+  fprintf(stdout, "entering decompose3D\n");
   int width = 4;  
   int blockDimX = static_cast<int>((numElementsX/(double)width)+.5);
   int blockDimY =  static_cast<int>((numElementsY/(double)width)+.5);
-  int blockDimZ =  static_cast<int>((numElementsZ/(double)width)+.6);
+  int blockDimZ =  static_cast<int>((numElementsZ/(double)width)+.5);
   SubDomain3D s;
+  fprintf(stdout, "clearing subd vector decompose3D\n");
+  domain.clear();
   for(int i=0; i < width; ++i){
     for(int j=0; j < width; ++j){
       for(int k=0; k < width; ++k){
@@ -89,11 +92,13 @@ void Decomposition::decompose3D(const int numElementsX,const int numElementsY,co
       }
     }
   }
- printf("domain.size():%d\n",domain.size()); 
+ fprintf(stdout,"domain.size():%zu\n",domain.size()); 
+
 }//end decompose3D
 
 
-void Decomposition::decompose(const int numDimensions, const int numElements[]){
+void Decomposition::decompose(const int numDimensions, const int numElements[3]){
+fprintf(stderr,"decompose(%d dimensions, [%d][%d][%d]\n",numDimensions,numElements[0],numElements[1],numElements[2]);
   if(1 == numDimensions)
     decompose1D(numElements[0]);
   else if(2 == numDimensions)

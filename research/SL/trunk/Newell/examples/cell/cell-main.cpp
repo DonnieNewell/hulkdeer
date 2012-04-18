@@ -227,13 +227,13 @@ int main(int argc, char** argv)
 	if(0==rank){
 	
  		#ifdef  DEBUG
-			printf("[%d] initializing data.\n",rank);
+			fprintf(stderr, "[%d] initializing data.\n",rank);
 		#endif
 
   		init(argc, argv); //initialize data
 
 		#ifdef DEBUG
-  			printf("[%d] decomposing data.\n",rank);
+  			fprintf(stderr,"[%d] decomposing data.\n",rank);
 		#endif
 
 		/* perform domain decomposition */
@@ -242,7 +242,8 @@ int main(int argc, char** argv)
 		decomp.decompose(3,numElements);
 
 		#ifdef DEBUG
- 			printf("[%d] sending data.",rank);
+  			fprintf(stderr,"[%d] decomposed data into %d chunks.\n",rank, decomp.getNumSubDomains());
+ 			fprintf(stderr,"[%d] sending data.",rank);
 		#endif
 		sendData(decomp, data, J*K*L);
 	}
