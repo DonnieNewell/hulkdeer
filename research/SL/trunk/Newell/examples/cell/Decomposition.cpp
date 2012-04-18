@@ -1,8 +1,8 @@
 #include "Decomposition.h"
-
-Decomposition::Decomposition():domain(2){
+#include <stdio.h>
+Decomposition::Decomposition(){
 }
-Decomposition::Decomposition(const int numNodes):domain(numNodes){
+Decomposition::Decomposition(const int numSubDomains){
 }
 
 Decomposition::Decomposition(const Decomposition &d){
@@ -13,33 +13,35 @@ Decomposition::~Decomposition(){
 }
 Decomposition& Decomposition::operator=(const Decomposition& d){
   this->domain.clear();
-  for ( int i=0; i<d.getNumNodes(); ++i){
-    this->domain.push_back(d.getNode(i));
+  for ( int i=0; i<d.getNumSubDomains(); ++i){
+    this->domain.push_back(d.getSubDomain(i));
   }
 }
-Node Decomposition::getNode(const int index)const {
-  Node n = this->domain.at(index);
-  return n;
+SubDomain3D Decomposition::getSubDomain(const int index)const {
+  SubDomain3D s = this->domain.at(index);
+  return s;
 }
 
-int Decomposition::getNumNodes() const {
+int Decomposition::getNumSubDomains() const {
   return domain.size();
 }
-void Decomposition::addNode(Node& n){
+void Decomposition::addSubDomain(SubDomain3D& s){
   
-  domain.push_back(n);
+  domain.push_back(s);
 }
 void Decomposition::decompose1D(const int numElementsX){
   if(0<numElementsX){
     int numLeftX=numElementsX;
+    const int num_chunks = 64;
+    int stride = numElementsX/num_chunks;
+
     for(int i=0; i < domain.size(); ++i){
-      Node& n = domain.at(i);
-      SubDomain3D s;
-      s.setLength(0, n.getWeight()*numElementsX);
+      SubDomain3D& s = domain.at(i);
+      
+      
+      s.setLength(0, stride);
       s.setOffset(0, numElementsX - numLeftX);
       
-      n.setSubDomain(s);
-
       numLeftX -= s.getLength(0);
     } //end for
   }//end if
@@ -48,45 +50,55 @@ void Decomposition::decompose1D(const int numElementsX){
 void Decomposition::decompose2D(const int numElementsX,const int numElementsY){
    if(0<numElementsX&&0<numElementsY){
     int numLeftX=numElementsX;
-    for(int i=0; i < domain.size(); ++i){
-      Node& n = domain.at(i);
-      double weight = n.getWeight();
-      SubDomain3D s;
-      s.setLength(0, weight*numElementsX);
-      s.setOffset(0, numElementsX - numLeftX);
-      s.setLength(1, numElementsY);
-      s.setOffset(1, 0);
-      
-      n.setSubDomain(s);
+    int numLeftY=numElementsY;
+    const int num_chunks = 8;
+    int x_chunk_width = numElementsX/num_chunks;
+    int y_chunk_width = numElementsY/num_chunks;
 
+    for(int i=0; i < domain.size(); ++i){
+      SubDomain3D& s = domain.at(i);
+      s.setLength(0, x_chunk_width);
+      s.setOffset(0, numElementsX - numLeftX);
+      s.setLength(1, y_chunk_width);
+      s.setOffset(1, numElementsY - numLeftY);
+      
       numLeftX -= s.getLength(0);
+      numLeftY -= s.getLength(1);
     } 
   }
 }//end decompose2D
 
 void Decomposition::decompose3D(const int numElementsX,const int numElementsY,const int numElementsZ){
-    if(0<numElementsX){
-    int numLeftZ=numElementsZ;
-    for(int i=0; i < domain.size(); ++i){
-      Node& n = domain.at(i);
-      SubDomain3D s;
-      double weight = n.getWeight();
-      s.setLength(0, numElementsX);
-      s.setOffset(0, 0);
-      s.setLength(1, numElementsY);
-      s.setOffset(1, 0);
-      s.setLength(2, weight*numElementsZ);
-      s.setOffset(2, numElementsZ - numLeftZ);
+  fprintf(stdout, "entering decompose3D\n");
+  int width = 4;  
+  int blockDimX = static_cast<int>((numElementsX/(double)width)+.5);
+  int blockDimY =  static_cast<int>((numElementsY/(double)width)+.5);
+  int blockDimZ =  static_cast<int>((numElementsZ/(double)width)+.5);
+  SubDomain3D s;
+  fprintf(stdout, "clearing subd vector decompose3D\n");
+  domain.clear();
+  for(int i=0; i < width; ++i){
+    for(int j=0; j < width; ++j){
+      for(int k=0; k < width; ++k){
       
-      n.setSubDomain(s);
-
-      numLeftZ -= s.getLength(2);
+        s.setLength(0, blockDimX);
+        s.setOffset(0, blockDimX*i);
+        s.setLength(1, blockDimY);
+        s.setOffset(1, blockDimY*j);
+        s.setLength(2, blockDimZ);
+        s.setOffset(2, blockDimZ*k);
+      
+	domain.push_back(s);
+      }
     }
   }
+ fprintf(stdout,"domain.size():%zu\n",domain.size()); 
+
 }//end decompose3D
 
 
-void Decomposition::decompose(const int numDimensions, const int numElements[]){
+void Decomposition::decompose(const int numDimensions, const int numElements[3]){
+fprintf(stderr,"decompose(%d dimensions, [%d][%d][%d]\n",numDimensions,numElements[0],numElements[1],numElements[2]);
   if(1 == numDimensions)
     decompose1D(numElements[0]);
   else if(2 == numDimensions)
@@ -95,13 +107,3 @@ void Decomposition::decompose(const int numDimensions, const int numElements[]){
     decompose3D(numElements[0],numElements[1], numElements[2]);
 }
 
-void Decomposition::normalize(){
-	double sum = 0.0;
-	for(int i=0; i<domain.size(); ++i){
-		sum+=domain.at(i).getWeight();
-	}
-	//divide each node's weight by total weight
-	for(int i=0; i<domain.size(); ++i){
-		domain.at(i).setWeight(domain.at(i).getWeight()/sum);
-	}
-}

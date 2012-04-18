@@ -110,7 +110,7 @@ void printResults(int* data, int J, int K, int L)
     printf("\n");
 }
 
-void sendDataToNode(int rank, Node n, int* buf, int size){
+void sendDataToNode(int rank, SubDomain3D s, int* buf, int size){
   
 	//first send number of dimensions
 	int numDim = 0;
@@ -118,8 +118,9 @@ void sendDataToNode(int rank, Node n, int* buf, int size){
 	int length[3];
 	int offset[3];
 	for(int i=0;i<3;++i){
-		length[i]=n.getSubDomain().getLength(i);
-		offset[i]=n.getSubDomain().getOffset(i);
+		/* DEBUG: just send first work block */
+		length[i]=s.getLength(i);
+		offset[i]=s.getOffset(i);
 		if(length[i]>0) numDim++;
 	}  
 	#ifdef DEBUG
@@ -129,8 +130,8 @@ void sendDataToNode(int rank, Node n, int* buf, int size){
         //second send size of each dimension
 	MPI_Isend((void*)length, 3, MPI_INT, rank,length_tag, MPI_COMM_WORLD, &reqs[1]);
 	#ifdef DEBUG
-		printf("[%d] sending [%d][%d][%d] data to Node %d.\n",0,length[0],length[1],length[2],rank);
-		printf("[%d] sending %dX%dX%d offsets to Node %d.\n",0,offset[0],offset[1],offset[2],rank);
+		printf("[%d] sending [%d][%d][%d] data to Node %d.\n",0,length[2],length[1],length[0],rank);
+		printf("[%d] sending %dX%dX%d offsets to Node %d.\n",0,offset[2],offset[1],offset[0],rank);
 	#endif
 
 	//third send data  
@@ -149,15 +150,15 @@ void sendDataToNode(int rank, Node n, int* buf, int size){
 	//wait for everything to finish
 	MPI_Waitall(3,reqs,MPI_STATUSES_IGNORE);
 	//clean up memory
-	//delete staged_data;
+	delete staged_data;
 }
 
 void sendData(Decomposition& d, int* buf, int size){
-	for(int i=1; i< d.getNumNodes(); ++i){
+	for(int i=1; i< d.getNumSubDomains(); ++i){
 	//	#ifdef DEBUG
 	//		printf("[%d] sending data to node[%d].\n",0,i);
 	//	#endif
-		sendDataToNode(i,d.getNode(i), buf, size);
+		sendDataToNode(i,d.getSubDomain(i), buf, size);
 	}
 }
 /* output variables: buf, size */
@@ -195,10 +196,9 @@ void receiveData(int rank, int* buf, int *size){
 	MPI_Waitall(1,reqs,MPI_STATUSES_IGNORE);
 	#ifdef DEBUG
 		printf("[%d] received %dD data from %d.\n",rank,numDim,0); 
-		printf("[%d] received [%d][%d][%d] length data from  %d.\n",rank,length[0],length[1],length[2],0); 
+		printf("[%d] received [%d][%d][%d] length data from  %d.\n",rank,length[2],length[1],length[0],0); 
 	#endif
 
-	exit(1); //DEBUG SEG FAULT
 }
 
 
@@ -207,7 +207,7 @@ int dieMax = 3, dieMin = 10;
 
 int main(int argc, char** argv)
 {
-	int numTasks, rank, rc, *buffer, buffSize;
+	int numTasks, rank, rc, *buffer, buffSize,deviceCount=0;
 	rc = MPI_Init(&argc, &argv);
 	if (rc != MPI_SUCCESS){
 		fprintf(stderr, "Error initializing MPI.\n");
@@ -216,25 +216,34 @@ int main(int argc, char** argv)
 
 	MPI_Comm_size(MPI_COMM_WORLD, &numTasks);
 	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+	
+	/* check to see how many NVIDIA GPU'S ARE AVAILABLE */
+	cudaError_t err = cudaGetDeviceCount(&deviceCount);
+	if(cudaSuccess != err){
+		fprintf(stderr, "error detecting cuda-enabled devices\n");
+		exit(1);
+	}
+	
 	if(0==rank){
 	
  		#ifdef  DEBUG
-			printf("[%d] initializing data.\n",rank);
+			fprintf(stderr, "[%d] initializing data.\n",rank);
 		#endif
 
   		init(argc, argv); //initialize data
 
 		#ifdef DEBUG
-  			printf("[%d] decomposing data.\n",rank);
+  			fprintf(stderr,"[%d] decomposing data.\n",rank);
 		#endif
 
-		Decomposition decomp(numTasks);
-		decomp.normalize();
+		/* perform domain decomposition */
+		Decomposition decomp;
 		int numElements[3] = {J,K,L};
 		decomp.decompose(3,numElements);
 
 		#ifdef DEBUG
- 			printf("[%d] sending data.",rank);
+  			fprintf(stderr,"[%d] decomposed data into %d chunks.\n",rank, decomp.getNumSubDomains());
+ 			fprintf(stderr,"[%d] sending data.",rank);
 		#endif
 		sendData(decomp, data, J*K*L);
 	}

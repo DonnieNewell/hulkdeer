@@ -3,7 +3,7 @@
 Node::Node():weight(1.0){
 }
 
-Node::Node(double wt, const SubDomain3D& sd):weight(wt),subD(sd){
+Node::Node(double wt):weight(wt){
   
 }
 Node::~Node(){
@@ -12,13 +12,17 @@ Node::~Node(){
 void Node::setWeight(double newWeight){
   weight = newWeight;
 }
-void Node::setSubDomain(const SubDomain3D& sd){
-  subD = sd;
+void Node::addSubDomain(const SubDomain3D& sd){
+  subD.push_back(sd);
 }
-double Node::getWeight(){
+const double Node::getWeight() const{
 
     return weight;
 }
-SubDomain3D Node::getSubDomain() const{
-    return subD;
+SubDomain3D Node::getSubDomain(int index) const{
+    return subD.at(index);
+}
+
+const int Node::numSubDomains() const{
+    return subD.size();
 }
