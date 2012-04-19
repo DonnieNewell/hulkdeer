@@ -239,9 +239,17 @@ __global__ void non_maximal_suppression(double* src, int* points, int width, int
 		/* check neighborhood around maximum */
 		for(int i2 = mi-n; i2 <= mi+n; i2++){
 			for(int j2 = mj-n; j2 <= mj+n; j2++){
+				if(src[i2*width+j2] > src[mi*width+mj]) 
+					return;
+			}
+		}
+		
+		/*found a local maximum */
+		points[mi*width + mj] = 1;
 	}//end if
 	
 }//end nms()
+
 __global__ void calc_det_hessian(double* dImg, double* dDetHess, int width, int height){
 	//calc index
 	int i = blockIdx.x*blockDim.x + threadIdx.x;
