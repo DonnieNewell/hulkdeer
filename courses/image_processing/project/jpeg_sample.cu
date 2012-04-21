@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <iostream>
 #include <jpeglib.h>
 #include <stdlib.h>
 #include <math.h>
@@ -15,28 +16,39 @@ int height = 1200;
 int bytes_per_pixel = 3;   /* or 1 for GRAYSCALE images */
 J_COLOR_SPACE color_space = JCS_RGB; /* or JCS_GRAYSCALE for grayscale images */
 
-void rgb2gray(const unsigned char *src, double*dst, size_t width, size_t height){
+void rgb2gray(const unsigned char *src, int*dst, size_t width, size_t height){
 	for(int i = 0; i<height; i++){
 		for(int j = 0; j < width; j++){
 			int index = (i*width + j);
 				//grayscale
 				dst[index] = .30*src[index*bytes_per_pixel] + .59*src[index*bytes_per_pixel+1] + .11*src[index*bytes_per_pixel+2]; 
-	}
+		}
 	}	
 }
 
-void convert_to_integral(double *src, size_t width, size_t height){
+void convert_to_integral(int *src, size_t width, size_t height){
 	for(int i=0; i<height; i++){
+		//std::cout <<"\ni:"<<i;
+		int west = 0;
 		for(int j =0; j < width; j++){
 			int index = i*width + j;
-			double south = 0.0, west = 0.0;
-			if(j > 0) west = src[index-1];
-			if(i > 0) south = src[index-width];
-			src[index]+= west+south;
+			//std::cout << " j:"<<j<<" current:"<<src[index];
+			int south = 0;
+			
+			if(i > 0) 
+				south = src[index-width];
+			
+			int tmp = west+south;
+			
+			west += src[index];
+
+			src[index] += tmp;
+			
 			if(0 > src[index]){
 				fprintf(stderr, "ERROR: overflow in integral image calculation.\n");
 				exit(1);
 			}
+			
 		}
 	}
 }
@@ -59,7 +71,7 @@ int read_jpeg_file(unsigned char **raw_image, char *filename, int &width, int &h
 	JSAMPROW row_pointer[1];
 	
 	FILE *infile = fopen( filename, "rb" );
-	unsigned long location = 0;
+	int location = 0;
 	int i = 0;
 	
 	if ( !infile )
@@ -230,42 +242,145 @@ __global__ void non_maximal_suppression(double* src, int* points, int width, int
 	if(i < height && j < width){
 		int mi = i;
 		int mj = j;
+		int ms = 0;
+
 		/* find maximum in current grid */
-		for(int i2 = i; i2 <= i+n; i2++){
-			for(int j2 = j; j2 <= j+n; j2++){
-				if(src[i2*width+j2] > src[mi*width+mj]){
-					mi = i2;
-					mj = j2;
-				}//end if
-			}//end for j2
-		} //end for i2
+		for(int s = 0; s<4; ++s){
+			for(int i2 = i; i2 <= i+n; i2++){
+				for(int j2 = j; j2 <= j+n; j2++){
+					if(src[s*width*height + i2*width+j2] > src[s*width*height+mi*width+mj]){
+						mi = i2;
+						mj = j2;
+						ms = s;
+					}//end if
+				}//end for j2
+			} //end for i2
+		} //end for s
 
 		/* check neighborhood around maximum */
-		for(int i2 = mi-n; i2 <= mi+n; i2++){
-			for(int j2 = mj-n; j2 <= mj+n; j2++){
-				if(src[i2*width+j2] > src[mi*width+mj]) 
-					return;
+		for(int s = 0; s<4; ++s){
+			for(int i2 = mi-n; i2 <= mi+n; i2++){
+				for(int j2 = mj-n; j2 <= mj+n; j2++){
+					if(src[s*width*height + i2*width+j2] > src[ms*width*height + mi*width+mj]) 
+						return;
+				}
 			}
 		}
-		
+
 		/*found a local maximum */
-		points[mi*width + mj] = 1;
+		points[ms*width*height+mi*width + mj] = 1;
 	}//end if
-	
+
 }//end nms()
 
-__global__ void calc_det_hessian(double* dImg, double* dDetHess, int width, int height, int filter_width){
+void CPU_calc_det_hessian(int* dImg, double* dDetHess, int width, int height, int interval, int filter_width){
+	//calc index
+	int half_filter_width = filter_width/2;
+
+	for(int i = half_filter_width; i<height-half_filter_width; ++i){
+		for(int j = half_filter_width; j<width-half_filter_width; ++j){
+
+			int lobe_height = filter_width/3;
+			int lobe_width = 2*lobe_height-1;
+
+
+			//Dyy
+			// get middle lobe value
+			int index = (i+lobe_height/2)*width+j+lobe_width/2;
+			double tmp = dImg[index]-dImg[index-lobe_width]-dImg[index - lobe_height*width]+dImg[index-lobe_width- lobe_height*width];
+			double Dyy = -2*tmp;
+
+			//get upper lobe
+			index -= (lobe_height)*width;
+			tmp = dImg[index]-dImg[index-lobe_width]-dImg[index - lobe_height*width]+dImg[index-lobe_width- lobe_height*width];
+			Dyy += tmp;
+
+			//get lower lobe
+			index += (2*lobe_height)*width;
+			tmp = dImg[index]-dImg[index-lobe_width]-dImg[index - lobe_height*width]+dImg[index-lobe_width- lobe_height*width];
+			Dyy += tmp;
+			if(0 > Dyy) Dyy=0.0;
+
+			//normalize by filter area
+			Dyy /= filter_width*filter_width;
+
+
+			//Dxx
+			// get middle lobe value
+			index = (i+lobe_width/2)*width+j+lobe_height/2;
+			tmp = dImg[index]-dImg[index-lobe_height]-dImg[index - lobe_width*width]+dImg[index-lobe_height- lobe_width*width];
+			double Dxx = -2*tmp;
+
+			//get left lobe
+			index -= (lobe_height);
+			tmp = dImg[index]-dImg[index-lobe_height]-dImg[index - lobe_width*width]+dImg[index-lobe_height- lobe_width*width];
+			Dxx += tmp;
+
+			//get right lobe
+			index += (2*lobe_height);
+			tmp = dImg[index]-dImg[index-lobe_height]-dImg[index - lobe_width*width]+dImg[index-lobe_height- lobe_width*width];
+			Dxx += tmp;
+			if(0 > Dxx) Dxx=0.0;
+
+			//normalize by filter area
+			Dxx /= filter_width*filter_width;
+
+
+			//Dxy
+			//get upper left
+			index = (i-1)*width+j-1;
+			tmp = dImg[index] - dImg[index-lobe_height] - dImg[index-lobe_height*width] + dImg[index-lobe_height-lobe_height*width];
+			double Dxy = tmp;
+
+			//get upper right
+			index += 1+lobe_height;
+			tmp = dImg[index] - dImg[index-lobe_height] - dImg[index-lobe_height*width] + dImg[index-lobe_height-lobe_height*width];
+			Dxy -= tmp;
+
+			//get lower right
+			index += (1+lobe_height)*width;
+			tmp = dImg[index] - dImg[index-lobe_height] - dImg[index-lobe_height*width] + dImg[index-lobe_height-lobe_height*width];
+			Dxy += tmp;
+
+			//get lower left
+			index -= 1+lobe_height;
+			tmp = dImg[index] - dImg[index-lobe_height] - dImg[index-lobe_height*width] + dImg[index-lobe_height-lobe_height*width];
+			Dxy -= tmp;
+			if(0>Dxy) Dxy=0.0;
+
+			//normalize by filter area
+			Dxy /= filter_width*filter_width;
+
+			//assign value to matrix for determinant of Hessian
+			Dxy *= Dxy;
+
+			int sign_of_laplacian = 1;
+			if(0>Dxx+Dyy)sign_of_laplacian = -1;
+
+			//equation 3 from Bay, et al., 2008
+			index = interval*width*height + index + lobe_height;
+			dDetHess[index]=Dxx*Dyy-.81*Dxy;
+
+			if(0 > dDetHess[index]) dDetHess[index] = 0.0;
+			else dDetHess[index] *= sign_of_laplacian;
+
+		}
+	}
+
+}
+
+__global__ void calc_det_hessian(int* dImg, double* dDetHess, int width, int height, int interval, int filter_width){
 	//calc index
 	int i = blockIdx.x*blockDim.x + threadIdx.x;
 	int j = blockIdx.y*blockDim.y + threadIdx.y;
 	int half_filter_width = filter_width/2;
-	
+
 	//check if entire filter would fit at this location
 	if(i < (height-half_filter_width) && 
-		i >= half_filter_width && 
-		j < (width-half_filter_width) && 
-		j >= half_filter_width){
-		
+			i >= half_filter_width && 
+			j < (width-half_filter_width) && 
+			j >= half_filter_width){
+
 		int lobe_height = filter_width/3;
 		int lobe_width = 2*lobe_height-1;
 
@@ -275,7 +390,7 @@ __global__ void calc_det_hessian(double* dImg, double* dDetHess, int width, int 
 		int index = (i+lobe_height/2)*width+j+lobe_width/2;
 		double tmp = dImg[index]-dImg[index-lobe_width]-dImg[index - lobe_height*width]+dImg[index-lobe_width- lobe_height*width];
 		double Dyy = -2*tmp;
-		
+
 		//get upper lobe
 		index -= (lobe_height)*width;
 		tmp = dImg[index]-dImg[index-lobe_width]-dImg[index - lobe_height*width]+dImg[index-lobe_width- lobe_height*width];
@@ -290,13 +405,13 @@ __global__ void calc_det_hessian(double* dImg, double* dDetHess, int width, int 
 		//normalize by filter area
 		Dyy /= filter_width*filter_width;
 
-		
+
 		//Dxx
 		// get middle lobe value
 		index = (i+lobe_width/2)*width+j+lobe_height/2;
 		tmp = dImg[index]-dImg[index-lobe_height]-dImg[index - lobe_width*width]+dImg[index-lobe_height- lobe_width*width];
 		double Dxx = -2*tmp;
-		
+
 		//get left lobe
 		index -= (lobe_height);
 		tmp = dImg[index]-dImg[index-lobe_height]-dImg[index - lobe_width*width]+dImg[index-lobe_height- lobe_width*width];
@@ -310,7 +425,7 @@ __global__ void calc_det_hessian(double* dImg, double* dDetHess, int width, int 
 
 		//normalize by filter area
 		Dxx /= filter_width*filter_width;
-		
+
 
 		//Dxy
 		//get upper left
@@ -344,14 +459,33 @@ __global__ void calc_det_hessian(double* dImg, double* dDetHess, int width, int 
 		if(0>Dxx+Dyy)sign_of_laplacian = -1;
 
 		//equation 3 from Bay, et al., 2008
-		dDetHess[index+lobe_height]=Dxx*Dyy-.81*Dxy;
+		index = interval*width*height + index + lobe_height;
+		dDetHess[index]=Dxx*Dyy-.81*Dxy;
 
-		if(0 > dDetHess[index+lobe_height]) dDetHess[index+lobe_height] = 0.0;
-		else dDetHess[index+lobe_height] *= sign_of_laplacian;
+		if(0 > dDetHess[index]) dDetHess[index] = 0.0;
+		else dDetHess[index] *= sign_of_laplacian;
 	
 	}
 
 }
+void write_hessian(unsigned char* dst, double* det_hess, double* det_hess_cpu, int width, int height){
+	double epsilon = .01;	
+	for(int i = 0; i<height; i++){
+		for(int j = 0; j<width; j++){
+			int index = i*width+j;
+			double difference = det_hess[index]-det_hess_cpu[index];
+			if(det_hess_cpu[index]*det_hess_cpu[index]>1.0){
+				//apply det_hess in dst
+				dst[index*3] = 255;
+				dst[index*3+2] = 0;
+				dst[index*3+1] = 0;
+			}
+		}
+
+	}
+
+}
+
 void mark_points(unsigned char* dst, int* src, int width, int height){
 	for(int i = 0; i<height; i++){
 		for(int j = 0; j<width; j++){
@@ -408,7 +542,7 @@ int main(int argc, char** argv)
 	unsigned char *temp=NULL;
 
 	int raw_width=0, raw_height=0,
-		temp_width=0, temp_height=0;
+	    temp_width=0, temp_height=0;
 
 	/* Try opening a jpeg*/
 	if(DEBUG) printf("reading file: %s\n",infilename);
@@ -418,9 +552,9 @@ int main(int argc, char** argv)
 
 	/* convert rgb image to gray scale */
 	if(DEBUG) printf("converting rgb images to gray scale.\n");
-	double * img1 = NULL, *img2 = NULL;
-	img1 = (double*) malloc(raw_width*raw_height*sizeof(double)); 
-	img2 = (double*) malloc(temp_width*temp_height*sizeof(double)); 
+	int* img1 = NULL, *img2 = NULL;
+	img1 = (int*) malloc(raw_width*raw_height*sizeof(int)); 
+	img2 = (int*) malloc(temp_width*temp_height*sizeof(int)); 
 	rgb2gray(raw_image, img1, raw_width, raw_height);	
 	rgb2gray(temp, img2, temp_width, temp_height);	
 
@@ -432,30 +566,36 @@ int main(int argc, char** argv)
 		int limit = 10;
 		int w = raw_width;
 		int h = raw_height;
-		double *img = img1;
-		printf("printing first %d elements in integral image.\n",limit);
-		for(int i=0; i<limit; i++){
+		int *img = img1;
+		printf("printing last %d elements in integral image.\n",limit);
+		for(int i=height-limit; i<height; i++){
 			printf("%d:  ",i);
-			for(int j=0; j<limit; j++){
-				printf("%f ",img[i*w+j]);
+			for(int j=width-limit; j<width; j++){
+				printf("%d ",img[i*w+j]);
 			}
 			printf("\n");
 		}
 	}
 	/* copy images to gpu */
 	if(DEBUG) printf("sending images to gpu.\n");
-	double* dImg1 = NULL;
-	double* dImg2 = NULL;
-	if( cudaMalloc(&dImg1,raw_width*raw_height*sizeof(double)) != cudaSuccess ) return -1;
-	if( cudaMalloc(&dImg2,temp_width*temp_height*sizeof(double)) != cudaSuccess ) return -1;
-	if( cudaMemcpy(dImg1, img1, raw_width*raw_height*sizeof(double), cudaMemcpyHostToDevice) != cudaSuccess ) return -1;
-	if( cudaMemcpy(dImg2, img2, temp_width*temp_height*sizeof(double), cudaMemcpyHostToDevice) != cudaSuccess ) return -1;
+	int* dImg1 = NULL;
+	int* dImg2 = NULL;
+	if( cudaMalloc(&dImg1,raw_width*raw_height*sizeof(int)) != cudaSuccess ) return -1;
+	if( cudaMalloc(&dImg2,temp_width*temp_height*sizeof(int)) != cudaSuccess ) return -1;
+	if( cudaMemcpy(dImg1, img1, raw_width*raw_height*sizeof(int), cudaMemcpyHostToDevice) != cudaSuccess ) return -1;
+	if( cudaMemcpy(dImg2, img2, temp_width*temp_height*sizeof(int), cudaMemcpyHostToDevice) != cudaSuccess ) return -1;
 	
+	int num_filters = 4;
+	
+	/************************************ create cpu array for calculating hessian to compare */
+	double * hDetHess1 = NULL;
+	hDetHess1 = (double*)malloc(num_filters*raw_width*raw_height*sizeof(double));
+
 	/* allocate results array for Determinant of Hessian */
 	double * dDetHess1 = NULL;
-	if( cudaMalloc(&dDetHess1,raw_width*raw_height*sizeof(double)) != cudaSuccess ) return -1;
+	if( cudaMalloc(&dDetHess1,num_filters*raw_width*raw_height*sizeof(double)) != cudaSuccess ) return -1;
 	double * dDetHess2 = NULL;
-	if( cudaMalloc(&dDetHess2,raw_width*raw_height*sizeof(double)) != cudaSuccess ) return -1;
+	if( cudaMalloc(&dDetHess2,num_filters*raw_width*raw_height*sizeof(double)) != cudaSuccess ) return -1;
 	
 	/****** IMAGE PROCESSING *******/
 	if(DEBUG) printf("processing images on gpu.\n");
@@ -463,17 +603,22 @@ int main(int argc, char** argv)
 	dim3 num_blocks_img1(ceil(raw_height/(float)threads_per_block.x),ceil(raw_width/(float)threads_per_block.y)); 
 	dim3 num_blocks_img2(ceil(temp_height/(float)(threads_per_block.x)),ceil(temp_width/(float)(threads_per_block.y))); 
 	//int octave = 0;
-	int filter_width = 99;
-	calc_det_hessian<<<num_blocks_img1,threads_per_block>>>(dImg1, dDetHess1, raw_width, raw_height, filter_width);
+	int filter_width = 9;
+	int filter_increase = 6;
+	int interval = 0;
+	for(int i = 0; i<4; ++i){
+		CPU_calc_det_hessian(img1, hDetHess1, raw_width, raw_height, i, filter_width+i*filter_increase);
+		calc_det_hessian<<<num_blocks_img1,threads_per_block>>>(dImg1, dDetHess1, raw_width, raw_height, i, filter_width+i*filter_increase);
+	}
 
 	/* performing non-maximal suppression */
 	if(DEBUG) printf("performing non-maximal suppression.\n");
 	int* intPoints1 = NULL;
-	if( cudaMalloc(&intPoints1,raw_width*raw_height*sizeof(int)) != cudaSuccess ) return -1;
-	if( cudaMemset(intPoints1,0,raw_width*raw_height*sizeof(int)) != cudaSuccess ) return -1;
+	if( cudaMalloc(&intPoints1,num_filters*raw_width*raw_height*sizeof(int)) != cudaSuccess ) return -1;
+	if( cudaMemset(intPoints1,0,num_filters*raw_width*raw_height*sizeof(int)) != cudaSuccess ) return -1;
 	int * intPoints2 = NULL;
-	if( cudaMalloc(&intPoints2,temp_width*temp_height*sizeof(int)) != cudaSuccess ) return -1;
-	if( cudaMemset(intPoints2,0,temp_width*temp_height*sizeof(int)) != cudaSuccess ) return -1;
+	if( cudaMalloc(&intPoints2,num_filters*temp_width*temp_height*sizeof(int)) != cudaSuccess ) return -1;
+	if( cudaMemset(intPoints2,0,num_filters*temp_width*temp_height*sizeof(int)) != cudaSuccess ) return -1;
 	num_blocks_img1.x=ceil(raw_height/(float)(3*threads_per_block.x));
 	num_blocks_img1.y=ceil(raw_width/(float)(3*threads_per_block.y)); 
 	num_blocks_img2.x=ceil(temp_height/(float)(3*threads_per_block.x));
@@ -484,19 +629,18 @@ int main(int argc, char** argv)
 
 	/* copy results back from card */
 	if(DEBUG) printf("retrieving results from gpu.\n");
-	int num_bytes = sizeof(double)*raw_width*raw_height;
+	int num_bytes = num_filters*sizeof(double)*raw_width*raw_height;
 	double *det_hess = (double*)malloc(num_bytes);
 	if(cudaMemcpy(det_hess, dDetHess1, num_bytes, cudaMemcpyDeviceToHost) != cudaSuccess ) return -1;
-	output(det_hess, 10, 10);
-	
-	num_bytes = sizeof(int)*raw_width*raw_height;
+		
+	num_bytes = num_filters*sizeof(int)*raw_width*raw_height;
 	int *interest_points = (int*)malloc(num_bytes);
 	if(cudaMemcpy(interest_points, intPoints1, num_bytes, cudaMemcpyDeviceToHost) != cudaSuccess ) return -1;
 	
-	output(interest_points, 30,30);
 	/* Mark up image */
 	if(DEBUG) printf("marking interest points on image\n");
-	mark_points(raw_image, interest_points, raw_width, raw_height);
+	//mark_points(raw_image, interest_points, raw_width, raw_height);
+	write_hessian(raw_image, det_hess,hDetHess1, raw_width, raw_height);
 
 	/* then copy it to another file */
 	if(DEBUG) printf("write to file: %s\n",outfilename);
