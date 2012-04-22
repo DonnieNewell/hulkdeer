@@ -6,6 +6,7 @@
 #include <npp.h>
 
 #define DEBUG 1
+#define PI 3.14159
 
 /* we will be using this uninitialized pointer later to store raw, uncompressd image */
 //unsigned char *raw_image = NULL;
@@ -238,17 +239,24 @@ __global__ void non_maximal_suppression(double* src, int* points, int width, int
 	int n = 3;
 	i = i*n;
 	j = j*n;
+	
 	//int index = (i*width+j);
 	if(i < height && j < width){
 		int mi = i;
 		int mj = j;
 		int ms = 0;
+		//DEBUG
+		//points[i*width+j] = 1;	
+		//return;
 
 		/* find maximum in current grid */
 		for(int s = 0; s<4; ++s){
 			for(int i2 = i; i2 <= i+n; i2++){
 				for(int j2 = j; j2 <= j+n; j2++){
-					if(src[s*width*height + i2*width+j2] > src[s*width*height+mi*width+mj]){
+					if(src[s*width*height + i2*width+j2] * 
+						src[s*width*height + i2*width+j2] > 
+						src[ms*width*height+mi*width+mj] * 
+						src[ms*width*height+mi*width+mj]){
 						mi = i2;
 						mj = j2;
 						ms = s;
@@ -261,14 +269,21 @@ __global__ void non_maximal_suppression(double* src, int* points, int width, int
 		for(int s = 0; s<4; ++s){
 			for(int i2 = mi-n; i2 <= mi+n; i2++){
 				for(int j2 = mj-n; j2 <= mj+n; j2++){
-					if(src[s*width*height + i2*width+j2] > src[ms*width*height + mi*width+mj]) 
+					if(src[s*width*height + i2*width+j2] * 
+						src[s*width*height + i2*width+j2] > 
+						src[ms*width*height+mi*width+mj] * 
+						src[ms*width*height+mi*width+mj]){
 						return;
+					}
 				}
 			}
 		}
 
 		/*found a local maximum */
-		points[ms*width*height+mi*width + mj] = 1;
+		if(src[ms*width*height+mi*width+mj] * 
+			src[ms*width*height+mi*width+mj]>1.0){
+			points[ms*width*height+mi*width + mj] = 1;
+		}
 	}//end if
 
 }//end nms()
@@ -459,7 +474,7 @@ __global__ void calc_det_hessian(int* dImg, double* dDetHess, int width, int hei
 		if(0>Dxx+Dyy)sign_of_laplacian = -1;
 
 		//equation 3 from Bay, et al., 2008
-		index = interval*width*height + index + lobe_height;
+		index = interval*width*height + i*width+j;
 		dDetHess[index]=Dxx*Dyy-.81*Dxy;
 
 		if(0 > dDetHess[index]) dDetHess[index] = 0.0;
@@ -468,13 +483,34 @@ __global__ void calc_det_hessian(int* dImg, double* dDetHess, int width, int hei
 	}
 
 }
-void write_hessian(unsigned char* dst, double* det_hess, double* det_hess_cpu, int width, int height){
+void write_interest(unsigned char* dst, int* interest, int width, int height){
+	double epsilon = .01;	
+	for(int s = 0; s<4; s++){
+		for(int i = 0; i<height; i++){
+			for(int j = 0; j<width; j++){
+				int index = i*width+j;
+				int offset = s*width*height;
+				if(interest[offset+index] > 0){
+					//apply interest in dst
+					dst[index*3] = 255;
+					dst[index*3+2] = 0;
+					dst[index*3+1] = 0;
+				}
+			}
+
+		}
+	}
+
+}
+
+void write_hessian(unsigned char* dst, double* det_hess, double* det_hess_cpu, int width, int height, int scale){
 	double epsilon = .01;	
 	for(int i = 0; i<height; i++){
 		for(int j = 0; j<width; j++){
 			int index = i*width+j;
-			double difference = det_hess[index]-det_hess_cpu[index];
-			if(det_hess_cpu[index]*det_hess_cpu[index]>1.0){
+			int offset = scale*width*height;
+			double difference = det_hess[offset+index]-det_hess_cpu[offset+index];
+			if(det_hess[offset+index]*det_hess[offset+index]>1.0){
 				//apply det_hess in dst
 				dst[index*3] = 255;
 				dst[index*3+2] = 0;
@@ -527,6 +563,114 @@ void output(int *array, const int w, const int h){
 		printf("\n");
 	}
 }
+
+/* this function approximates the Haar wavelet in x or y direction */
+int haar(int* img, int i, int j, int i_width, int i_height, float scale, int direction){
+	int haar_width = 4*scale;
+	int half_width = haar_width/2;
+	int black = 0, white=0;
+	
+	if(1==direction){ //y direction
+		black = img[i*width+j+half_width]-img[(i-half_width)*width+j+half_width]-
+			img[i*width+j-half_width]+img[(i-half_width)*width+j-half_width];
+		white = img[(i+half_width)*width+j+half_width]-img[(i)*width+j+half_width]-
+			img[(i+half_width)*width+j-half_width]+img[(i)*width+j-half_width];
+	}else{ //x direction
+		black = img[(i+half_width)*width+j]-img[(i-half_width)*width+j]-
+			img[(i+half_width)*width+j-half_width]+img[(i-half_width)*width+j-half_width];
+		white = img[(i+half_width)*width+j+half_width]-img[(i-half_width)*width+j+half_width]-
+			img[(i+half_width)*width+j]+img[(i-half_width)*width+j];
+	}
+	return -1*black+white;
+	
+}
+
+/* returns the value of 2d gaussian centered at the origin */
+float gauss(int x, int y, float sigma){
+		float sigma_squared = sigma*sigma;
+	return ( 1 / sqrt(2*PI*sigma_squared)) * exp(-(x*x+y*y)/(2*sigma_squared));
+}
+
+/* this function calculates the 'orientation' of  each interest point, using Haar wavelets */
+void calculate_orientation(int *img, int* intPoints,int num_interest_points, int* orient, int width, int height){
+	int row=-1,col=-1,itrvl=-1;
+	float scale = 0.0f;
+	int radius=0;
+	float sigma=0;
+	float*neighborhood = NULL;
+	neighborhood = (float*)malloc(2*17424*sizeof(float)); //size of neighborhood if scale is 11
+
+	for(int curr = 0; curr < num_interest_points; ++curr){
+		//get current interest point
+		row = intPoints[curr*3];
+		col = intPoints[curr*3+1];
+		itrvl = intPoints[curr*3+2];
+		scale = (9+itrvl*6)/9;
+		radius = 6*scale;
+		sigma = 2*scale;
+		
+		
+		//only calculate if there's enough room
+		if(row < radius || row > height-radius || 
+			col < radius || col > width-radius) continue;
+		
+		int n_width = 2*radius;
+		int in_circle = 0;
+		for(int i= row-radius; i<row+radius; i++){
+			for(int j=col-radius; j<col+radius; j++){
+				int n_row = (i-row-radius);
+				int n_col = j-col-radius;
+				int delta_row = i-row;
+				int delta_col = j-col;
+				delta_row*= delta_row;
+				delta_col*= delta_col;
+				in_circle = sqrt(delta_row+delta_col) <= radius;
+				if(in_circle){
+					float weight = gauss(delta_row,delta_col,sigma);
+					neighborhood[n_row*n_width+n_col] = weight*haar(img,i,j,width,height,scale,0);
+					neighborhood[n_row*n_width+n_col+1] = weight*haar(img,i,j,width,height,scale,1);
+				}else{
+					neighborhood[n_row*n_width+n_col]=0.0f;
+					neighborhood[n_row*n_width+n_col+1]=0.0f;
+				}
+			}
+		}
+	}
+
+	//clean up
+	free(neighborhood);
+	
+}
+
+int count_interest_points(int *interest_points, int width, int height){
+	int num_points =0;
+	for(int s = 0; s < 4; s++){
+		for(int i=0; i < height; i++){
+			for(int j=0; j<width; j++){
+				if(interest_points[i*width+j])
+					num_points++;
+			}
+		}
+	}
+	return num_points;
+}	
+
+void get_compact_interest_pts(int *interest_points, int *compact_interest_pts, int width, int height){
+	int curr_point = 0;
+	for(int s = 0; s < 4; s++){
+		for(int i=0; i < height; i++){
+			for(int j=0; j<width; j++){
+				if(interest_points[i*width+j]){
+					compact_interest_pts[curr_point++]=i;
+					compact_interest_pts[curr_point++]=j;
+					compact_interest_pts[curr_point++]=s;
+				}
+			}
+		}
+	}
+
+}
+
 int main(int argc, char** argv)
 {
 	if(2 >= argc) {
@@ -625,22 +769,46 @@ int main(int argc, char** argv)
 	num_blocks_img2.y=ceil(temp_width/(float)(3*threads_per_block.y)); 
 	non_maximal_suppression<<<num_blocks_img1, threads_per_block>>>(dDetHess1, intPoints1, raw_width, raw_height);
 
+
+	
+	/* copy interest points back to host */
+	if(DEBUG) printf("copying interest points back to host.\n");
+	int num_bytes = num_filters*sizeof(int)*raw_width*raw_height;
+	int *interest_points = (int*)malloc(num_bytes);
+	if(cudaMemcpy(interest_points, intPoints1, num_bytes, cudaMemcpyDeviceToHost) != cudaSuccess ) return -1;
+	int num_interest_points = count_interest_points(interest_points,raw_width, raw_height);	
+	num_bytes = 3*num_interest_points*sizeof(int);
+	int *compact_interest_pts = (int*)malloc(num_bytes);
+	get_compact_interest_pts(interest_points, compact_interest_pts, raw_width, raw_height);
+	
+	/* clean up memory */
+	if(interest_points){
+	 	free(interest_points);
+		interest_points=NULL;
+	}
+		
+
+	/* get orientation of interest points */
+	if(DEBUG) printf("calculating orientation of interest points.\n");
+	int * orient1= NULL;
+	orient1 = (int *)malloc(2*num_interest_points*sizeof(int));
+	calculate_orientation(img1, compact_interest_pts, num_interest_points, orient1, raw_width, raw_height);
+
 	/****** END IMAGE PROCESSING *******/
 
 	/* copy results back from card */
 	if(DEBUG) printf("retrieving results from gpu.\n");
-	int num_bytes = num_filters*sizeof(double)*raw_width*raw_height;
+	num_bytes = num_filters*sizeof(double)*raw_width*raw_height;
 	double *det_hess = (double*)malloc(num_bytes);
 	if(cudaMemcpy(det_hess, dDetHess1, num_bytes, cudaMemcpyDeviceToHost) != cudaSuccess ) return -1;
 		
-	num_bytes = num_filters*sizeof(int)*raw_width*raw_height;
-	int *interest_points = (int*)malloc(num_bytes);
-	if(cudaMemcpy(interest_points, intPoints1, num_bytes, cudaMemcpyDeviceToHost) != cudaSuccess ) return -1;
-	
+
 	/* Mark up image */
-	if(DEBUG) printf("marking interest points on image\n");
+	//if(DEBUG) printf("marking interest points on image\n");
 	//mark_points(raw_image, interest_points, raw_width, raw_height);
-	write_hessian(raw_image, det_hess,hDetHess1, raw_width, raw_height);
+	int scale = 1;
+	//write_interest(raw_image, interest_points, raw_width, raw_height);
+	//write_hessian(raw_image, det_hess, hDetHess1, raw_width, raw_height, scale);
 
 	/* then copy it to another file */
 	if(DEBUG) printf("write to file: %s\n",outfilename);
