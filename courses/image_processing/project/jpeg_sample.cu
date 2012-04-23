@@ -613,7 +613,8 @@ void calculate_orientation(int *img, int* intPoints,int num_interest_points, int
 		//only calculate if there's enough room
 		if(row < radius || row > height-radius || 
 			col < radius || col > width-radius) continue;
-		
+
+		//calculate weighted Haar response values for neighborhood around interest point		
 		int n_width = 2*radius;
 		int in_circle = 0;
 		for(int i= row-radius; i<row+radius; i++){
@@ -627,15 +628,49 @@ void calculate_orientation(int *img, int* intPoints,int num_interest_points, int
 				in_circle = sqrt(delta_row+delta_col) <= radius;
 				if(in_circle){
 					float weight = gauss(delta_row,delta_col,sigma);
-					neighborhood[n_row*n_width+n_col] = weight*haar(img,i,j,width,height,scale,0);
-					neighborhood[n_row*n_width+n_col+1] = weight*haar(img,i,j,width,height,scale,1);
+					neighborhood[2*(n_row*n_width+n_col)] = weight*haar(img,i,j,width,height,scale,0);
+					neighborhood[2*(n_row*n_width+n_col)+1] = weight*haar(img,i,j,width,height,scale,1);
 				}else{
-					neighborhood[n_row*n_width+n_col]=0.0f;
-					neighborhood[n_row*n_width+n_col+1]=0.0f;
+					neighborhood[2*(n_row*n_width+n_col)]=0.0f;
+					neighborhood[2*(n_row*n_width+n_col)+1]=0.0f;
 				}
 			}
 		}
-	}
+
+		//determine 'orientation' of interest point
+		float step = PI/6.0f;
+		float range = PI/3.0f;
+		double max_x=0.0,max_y=0.0;
+		for(float start=0.0f; start<5*PI/3;start+=step){
+			float stop =  start+range;
+			//now go through all points in neighborhood and sum if they are in this window.
+			double sum_x=0.0,sum_y=0.0;
+			for(int i=0; i<2*radius; i++){
+				for(int j=0; j<2*radius; j++){
+					//haar in y divided by haar in x is the slope to check
+					int index = i*2*radius+j;
+					float angle = neighborhood[2*index+1]/neighborhood[2*index];
+					if(angle >=start && angle < stop){
+						//point is in the sliding window
+						sum_x+=neighborhood[2*index];
+						sum_y+=neighborhood[2*index+1];
+					}
+				}
+			
+			}
+
+			double length_of_max = sqrt(max_x*max_x+max_y*max_y);
+			double curr_length = sqrt(sum_x*sum_x+sum_y*sum_y);
+			if(curr_length > length_of_max){
+				max_x = sum_x;
+				max_y = sum_y;
+			}
+		}//end for
+
+		//now set the orientation vector
+		orient[curr*2]=max_x;
+		orient[curr*2+1]=max_y;
+	}//end for all interest points
 
 	//clean up
 	free(neighborhood);
