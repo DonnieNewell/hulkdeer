@@ -565,8 +565,13 @@ void output(int *array, const int w, const int h){
 }
 
 /* this function approximates the Haar wavelet in x or y direction */
-int haar(int* img, int i, int j, int i_width, int i_height, float scale, int direction){
-	int haar_width = 4*scale;
+int haar(int* img, int i, int j, int i_width, int i_height, float scale, int direction, int for_descriptor){
+	int haar_width = -1;
+	if(for_descriptor)
+		haar_width = 2*scale;
+	else
+		haar_width = 4*scale;
+
 	int half_width = haar_width/2;
 	int black = 0, white=0;
 	
@@ -590,6 +595,136 @@ float gauss(int x, int y, float sigma){
 		float sigma_squared = sigma*sigma;
 	return ( 1 / sqrt(2*PI*sigma_squared)) * exp(-(x*x+y*y)/(2*sigma_squared));
 }
+
+/* returns the correct index for a relative pixel after rotation */
+int getIndex(int rel_i, int rel_j, int itrst_i, int itrst_j, float angle_rotate, int img_width, int img_height){
+	int new_x = 0.5f+rel_i*cos(angle_rotate)-rel_j*sin(angle_rotate);
+	int new_y = 0.5f+rel_i*sin(angle_rotate)+rel_j*cos(angle_rotate);
+	int actual_x = new_x + itrst_i;
+	int actual_y = new_y + itrst_j;
+	
+	if(actual_x < 0 || actual_x >=img_height || actual_y < 0 || actual_y >=img_width)
+		return -1;
+	
+	return actual_x*img_width+actual_y;
+}
+
+float angle_between(int x0, int y0, int x1, int y1){
+	float angle = 0.0f;
+	float mag0 = sqrt(x0*x0+y0*y0);
+	float mag1 = sqrt(x1*x1+y1*y1);
+	angle = acos((x0*y0+x1*y1)/(mag0*mag1));
+	return angle;
+}
+
+/* function calculates the 64-feature descriptor for each interest point */
+void calculate_descriptor(int *img, int* intPoints,int num_interest_points, int* orient, float**descriptors, int width, int height){
+	
+	int row=-1,col=-1,itrvl=-1,orient_i=-1,orient_j=-1;
+	int filter_size = -1, window_size=-1;
+	int step = -1;
+	float scale = 0.0f;
+	float sigma = 0.0f;
+	float *neighborhood = NULL;
+
+	for(int int_pt = 0; int_pt < num_interest_points; ++int_pt){
+		if(DEBUG) fprintf(stderr,"calculating descriptor for interest point:%d of %d.\n",int_pt,num_interest_points);
+		neighborhood = (float*)malloc(4*8*8*sizeof(float)); //simplifying the neighborhood by not using sub samples
+		//each neighborhood has dx, dy, |dx|, and |dy|
+		
+	
+		//calculate descriptor for this interest point
+		row = intPoints[int_pt*3];
+		col = intPoints[int_pt*3+1];
+		itrvl = intPoints[int_pt*3+2];
+		scale = (9+itrvl*6)/9;
+		filter_size=2*scale;
+		window_size = 20*scale;
+		step = window_size/8; //this is to evenly space the samples in the window
+		sigma = 3.3*scale;
+		orient_i = orient[2*int_pt];
+		orient_j = orient[2*int_pt+1];
+		
+		//angle between the orientation vector and vertical
+		float angle = angle_between(orient_i,orient_j,1,0);
+		
+		if(DEBUG) fprintf(stderr,"calculating Haar responses for the neighborhood.\n");
+		//get Haar wavelet responses at each point
+		for(int i = 0; i<8; ++i){
+			for(int j=0; j<8; ++j){
+				//relative points scaled
+				int i_sample = (i-4)*step;
+				int j_sample = (j-4)*step;
+				float weight = gauss(i_sample,j_sample,sigma);
+				int index = getIndex(i_sample,j_sample,row,col,angle,width,height);
+				
+				float temp = 0.0f;
+				float abs_dx = 0.0f;
+				float abs_dy = 0.0f;
+				float tempdx=0.0f;
+				float tempdy = 0.0f;
+				if(index >=0 && 
+					index/width > (int)scale && 
+					index%width > (int)scale && 
+					index/width < (int)(height-scale) && 
+					index%width < (int)(width-scale)){
+					//down one row
+					temp = haar(img,min((index/width)+1,height-1),index%width, width, height, scale,0,1);
+					abs_dx = fabs(temp);
+					tempdx = temp;
+					temp = haar(img,min((index/width)+1,height-1),index%width, width, height, scale,1,1);
+					abs_dy = fabs(temp);
+					tempdy = temp;
+
+					//up one row
+					temp = haar(img,max((index/width)-1,0),index%width, width, height, scale,0,1);
+					abs_dx += fabs(temp);
+					tempdx += temp;
+					temp = haar(img,max((index/width)-1,0),index%width, width, height, scale,1,1);
+					abs_dy += fabs(temp);
+					tempdy += temp;
+
+					//right one column
+					temp = haar(img,index/width,min((index%width)+1,width-1), width, height, scale,0,1);
+					abs_dx += fabs(temp);
+					tempdx += temp;
+					temp = haar(img,index/width,min((index%width)+1,width-1), width, height, scale,1,1);
+					abs_dy += fabs(temp);
+					tempdy += temp;
+
+					//left one column
+					temp = haar(img,index/width,max((index%width)-1,0), width, height, scale,0,1);
+					abs_dx += fabs(temp);
+					tempdx += temp;
+					temp = haar(img,index/width,max((index%width)-1,0), width, height, scale,1,1);
+					abs_dy += fabs(temp);
+					tempdy += temp;
+				}
+				float mag_abs = sqrt(abs_dx*abs_dx+abs_dy*abs_dy);				
+				float mag_temp = sqrt(tempdx*tempdx+tempdy*tempdy);				
+				float a2 = angle_between(tempdx,tempdy,orient_i,orient_j);
+				float a3 = angle_between(abs_dx,abs_dy,orient_i,orient_j);
+
+				//convert haar vector to be relative to the orientation vector of the interest point.
+				abs_dx = mag_abs*cos(a2);
+				abs_dy = mag_abs*sin(a2);
+				tempdx = mag_temp*cos(a2);
+				tempdy = mag_temp*sin(a2);
+
+				neighborhood[4*(i*8+j)]= tempdx;
+				neighborhood[4*(i*8+j)+1]= abs_dx;
+				neighborhood[4*(i*8+j)+2]= tempdy;
+				neighborhood[4*(i*8+j)+3]= abs_dy;
+				
+			}//end for cols
+		}//end for rows
+
+		//we now have the haar
+		descriptors[int_pt]=neighborhood;
+
+	}//end for interest points
+}//end calc descriptor
+
 
 /* this function calculates the 'orientation' of  each interest point, using Haar wavelets */
 void calculate_orientation(int *img, int* intPoints,int num_interest_points, int* orient, int width, int height){
@@ -628,8 +763,8 @@ void calculate_orientation(int *img, int* intPoints,int num_interest_points, int
 				in_circle = sqrt(delta_row+delta_col) <= radius;
 				if(in_circle){
 					float weight = gauss(delta_row,delta_col,sigma);
-					neighborhood[2*(n_row*n_width+n_col)] = weight*haar(img,i,j,width,height,scale,0);
-					neighborhood[2*(n_row*n_width+n_col)+1] = weight*haar(img,i,j,width,height,scale,1);
+					neighborhood[2*(n_row*n_width+n_col)] = weight*haar(img,i,j,width,height,scale,0, 0);
+					neighborhood[2*(n_row*n_width+n_col)+1] = weight*haar(img,i,j,width,height,scale,1, 0);
 				}else{
 					neighborhood[2*(n_row*n_width+n_col)]=0.0f;
 					neighborhood[2*(n_row*n_width+n_col)+1]=0.0f;
@@ -756,11 +891,12 @@ int main(int argc, char** argv)
 		}
 	}
 	/* copy images to gpu */
-	if(DEBUG) printf("sending images to gpu.\n");
 	int* dImg1 = NULL;
 	int* dImg2 = NULL;
+	if(DEBUG) printf("allocate space on gpu.\n");
 	if( cudaMalloc(&dImg1,raw_width*raw_height*sizeof(int)) != cudaSuccess ) return -1;
 	if( cudaMalloc(&dImg2,temp_width*temp_height*sizeof(int)) != cudaSuccess ) return -1;
+	if(DEBUG) printf("copy images to gpu.\n");
 	if( cudaMemcpy(dImg1, img1, raw_width*raw_height*sizeof(int), cudaMemcpyHostToDevice) != cudaSuccess ) return -1;
 	if( cudaMemcpy(dImg2, img2, temp_width*temp_height*sizeof(int), cudaMemcpyHostToDevice) != cudaSuccess ) return -1;
 	
@@ -829,6 +965,12 @@ int main(int argc, char** argv)
 	orient1 = (int *)malloc(2*num_interest_points*sizeof(int));
 	calculate_orientation(img1, compact_interest_pts, num_interest_points, orient1, raw_width, raw_height);
 
+	/* calculate descriptors for each interest point */
+	if(DEBUG) printf("calculating descriptors for interest points.\n");
+	float** descriptors = NULL;
+	descriptors = (float**)malloc(num_interest_points*sizeof(float*));
+	calculate_descriptor(img1, compact_interest_pts, num_interest_points, orient1, descriptors, raw_width, raw_height);
+	
 	/****** END IMAGE PROCESSING *******/
 
 	/* copy results back from card */
@@ -860,6 +1002,13 @@ int main(int argc, char** argv)
 	raw_image=NULL;
 	if(temp) free(temp); 
 	temp=NULL;
+	if(descriptors){
+		for(int i=0;i<num_interest_points;i++){
+			if(descriptors[i]) 
+				free(descriptors[i]);
+		}
+		free(descriptors);
+	}
 
 	return 0;
 }
