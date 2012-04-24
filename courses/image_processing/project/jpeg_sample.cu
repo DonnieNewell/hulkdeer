@@ -54,6 +54,7 @@ void convert_to_integral(int *src, size_t width, size_t height){
 	}
 }
 
+
 /**
  * read_jpeg_file Reads from a jpeg file on disk specified by filename and saves into the 
  * raw_image buffer in an uncompressed format.
@@ -611,9 +612,10 @@ int getIndex(int rel_i, int rel_j, int itrst_i, int itrst_j, float angle_rotate,
 
 float angle_between(int x0, int y0, int x1, int y1){
 	float angle = 0.0f;
-	float mag0 = sqrt(x0*x0+y0*y0);
-	float mag1 = sqrt(x1*x1+y1*y1);
-	angle = acos((x0*y0+x1*y1)/(mag0*mag1));
+	float mag0 = sqrtf(x0*x0+y0*y0);
+	float mag1 = sqrtf(x1*x1+y1*y1);
+//	fprintf(stderr,"angle_between:mag0:%f, mag1:%f.\n",mag0,mag1);
+	angle = acosf((x0*y0+x1*y1)/(mag0*mag1));
 	return angle;
 }
 
@@ -628,11 +630,18 @@ void calculate_descriptor(int *img, int* intPoints,int num_interest_points, int*
 	float *neighborhood = NULL;
 
 	for(int int_pt = 0; int_pt < num_interest_points; ++int_pt){
-		if(DEBUG) fprintf(stderr,"calculating descriptor for interest point:%d of %d.\n",int_pt,num_interest_points);
+		orient_i = orient[2*int_pt];
+		orient_j = orient[2*int_pt+1];
+		//printf("orient_i:%d, orient_j:%d\n",orient_i, orient_j);
+		neighborhood = NULL;
+		if(orient_i==0 && orient_j==0) 
+			continue;
+
+		//if(DEBUG) fprintf(stderr,"calculating descriptor for interest point:%d of %d.\n",int_pt,num_interest_points);
 		neighborhood = (float*)malloc(4*8*8*sizeof(float)); //simplifying the neighborhood by not using sub samples
 		//each neighborhood has dx, dy, |dx|, and |dy|
-		
-	
+
+
 		//calculate descriptor for this interest point
 		row = intPoints[int_pt*3];
 		col = intPoints[int_pt*3+1];
@@ -642,13 +651,10 @@ void calculate_descriptor(int *img, int* intPoints,int num_interest_points, int*
 		window_size = 20*scale;
 		step = window_size/8; //this is to evenly space the samples in the window
 		sigma = 3.3*scale;
-		orient_i = orient[2*int_pt];
-		orient_j = orient[2*int_pt+1];
-		
 		//angle between the orientation vector and vertical
-		float angle = angle_between(orient_i,orient_j,1,0);
+		float angle = angle_between(orient_i,orient_j,0,5);
 		
-		if(DEBUG) fprintf(stderr,"calculating Haar responses for the neighborhood.\n");
+		//if(DEBUG) fprintf(stderr,"calculating Haar responses for the neighborhood.\n");
 		//get Haar wavelet responses at each point
 		for(int i = 0; i<8; ++i){
 			for(int j=0; j<8; ++j){
@@ -658,6 +664,7 @@ void calculate_descriptor(int *img, int* intPoints,int num_interest_points, int*
 				float weight = gauss(i_sample,j_sample,sigma);
 				int index = getIndex(i_sample,j_sample,row,col,angle,width,height);
 				
+				//if(index < 0)printf("index:%d <-- getIndex(is:%d,js:%d,r:%d,c:%d,a:%f,w:%d,h:%d);\n",index,i_sample,j_sample,row,col,angle,width,height);
 				float temp = 0.0f;
 				float abs_dx = 0.0f;
 				float abs_dy = 0.0f;
@@ -669,58 +676,62 @@ void calculate_descriptor(int *img, int* intPoints,int num_interest_points, int*
 					index/width < (int)(height-scale) && 
 					index%width < (int)(width-scale)){
 					//down one row
-					temp = haar(img,min((index/width)+1,height-1),index%width, width, height, scale,0,1);
+					temp = weight*haar(img,min((index/width)+1,height-1),index%width, width, height, scale,0,1);
 					abs_dx = fabs(temp);
 					tempdx = temp;
-					temp = haar(img,min((index/width)+1,height-1),index%width, width, height, scale,1,1);
+					temp = weight*haar(img,min((index/width)+1,height-1),index%width, width, height, scale,1,1);
 					abs_dy = fabs(temp);
 					tempdy = temp;
 
 					//up one row
-					temp = haar(img,max((index/width)-1,0),index%width, width, height, scale,0,1);
+					temp = weight*haar(img,max((index/width)-1,0),index%width, width, height, scale,0,1);
 					abs_dx += fabs(temp);
 					tempdx += temp;
-					temp = haar(img,max((index/width)-1,0),index%width, width, height, scale,1,1);
+					temp = weight*haar(img,max((index/width)-1,0),index%width, width, height, scale,1,1);
 					abs_dy += fabs(temp);
 					tempdy += temp;
 
 					//right one column
-					temp = haar(img,index/width,min((index%width)+1,width-1), width, height, scale,0,1);
+					temp = weight*haar(img,index/width,min((index%width)+1,width-1), width, height, scale,0,1);
 					abs_dx += fabs(temp);
 					tempdx += temp;
-					temp = haar(img,index/width,min((index%width)+1,width-1), width, height, scale,1,1);
+					temp = weight*haar(img,index/width,min((index%width)+1,width-1), width, height, scale,1,1);
 					abs_dy += fabs(temp);
 					tempdy += temp;
 
 					//left one column
-					temp = haar(img,index/width,max((index%width)-1,0), width, height, scale,0,1);
+					temp = weight*haar(img,index/width,max((index%width)-1,0), width, height, scale,0,1);
 					abs_dx += fabs(temp);
 					tempdx += temp;
-					temp = haar(img,index/width,max((index%width)-1,0), width, height, scale,1,1);
+					temp = weight*haar(img,index/width,max((index%width)-1,0), width, height, scale,1,1);
 					abs_dy += fabs(temp);
 					tempdy += temp;
+
+					float mag_abs = sqrt(abs_dx*abs_dx+abs_dy*abs_dy);				
+					float mag_temp = sqrt(tempdx*tempdx+tempdy*tempdy);				
+					float a2 = angle_between(tempdx,tempdy,orient_i,orient_j);
+					float a3 = angle_between(abs_dx,abs_dy,orient_i,orient_j);
+					
+					//convert haar vector to be relative to the orientation vector of the interest point.
+					abs_dx = mag_abs*cosf(a3);
+					abs_dy = mag_abs*sinf(a3);
+					tempdx = mag_temp*cosf(a2);
+					tempdy = mag_temp*sinf(a2);
+//					if(abs_dx==0.0f || abs_dy==0.0f || tempdx==0.0f || tempdy==0.0f)
+//						fprintf(stderr,"int_pt:%d -- abs_dx:%f, abs_dy:%f, tempdx:%f, tempdy:%f\n",int_pt,abs_dx,abs_dy,tempdx,tempdy);
+
 				}
-				float mag_abs = sqrt(abs_dx*abs_dx+abs_dy*abs_dy);				
-				float mag_temp = sqrt(tempdx*tempdx+tempdy*tempdy);				
-				float a2 = angle_between(tempdx,tempdy,orient_i,orient_j);
-				float a3 = angle_between(abs_dx,abs_dy,orient_i,orient_j);
-
-				//convert haar vector to be relative to the orientation vector of the interest point.
-				abs_dx = mag_abs*cos(a2);
-				abs_dy = mag_abs*sin(a2);
-				tempdx = mag_temp*cos(a2);
-				tempdy = mag_temp*sin(a2);
-
 				neighborhood[4*(i*8+j)]= tempdx;
 				neighborhood[4*(i*8+j)+1]= abs_dx;
 				neighborhood[4*(i*8+j)+2]= tempdy;
 				neighborhood[4*(i*8+j)+3]= abs_dy;
-				
+
 			}//end for cols
 		}//end for rows
 
 		//we now have the haar
 		descriptors[int_pt]=neighborhood;
+		neighborhood = NULL;
 
 	}//end for interest points
 }//end calc descriptor
@@ -743,28 +754,31 @@ void calculate_orientation(int *img, int* intPoints,int num_interest_points, int
 		scale = (9+itrvl*6)/9;
 		radius = 6*scale;
 		sigma = 2*scale;
-		
-		
+
+
 		//only calculate if there's enough room
 		if(row < radius || row > height-radius || 
-			col < radius || col > width-radius) continue;
+				col < radius || col > width-radius) continue;
 
 		//calculate weighted Haar response values for neighborhood around interest point		
 		int n_width = 2*radius;
 		int in_circle = 0;
 		for(int i= row-radius; i<row+radius; i++){
 			for(int j=col-radius; j<col+radius; j++){
-				int n_row = (i-row-radius);
-				int n_col = j-col-radius;
+				int n_row = (i-row+radius);
+				int n_col = j-col+radius;
 				int delta_row = i-row;
 				int delta_col = j-col;
 				delta_row*= delta_row;
 				delta_col*= delta_col;
 				in_circle = sqrt(delta_row+delta_col) <= radius;
 				if(in_circle){
+					//printf("in the circle***************************************\n");
 					float weight = gauss(delta_row,delta_col,sigma);
-					neighborhood[2*(n_row*n_width+n_col)] = weight*haar(img,i,j,width,height,scale,0, 0);
-					neighborhood[2*(n_row*n_width+n_col)+1] = weight*haar(img,i,j,width,height,scale,1, 0);
+					int tmp_index = 2*(n_row*n_width+n_col);
+					neighborhood[tmp_index] = weight*haar(img,i,j,width,height,scale,0, 0);
+					neighborhood[tmp_index+1] = weight*haar(img,i,j,width,height,scale,1, 0);
+					//printf("neighb[%d]:%f, neighb[%d+1]:%f.\n",tmp_index,neighborhood[tmp_index],tmp_index,neighborhood[tmp_index]);
 				}else{
 					neighborhood[2*(n_row*n_width+n_col)]=0.0f;
 					neighborhood[2*(n_row*n_width+n_col)+1]=0.0f;
@@ -784,9 +798,10 @@ void calculate_orientation(int *img, int* intPoints,int num_interest_points, int
 				for(int j=0; j<2*radius; j++){
 					//haar in y divided by haar in x is the slope to check
 					int index = i*2*radius+j;
-					float angle = neighborhood[2*index+1]/neighborhood[2*index];
+					float angle = angle_between(neighborhood[2*index],neighborhood[2*index+1],0,5);
 					if(angle >=start && angle < stop){
 						//point is in the sliding window
+						//printf("points are being added****************\n");
 						sum_x+=neighborhood[2*index];
 						sum_y+=neighborhood[2*index+1];
 					}
@@ -841,6 +856,45 @@ void get_compact_interest_pts(int *interest_points, int *compact_interest_pts, i
 
 }
 
+bool match_images(float**descriptors1, int num_desc1, float**descriptors2, int num_desc2, float thresh){
+	int num_non_null = 0;
+	int num_match = 0;
+	printf("image1 num_desc1:%d, image2 num_desc2:%d.\n",num_desc1,num_desc2);
+	for(int i = 0; i<min(num_desc1,num_desc2); i++){
+		if(descriptors1[i] != NULL && descriptors2[i] != NULL){
+			num_non_null++;
+			int match = 1;
+			//check all of the descriptors
+			for(int j=0; j<64; j++){
+				if(descriptors1[i][j*4] != descriptors2[i][j*4]  ){
+					match = 0;
+					break;
+				}
+				if(descriptors1[i][j*4+1] != descriptors2[i][j*4+1]){
+					match = 0;
+					break;
+				}
+				if(descriptors1[i][j*4+2] != descriptors2[i][j*4+2]){
+					match = 0;
+					break;
+				}
+				if(descriptors1[i][j*4+3] != descriptors2[i][j*4+3]){
+					match = 0;
+					break;
+				}
+
+			}
+			if(match)
+				num_match++;
+		}
+	}
+	printf("num matched: %d, num_non_null: %d\n",num_match,num_non_null);
+	if(thresh <= num_match/(float)num_non_null)
+		return true;
+	else
+		return false;
+}
+
 int main(int argc, char** argv)
 {
 	if(2 >= argc) {
@@ -876,7 +930,7 @@ int main(int argc, char** argv)
 	if(DEBUG) printf("converting images to integral images.\n");
 	convert_to_integral(img1, raw_width, raw_height);
 	convert_to_integral(img2, temp_width, temp_height);
-	if(DEBUG) {
+	if(0) {
 		int limit = 10;
 		int w = raw_width;
 		int h = raw_height;
@@ -905,12 +959,14 @@ int main(int argc, char** argv)
 	/************************************ create cpu array for calculating hessian to compare */
 	double * hDetHess1 = NULL;
 	hDetHess1 = (double*)malloc(num_filters*raw_width*raw_height*sizeof(double));
+	double * hDetHess2 = NULL;
+	hDetHess2 = (double*)malloc(num_filters*temp_width*temp_height*sizeof(double));
 
 	/* allocate results array for Determinant of Hessian */
 	double * dDetHess1 = NULL;
 	if( cudaMalloc(&dDetHess1,num_filters*raw_width*raw_height*sizeof(double)) != cudaSuccess ) return -1;
 	double * dDetHess2 = NULL;
-	if( cudaMalloc(&dDetHess2,num_filters*raw_width*raw_height*sizeof(double)) != cudaSuccess ) return -1;
+	if( cudaMalloc(&dDetHess2,num_filters*temp_width*temp_height*sizeof(double)) != cudaSuccess ) return -1;
 	
 	/****** IMAGE PROCESSING *******/
 	if(DEBUG) printf("processing images on gpu.\n");
@@ -922,8 +978,9 @@ int main(int argc, char** argv)
 	int filter_increase = 6;
 	int interval = 0;
 	for(int i = 0; i<4; ++i){
-		CPU_calc_det_hessian(img1, hDetHess1, raw_width, raw_height, i, filter_width+i*filter_increase);
+//		CPU_calc_det_hessian(img1, hDetHess1, raw_width, raw_height, i, filter_width+i*filter_increase);
 		calc_det_hessian<<<num_blocks_img1,threads_per_block>>>(dImg1, dDetHess1, raw_width, raw_height, i, filter_width+i*filter_increase);
+		calc_det_hessian<<<num_blocks_img2,threads_per_block>>>(dImg2, dDetHess2, temp_width, temp_height, i, filter_width+i*filter_increase);
 	}
 
 	/* performing non-maximal suppression */
@@ -939,51 +996,79 @@ int main(int argc, char** argv)
 	num_blocks_img2.x=ceil(temp_height/(float)(3*threads_per_block.x));
 	num_blocks_img2.y=ceil(temp_width/(float)(3*threads_per_block.y)); 
 	non_maximal_suppression<<<num_blocks_img1, threads_per_block>>>(dDetHess1, intPoints1, raw_width, raw_height);
+	non_maximal_suppression<<<num_blocks_img2, threads_per_block>>>(dDetHess2, intPoints2, temp_width, temp_height);
 
 
-	
 	/* copy interest points back to host */
 	if(DEBUG) printf("copying interest points back to host.\n");
-	int num_bytes = num_filters*sizeof(int)*raw_width*raw_height;
-	int *interest_points = (int*)malloc(num_bytes);
-	if(cudaMemcpy(interest_points, intPoints1, num_bytes, cudaMemcpyDeviceToHost) != cudaSuccess ) return -1;
-	int num_interest_points = count_interest_points(interest_points,raw_width, raw_height);	
-	num_bytes = 3*num_interest_points*sizeof(int);
-	int *compact_interest_pts = (int*)malloc(num_bytes);
-	get_compact_interest_pts(interest_points, compact_interest_pts, raw_width, raw_height);
+	int num_bytes1 = num_filters*sizeof(int)*raw_width*raw_height;
+	int num_bytes2 = num_filters*sizeof(int)*temp_width*temp_height;
+	int *interest_points1 = (int*)malloc(num_bytes1);
+	int *interest_points2 = (int*)malloc(num_bytes2);
+	if(cudaMemcpy(interest_points1, intPoints1, num_bytes1, cudaMemcpyDeviceToHost) != cudaSuccess ) return -1;
+	if(cudaMemcpy(interest_points2, intPoints2, num_bytes2, cudaMemcpyDeviceToHost) != cudaSuccess ) return -1;
+	int num_interest_points1 = count_interest_points(interest_points1,raw_width, raw_height);	
+	int num_interest_points2 = count_interest_points(interest_points2,temp_width, temp_height);	
+	num_bytes1 = 3*num_interest_points1*sizeof(int);
+	num_bytes2 = 3*num_interest_points2*sizeof(int);
+	int *compact_interest_pts1 = (int*)malloc(num_bytes1);
+	int *compact_interest_pts2 = (int*)malloc(num_bytes2);
+	get_compact_interest_pts(interest_points1, compact_interest_pts1, raw_width, raw_height);
+	get_compact_interest_pts(interest_points2, compact_interest_pts2, temp_width, temp_height);
 	
 	/* clean up memory */
-	if(interest_points){
-	 	free(interest_points);
-		interest_points=NULL;
+	if(interest_points1){
+	 	free(interest_points1);
+		interest_points1=NULL;
+	}
+	if(interest_points2){
+	 	free(interest_points2);
+		interest_points2=NULL;
 	}
 		
 
 	/* get orientation of interest points */
 	if(DEBUG) printf("calculating orientation of interest points.\n");
 	int * orient1= NULL;
-	orient1 = (int *)malloc(2*num_interest_points*sizeof(int));
-	calculate_orientation(img1, compact_interest_pts, num_interest_points, orient1, raw_width, raw_height);
+	int * orient2= NULL;
+	orient1 = (int *)malloc(2*num_interest_points1*sizeof(int));
+	orient2 = (int *)malloc(2*num_interest_points2*sizeof(int));
+	calculate_orientation(img1, compact_interest_pts1, num_interest_points1, orient1, raw_width, raw_height);
+	calculate_orientation(img2, compact_interest_pts2, num_interest_points2, orient2, temp_width, raw_height);
 
 	/* calculate descriptors for each interest point */
 	if(DEBUG) printf("calculating descriptors for interest points.\n");
-	float** descriptors = NULL;
-	descriptors = (float**)malloc(num_interest_points*sizeof(float*));
-	calculate_descriptor(img1, compact_interest_pts, num_interest_points, orient1, descriptors, raw_width, raw_height);
+	float** descriptors1 = NULL;
+	float** descriptors2 = NULL;
+	descriptors1 = (float**)malloc(num_interest_points1*sizeof(float*));
+	descriptors2 = (float**)malloc(num_interest_points2*sizeof(float*));
+	bzero(descriptors1,num_interest_points1*sizeof(float*));
+	bzero(descriptors2,num_interest_points2*sizeof(float*));
+	calculate_descriptor(img1, compact_interest_pts1, num_interest_points1, orient1, descriptors1, raw_width, raw_height);
+	calculate_descriptor(img2, compact_interest_pts2, num_interest_points2, orient2, descriptors2, temp_width, temp_height);
 	
+	/* checking if descriptors match for interest points in the images */
+	if(DEBUG) printf("comparing descriptors between image interest points.\n");
+	if(match_images(descriptors1,num_interest_points1,descriptors2,num_interest_points2,0.1))
+		printf("********************IMAGES HAVE MATCHING INTEREST POINTS*****************************\n");
+	else
+		printf("-----------------DON'T MATCH------------------------------\n");
 	/****** END IMAGE PROCESSING *******/
-
+	
 	/* copy results back from card */
 	if(DEBUG) printf("retrieving results from gpu.\n");
-	num_bytes = num_filters*sizeof(double)*raw_width*raw_height;
-	double *det_hess = (double*)malloc(num_bytes);
-	if(cudaMemcpy(det_hess, dDetHess1, num_bytes, cudaMemcpyDeviceToHost) != cudaSuccess ) return -1;
+	num_bytes1 = num_filters*sizeof(double)*raw_width*raw_height;
+	num_bytes2 = num_filters*sizeof(double)*temp_width*temp_height;
+	double *det_hess1 = (double*)malloc(num_bytes1);
+	double *det_hess2 = (double*)malloc(num_bytes2);
+	if(cudaMemcpy(det_hess1, dDetHess1, num_bytes1, cudaMemcpyDeviceToHost) != cudaSuccess ) return -1;
+	if(cudaMemcpy(det_hess2, dDetHess2, num_bytes2, cudaMemcpyDeviceToHost) != cudaSuccess ) return -2;
 		
 
 	/* Mark up image */
 	//if(DEBUG) printf("marking interest points on image\n");
 	//mark_points(raw_image, interest_points, raw_width, raw_height);
-	int scale = 1;
+	//int scale = 1;
 	//write_interest(raw_image, interest_points, raw_width, raw_height);
 	//write_hessian(raw_image, det_hess, hDetHess1, raw_width, raw_height, scale);
 
@@ -1002,12 +1087,12 @@ int main(int argc, char** argv)
 	raw_image=NULL;
 	if(temp) free(temp); 
 	temp=NULL;
-	if(descriptors){
-		for(int i=0;i<num_interest_points;i++){
-			if(descriptors[i]) 
-				free(descriptors[i]);
+	if(descriptors1){
+		for(int i=0;i<num_interest_points1;i++){
+			if(descriptors1[i]!=NULL) 
+				free(descriptors1[i]);
 		}
-		free(descriptors);
+		free(descriptors1);
 	}
 
 	return 0;
