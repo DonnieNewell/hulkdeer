@@ -7,9 +7,10 @@ using namespace std;
 
 class Decomposition{
   vector<SubDomain3D> domain;
-  void decompose1D(const int);
-  void decompose2D(const int, const int);
-  void decompose3D(const int, const int, const int);
+  void decompose1D(int*, const int);
+  void decompose2D(int*, const int, const int);
+  void decompose3D(int*, const int, const int, const int);
+  void Decomposition::copyBlock(int* , SubDomain3D& , const int ,const int ,const int );
 
   public: 
     Decomposition();
@@ -20,7 +21,7 @@ class Decomposition{
     void addSubDomain(SubDomain3D&);
     SubDomain3D getSubDomain(const int )const;
     int getNumSubDomains()const; 
-    void decompose(const int numDimensions, const int numElements[]);
-};
+    void decompose(int* buffer, const int numDimensions, const int numElements[]);
+};    
 
 #endif

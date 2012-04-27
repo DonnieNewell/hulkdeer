@@ -27,10 +27,10 @@ SubDomain3D::SubDomain3D(int xOffset,int xLength,int yOffset,int yLength,int zOf
 SubDomain3D::~SubDomain3D(){
 	if(buffer != NULL) free(buffer);
 }
-void SubDomain3D::setBuffer(void * buff){
-	buffer = buff;
-}
 
+void SubDomain3D::setBuffer(int* buff){
+    this->buffer=buff;
+}
 void SubDomain3D::setOffset(int dim, int off){
   if(0 <= dim && 3 > dim && 0 <= off)
     offset[dim] = off;
@@ -40,8 +40,8 @@ void SubDomain3D::setLength(int dim, int len){
     length[dim] = len;
 
 }
-int SubDomain3D::getBuffer()const {
-  return this.buffer;
+int* SubDomain3D::getBuffer()const {
+        return this->buffer;
 }
 int SubDomain3D::getOffset(int dim)const {
 
