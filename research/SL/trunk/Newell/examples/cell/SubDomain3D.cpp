@@ -7,12 +7,13 @@ SubDomain3D::SubDomain3D(){
   length[0]=0;
   length[1]=0;
   length[2]=0;
+  buffer = NULL;
 }
 
 SubDomain3D::SubDomain3D(const SubDomain3D& sd){
     (*this) = sd;
   }
-SubDomain3D::SubDomain3D(int xOffset,int xLength,int yOffset,int yLength,int zOffset,int zLength){
+SubDomain3D::SubDomain3D(int xOffset,int xLength,int yOffset,int yLength,int zOffset,int zLength, void* buffer){
 
  
   offset[0]=xOffset;
@@ -21,10 +22,15 @@ SubDomain3D::SubDomain3D(int xOffset,int xLength,int yOffset,int yLength,int zOf
   length[0]=xLength;
   length[1]=yLength;
   length[2]=zLength;
+  this.buffer = buffer;
 }
 SubDomain3D::~SubDomain3D(){
-
+	if(buffer != NULL) free(buffer);
 }
+void SubDomain3D::setBuffer(void * buff){
+	buffer = buff;
+}
+
 void SubDomain3D::setOffset(int dim, int off){
   if(0 <= dim && 3 > dim && 0 <= off)
     offset[dim] = off;
@@ -33,6 +39,9 @@ void SubDomain3D::setLength(int dim, int len){
   if(0 <= dim && 3 > dim && 0 <= len)
     length[dim] = len;
 
+}
+int SubDomain3D::getBuffer()const {
+  return this.buffer;
 }
 int SubDomain3D::getOffset(int dim)const {
 

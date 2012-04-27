@@ -31,6 +31,7 @@ int timesteps;
 
 const int dim_tag = 0;
 const int length_tag = 1;
+const int children_tag = 2;
 const int data_tag = 3;
 // #define BENCH_PRINT
 
@@ -110,7 +111,7 @@ void printResults(int* data, int J, int K, int L)
     printf("\n");
 }
 
-void sendDataToNode(int rank, SubDomain3D s, int* buf, int size){
+void sendDataToNode(int rank, SubDomain3D s){
   
 	//first send number of dimensions
 	int numDim = 0;
@@ -140,27 +141,75 @@ void sendDataToNode(int rank, SubDomain3D s, int* buf, int size){
 	for(int i=0; i<numDim; ++i){
 		total_size *= length[i];
 	}
-	int *staged_data = new int[total_size];
-	for(int i=0; i<total_size; ++i){
-		staged_data[i] = space3D[offset[2]+i/(K*J)][offset[1]+(i%(J*K))/J][offset[0]+(i%J)];
-	}//end for
-	MPI_Isend((void*)staged_data, total_size, MPI_INT, rank,data_tag, MPI_COMM_WORLD, &reqs[2]);
+	//no need to stage the data now that the subdomain class holds a pointer to the data
+	//int *staged_data = new int[total_size];
+	//for(int i=0; i<total_size; ++i){
+	//	staged_data[i] = space3D[offset[2]+i/(K*J)][offset[1]+(i%(J*K))/J][offset[0]+(i%J)];
+	//}//end for
+	MPI_Isend(s.getBuffer(), total_size, MPI_INT, rank,data_tag, MPI_COMM_WORLD, &reqs[2]);
 	
 	
 	//wait for everything to finish
 	MPI_Waitall(3,reqs,MPI_STATUSES_IGNORE);
 	//clean up memory
-	delete staged_data;
+	//delete staged_data;
 }
 
-void sendData(Decomposition& d, int* buf, int size){
-	for(int i=1; i< d.getNumSubDomains(); ++i){
-	//	#ifdef DEBUG
-	//		printf("[%d] sending data to node[%d].\n",0,i);
-	//	#endif
-		sendDataToNode(i,d.getSubDomain(i), buf, size);
+void getNumberOfChildren(int& numChildren){
+	#ifdef DEBUG
+		printf("getting the number of children...\n");
+	#endif
+	/* check to see how many NVIDIA GPU'S ARE AVAILABLE */
+	cudaError_t err = cudaGetDeviceCount(&numChildren);
+	if(cudaSuccess != err){
+		fprintf(stderr, "error detecting cuda-enabled devices\n");
+		exit(1);
+	}
+	
+}
+void sendNumberOfChildren(const int dest_rank, const int numChildren){
+	#ifdef DEBUG
+		printf("sending number of children:%d.\n",numChildren);
+	#endif
+	MPI_Request req;
+	MPI_Isend((void*)&numChildren, 1, MPI_INT, dest_rank, children_tag, MPI_COMM_WORLD, &req);
+	
+	
+	//wait for everything to finish
+	MPI_Waitall(1,&req,MPI_STATUSES_IGNORE);
+	
+}
+
+void receiveNumberOfChildren(int numTasks, int *numChildren){
+	#ifdef DEBUG
+		printf("receiving number of children.\n");
+	#endif
+	MPI_Request *reqs = (MPI_Request*)malloc(sizeof(MPI_Request)*(numTasks-1));	
+	
+	if(numChildren != NULL) free(numChildren);
+
+	numChildren = (int*)malloc((numTasks-1)*sizeof(int));
+
+	for(int i=0; i<numTasks-1; i++){
+		//receive next count
+		MPI_Irecv((void*)&(numChildren[i]), 1, MPI_INT, i+1, children_tag, MPI_COMM_WORLD, &(reqs[i]));
+	}
+	MPI_Waitall(numTasks-1,reqs,MPI_STATUSES_IGNORE);
+#ifdef DEBUG
+	for(int task=0; task < numTasks-1; task++){
+		printf("[0]: child [%d] has %d children.\n",task+1, numChildren[task]);
+	}
+#endif
+	free(reqs);
+	reqs=NULL;
+}
+
+void sendData(int rank, Node& n){
+	for(int i=0; i< n.numSubDomains(); ++i){
+		sendDataToNode(r, n.getSubDomain(i));
 	}
 }
+
 /* output variables: buf, size */
 void receiveData(int rank, int* buf, int *size){
 	MPI_Request reqs[5];
@@ -217,14 +266,14 @@ int main(int argc, char** argv)
 	MPI_Comm_size(MPI_COMM_WORLD, &numTasks);
 	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 	
-	/* check to see how many NVIDIA GPU'S ARE AVAILABLE */
-	cudaError_t err = cudaGetDeviceCount(&deviceCount);
-	if(cudaSuccess != err){
-		fprintf(stderr, "error detecting cuda-enabled devices\n");
-		exit(1);
-	}
-	
+	getNumberOfChildren(deviceCount);
+	printf("children:%d\n",deviceCount);
+
 	if(0==rank){
+	
+		//get the number of children from other nodes
+		int *numChildren=NULL;
+		receiveNumberOfChildren(numTasks, numChildren);
 	
  		#ifdef  DEBUG
 			fprintf(stderr, "[%d] initializing data.\n",rank);
@@ -245,9 +294,12 @@ int main(int argc, char** argv)
   			fprintf(stderr,"[%d] decomposed data into %d chunks.\n",rank, decomp.getNumSubDomains());
  			fprintf(stderr,"[%d] sending data.",rank);
 		#endif
-		sendData(decomp, data, J*K*L);
+		sendData(numTasks-1,decomp, data, J*K*L);
 	}
 	else{
+		//send number of children to root
+		sendNumberOfChildren(0,deviceCount);
+
 		timesteps = atoi(argv[4]);
 		pyramid_height= atoi(argv[5]);
 		receiveData(rank, buffer,&buffSize);
@@ -257,7 +309,7 @@ int main(int argc, char** argv)
 	{
 		// Set iteration count so that kernel is called at least 30 times.
 		// The maximum pyramid height is 3, so iterations = 90.
-		runCell(data, i, i, i, 90, bornMin, bornMax, dieMin, dieMax);
+		//runCell(data, i, i, i, 90, bornMin, bornMax, dieMin, dieMax);
 	}
 #else
 	runCell(data, J, K, L, timesteps, bornMin, bornMax, dieMin, dieMax);

@@ -7,6 +7,7 @@ using namespace std;
 class Node{
   double weight;
   vector<SubDomain3D> subD;
+  vector<Node> children;
 
   public: 
     Node();
