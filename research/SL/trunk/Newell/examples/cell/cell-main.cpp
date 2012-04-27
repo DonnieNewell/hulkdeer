@@ -110,7 +110,7 @@ void printResults(int* data, int J, int K, int L)
     printf("\n");
 }
 
-void sendDataToNode(int rank, SubDomain3D s, int* buf, int size){
+void sendDataToNode(int rank, SubDomain3D& s){
   
 	//first send number of dimensions
 	int numDim = 0;
@@ -135,16 +135,16 @@ void sendDataToNode(int rank, SubDomain3D s, int* buf, int size){
 	#endif
 
 	//third send data  
-	//first we have to stage the data into contiguous memory
-	int total_size=1;
-	for(int i=0; i<numDim; ++i){
-		total_size *= length[i];
-	}
-	int *staged_data = new int[total_size];
-	for(int i=0; i<total_size; ++i){
-		staged_data[i] = space3D[offset[2]+i/(K*J)][offset[1]+(i%(J*K))/J][offset[0]+(i%J)];
-	}//end for
-	MPI_Isend((void*)staged_data, total_size, MPI_INT, rank,data_tag, MPI_COMM_WORLD, &reqs[2]);
+//	//first we have to stage the data into contiguous memory
+//	int total_size=1;
+//	for(int i=0; i<numDim; ++i){
+//		total_size *= length[i];
+//	}
+//	int *staged_data = new int[total_size];
+//	for(int i=0; i<total_size; ++i){
+//		staged_data[i] = space3D[offset[2]+i/(K*J)][offset[1]+(i%(J*K))/J][offset[0]+(i%J)];
+//	}//end for
+	MPI_Isend((void*)s.getBuffer(), total_size, MPI_INT, rank,data_tag, MPI_COMM_WORLD, &reqs[2]);
 	
 	
 	//wait for everything to finish
@@ -153,12 +153,12 @@ void sendDataToNode(int rank, SubDomain3D s, int* buf, int size){
 	delete staged_data;
 }
 
-void sendData(Decomposition& d, int* buf, int size){
-	for(int i=1; i< d.getNumSubDomains(); ++i){
+void sendData(Decomposition& d){
+	//for(int i=1; i< d.getNumSubDomains(); ++i){
 	//	#ifdef DEBUG
 	//		printf("[%d] sending data to node[%d].\n",0,i);
 	//	#endif
-		sendDataToNode(i,d.getSubDomain(i), buf, size);
+		sendDataToNode(i,d.getSubDomain(i));
 	}
 }
 /* output variables: buf, size */
@@ -166,6 +166,7 @@ void receiveData(int rank, int* buf, int *size){
 	MPI_Request reqs[5];
 	int numDim = 0;
 	int length[3];
+        int *buffer = NULL;
 	//receive dimensionality of data
 	#ifdef DEBUG
 		fprintf(stderr,"[%d] receiving dimensionality from Node %d.\n",rank,0);
@@ -239,7 +240,7 @@ int main(int argc, char** argv)
 		/* perform domain decomposition */
 		Decomposition decomp;
 		int numElements[3] = {J,K,L};
-		decomp.decompose(3,numElements);
+		decomp.decompose(data,3,numElements);
 
 		#ifdef DEBUG
   			fprintf(stderr,"[%d] decomposed data into %d chunks.\n",rank, decomp.getNumSubDomains());
