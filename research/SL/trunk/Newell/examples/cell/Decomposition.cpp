@@ -16,6 +16,7 @@ Decomposition& Decomposition::operator=(const Decomposition& d){
   for ( int i=0; i<d.getNumSubDomains(); ++i){
     this->domain.push_back(d.getSubDomain(i));
   }
+return *this;
 }
 SubDomain3D Decomposition::getSubDomain(const int index)const {
   SubDomain3D s = this->domain.at(index);
@@ -35,7 +36,7 @@ void Decomposition::decompose1D(int* buffer, const int numElementsX){
     const int num_chunks = 64;
     int stride = numElementsX/num_chunks;
 
-    for(int i=0; i < domain.size(); ++i){
+    for(size_t i=0; i < domain.size(); ++i){
       SubDomain3D& s = domain.at(i);
       
       
@@ -55,7 +56,7 @@ void Decomposition::decompose2D(int* buffer, const int numElementsRows,const int
     int x_chunk_width = numElementsRows/num_chunks;
     int y_chunk_width = numElementsCols/num_chunks;
 
-    for(int i=0; i < domain.size(); ++i){
+    for(size_t i=0; i < domain.size(); ++i){
       SubDomain3D& s = domain.at(i);
       s.setLength(0, x_chunk_width);
       s.setOffset(0, numElementsRows - numLeftX);
@@ -86,8 +87,7 @@ void Decomposition::copyBlock(int* buffer, SubDomain3D& s, const int numElements
     }
     
     //make sure there's not a memory leak
-    void* tmp = (void*)s.getBuffer();
-    if(NULL != tmp){ delete tmp; }
+    if(NULL != s.getBuffer()){ delete s.getBuffer(); }
     
     //put new memory block in sub-domain
     s.setBuffer(newBuff);

@@ -10,7 +10,7 @@ class Decomposition{
   void decompose1D(int*, const int);
   void decompose2D(int*, const int, const int);
   void decompose3D(int*, const int, const int, const int);
-  void Decomposition::copyBlock(int* , SubDomain3D& , const int ,const int ,const int );
+  void copyBlock(int* , SubDomain3D& , const int ,const int ,const int );
 
   public: 
     Decomposition();

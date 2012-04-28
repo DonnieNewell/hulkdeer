@@ -137,10 +137,10 @@ void sendDataToNode(int rank, SubDomain3D& s){
 
 	//third send data  
 //	//first we have to stage the data into contiguous memory
-//	int total_size=1;
-//	for(int i=0; i<numDim; ++i){
-//		total_size *= length[i];
-//	}
+	int total_size=1;
+	for(int i=0; i<numDim; ++i){
+		total_size *= length[i];
+	}
 //	int *staged_data = new int[total_size];
 //	for(int i=0; i<total_size; ++i){
 //		staged_data[i] = space3D[offset[2]+i/(K*J)][offset[1]+(i%(J*K))/J][offset[0]+(i%J)];
@@ -166,14 +166,6 @@ void getNumberOfChildren(int& numChildren){
 	}
 }
 
-void sendData(Decomposition& d){
-	//for(int i=1; i< d.getNumSubDomains(); ++i){
-	//	#ifdef DEBUG
-	//		printf("[%d] sending data to node[%d].\n",0,i);
-	//	#endif
-		sendDataToNode(i,d.getSubDomain(i));
-}
-	
 
 void sendNumberOfChildren(const int dest_rank, const int numChildren){
 	#ifdef DEBUG
@@ -212,9 +204,9 @@ void receiveNumberOfChildren(int numTasks, int *numChildren){
 	reqs=NULL;
 }
 
-void sendData(int rank, Node& n){
+void sendData(Node& n){
 	for(int i=0; i< n.numSubDomains(); ++i){
-		sendDataToNode(r, n.getSubDomain(i));
+		sendDataToNode(n.getRank(), n.getSubDomain(i));
 	}
 }
 
@@ -223,7 +215,7 @@ void receiveData(int rank, int* buf, int *size){
 	MPI_Request reqs[5];
 	int numDim = 0;
 	int length[3];
-        int *buffer = NULL;
+        //int *buffer = NULL;
 	//receive dimensionality of data
 	#ifdef DEBUG
 		fprintf(stderr,"[%d] receiving dimensionality from Node %d.\n",rank,0);
@@ -303,7 +295,11 @@ int main(int argc, char** argv)
   			fprintf(stderr,"[%d] decomposed data into %d chunks.\n",rank, decomp.getNumSubDomains());
  			fprintf(stderr,"[%d] sending data.",rank);
 		#endif
-		sendData(numTasks-1,decomp, data, J*K*L);
+		//this is commented out so that it will compile and we can test that the domain 
+		//decomposition is working correctly
+		//then we will handle the load balancing aspect
+		//once we have the machine graph represented, then we can send the data.
+		//sendData(numTasks-1,decomp, data, J*K*L);
 	}
 	else{
 		//send number of children to root

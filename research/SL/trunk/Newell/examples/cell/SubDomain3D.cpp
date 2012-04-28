@@ -1,4 +1,5 @@
 #include "SubDomain3D.h"
+#include <cstddef>
 
 SubDomain3D::SubDomain3D(){
   offset[0]=0;
@@ -13,7 +14,7 @@ SubDomain3D::SubDomain3D(){
 SubDomain3D::SubDomain3D(const SubDomain3D& sd){
     (*this) = sd;
   }
-SubDomain3D::SubDomain3D(int xOffset,int xLength,int yOffset,int yLength,int zOffset,int zLength, void* buffer){
+SubDomain3D::SubDomain3D(int xOffset,int xLength,int yOffset,int yLength,int zOffset,int zLength, int* buffer){
 
  
   offset[0]=xOffset;
@@ -22,10 +23,10 @@ SubDomain3D::SubDomain3D(int xOffset,int xLength,int yOffset,int yLength,int zOf
   length[0]=xLength;
   length[1]=yLength;
   length[2]=zLength;
-  this.buffer = buffer;
+  this->buffer = buffer;
 }
 SubDomain3D::~SubDomain3D(){
-	if(buffer != NULL) free(buffer);
+	if(buffer != NULL) delete (buffer);
 }
 
 void SubDomain3D::setBuffer(int* buff){

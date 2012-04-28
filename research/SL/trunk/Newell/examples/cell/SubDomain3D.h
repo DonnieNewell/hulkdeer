@@ -8,7 +8,7 @@ class SubDomain3D{
   public: 
     SubDomain3D();
     SubDomain3D(const SubDomain3D&);
-    SubDomain3D(int, int, int, int, int, int);
+    SubDomain3D(int, int, int, int, int, int, int*);
     SubDomain3D& operator=(const SubDomain3D &);
     ~SubDomain3D();
    void setBuffer(int* buff);	
