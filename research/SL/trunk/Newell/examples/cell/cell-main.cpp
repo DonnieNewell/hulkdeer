@@ -31,10 +31,7 @@ int*** space3D;
 int pyramid_height;
 int timesteps;
 
-const int dim_tag = 0;
-const int length_tag = 1;
-const int children_tag = 2;
-const int data_tag = 3;
+enum MPITagType {xDim = 0, xLength = 1, xChildren = 2, xDevice = 3, xData = 4, xNumBlocks = 5, xOffset = 6};
 // #define BENCH_PRINT
 
 void
@@ -113,7 +110,8 @@ void printResults(int* data, int J, int K, int L)
     printf("\n");
 }
 
-void sendDataToNode(int rank, SubDomain3D& s){
+void sendDataToNode(int rank, int device, SubDomain3D& s){
+
   
 	//first send number of dimensions
 	int numDim = 0;
@@ -126,13 +124,15 @@ void sendDataToNode(int rank, SubDomain3D& s){
 		offset[i]=s.getOffset(i);
 		if(length[i]>0) numDim++;
 	}  
-	#ifdef DEBUG
+	MPI_Isend((void*)&device, 1, MPI_INT, rank,xDevice, MPI_COMM_WORLD, &reqs[0]);
+	#ifdef NOT_DEFINED
 		printf("[%d] sending %dD data to Node %d.\n",0,numDim,rank);
 	#endif
-	MPI_Isend((void*)&numDim, 1, MPI_INT, rank,dim_tag, MPI_COMM_WORLD, &reqs[0]);
+	MPI_Isend((void*)&numDim, 1, MPI_INT, rank,xDim, MPI_COMM_WORLD, &reqs[1]);
         //second send size of each dimension
-	MPI_Isend((void*)length, 3, MPI_INT, rank,length_tag, MPI_COMM_WORLD, &reqs[1]);
-	#ifdef DEBUG
+	MPI_Isend((void*)length, 3, MPI_INT, rank,xLength, MPI_COMM_WORLD, &reqs[2]);
+	MPI_Isend((void*)offset, 3, MPI_INT, rank,xOffset, MPI_COMM_WORLD, &reqs[3]);
+	#ifdef NOT_DEFINED
 		printf("[%d] sending [%d][%d][%d] data to Node %d.\n",0,length[2],length[1],length[0],rank);
 		printf("[%d] sending %dX%dX%d offsets to Node %d.\n",0,offset[2],offset[1],offset[0],rank);
 	#endif
@@ -147,17 +147,17 @@ void sendDataToNode(int rank, SubDomain3D& s){
 //	for(int i=0; i<total_size; ++i){
 //		staged_data[i] = space3D[offset[2]+i/(K*J)][offset[1]+(i%(J*K))/J][offset[0]+(i%J)];
 //	}//end for
-	MPI_Isend((void*)s.getBuffer(), total_size, MPI_INT, rank,data_tag, MPI_COMM_WORLD, &reqs[2]);
+	MPI_Isend((void*)s.getBuffer(), total_size, MPI_INT, rank,xData, MPI_COMM_WORLD, &reqs[4]);
 	
 	
 	//wait for everything to finish
-	MPI_Waitall(3,reqs,MPI_STATUSES_IGNORE);
+	MPI_Waitall(5,reqs,MPI_STATUSES_IGNORE);
 	//clean up memory
 	//delete staged_data;
 }
 
 void getNumberOfChildren(int& numChildren){
-	#ifdef DEBUG
+	#ifdef NOT_DEFINED
 		printf("getting the number of children...\n");
 	#endif
 	/* check to see how many NVIDIA GPU'S ARE AVAILABLE */
@@ -170,11 +170,11 @@ void getNumberOfChildren(int& numChildren){
 
 
 void sendNumberOfChildren(const int dest_rank, const int numChildren){
-	#ifdef DEBUG
+	#ifdef NOT_DEFINED
 		printf("sending number of children:%d.\n",numChildren);
 	#endif
 	MPI_Request req;
-	MPI_Isend((void*)&numChildren, 1, MPI_INT, dest_rank, children_tag, MPI_COMM_WORLD, &req);
+	MPI_Isend((void*)&numChildren, 1, MPI_INT, dest_rank, xChildren, MPI_COMM_WORLD, &req);
 	
 	
 	//wait for everything to finish
@@ -183,7 +183,7 @@ void sendNumberOfChildren(const int dest_rank, const int numChildren){
 }
 
 void receiveNumberOfChildren(int numTasks, Cluster &cluster){
-	#ifdef DEBUG
+	#ifdef NOT_DEFINED
 		printf("receiving number of children.\n");
 	#endif
 	MPI_Request *reqs = (MPI_Request*)malloc(sizeof(MPI_Request)*(numTasks-1));	
@@ -193,7 +193,7 @@ void receiveNumberOfChildren(int numTasks, Cluster &cluster){
 
 	for(int i=0; i<numTasks-1; i++){
 		//receive next count
-		MPI_Irecv((void*)&(numChildren[i]), 1, MPI_INT, i+1, children_tag, MPI_COMM_WORLD, &(reqs[i]));
+		MPI_Irecv((void*)&(numChildren[i]), 1, MPI_INT, i+1, xChildren, MPI_COMM_WORLD, &(reqs[i]));
 	}
 	MPI_Waitall(numTasks-1,reqs,MPI_STATUSES_IGNORE);
 	for(int task=0; task < numTasks-1; task++){
@@ -210,52 +210,115 @@ void receiveNumberOfChildren(int numTasks, Cluster &cluster){
 }
 
 void sendData(Node& n){
-	for(int i=0; i< n.numSubDomains(); ++i){
-		sendDataToNode(n.getRank(), n.getSubDomain(i));
+	//count how many task blocks, total, are going to be sent
+	int total = n.numSubDomains();
+	for(int child=0; child < n.getNumChildren(); ++child){
+		total += n.getChild(child).numSubDomains();
 	}
+
+	//send node number of blocks
+	MPI_Request req;
+	MPI_Isend((void*)&total, 1, MPI_INT, n.getRank(),xNumBlocks,MPI_COMM_WORLD, &req);
+
+	int device = -1;
+	for(int i=0; i< n.numSubDomains(); ++i){
+		sendDataToNode(n.getRank(),device, n.getSubDomain(i));
+	}
+	for(int child=0; child < n.getNumChildren(); ++child){
+		for(int i=0; i< n.getChild(child).numSubDomains(); ++i){
+			sendDataToNode(n.getRank(), device, n.getChild(child).getSubDomain(i));
+		}
+		
+	}
+	//wait for first send to finish
+	MPI_Waitall(1,&req, MPI_STATUSES_IGNORE);
 }
 
+
 /* output variables: buf, size */
-void receiveData(int rank, int* buf, int *size){
+void receiveDataFromNode(int rank,int& device, SubDomain3D &s){
 	MPI_Request reqs[5];
 	int numDim = 0;
 	int length[3];
+	int offset[3];
         //int *buffer = NULL;
 	//receive dimensionality of data
-	#ifdef DEBUG
+	MPI_Irecv((void*)&device, 1, MPI_INT, rank, xDevice, MPI_COMM_WORLD,  &reqs[0]);
+	#ifdef NOT_DEFINED
 		fprintf(stderr,"[%d] receiving dimensionality from Node %d.\n",rank,0);
 	#endif
-	MPI_Irecv((void*)&numDim, 1, MPI_INT, 0, dim_tag, MPI_COMM_WORLD,  &reqs[0]);
+	MPI_Irecv((void*)&numDim, 1, MPI_INT, rank, xDim, MPI_COMM_WORLD,  &reqs[1]);
 
 	//receive size of data
-	#ifdef DEBUG
+	#ifdef NOT_DEFINED 
 		fprintf(stderr,"[%d] receiving size of data from Node %d.\n",rank,0);
 	#endif
-	MPI_Irecv((void*)length, 3, MPI_INT, 0, length_tag, MPI_COMM_WORLD,  &reqs[1]);
+	MPI_Irecv((void*)length, 3, MPI_INT, rank, xLength, MPI_COMM_WORLD,  &reqs[2]);
+	MPI_Irecv((void*)offset, 3, MPI_INT, rank, xOffset, MPI_COMM_WORLD,  &reqs[3]);
 
-	*size=1;
+	MPI_Waitall(4,reqs,MPI_STATUSES_IGNORE);
+
+	int size=1;
 	for(int i =0; i<numDim; ++i){
-		(*size) *= length[i];
+		s.setLength(i, length[i]);
+		s.setOffset(i, offset[i]);
+		size *= length[i];
 	}
 
-	MPI_Waitall(2,reqs,MPI_STATUSES_IGNORE);
 	//allocates data memory and sets up 2d and 3d data pointers
-	initData(length);
+	//initData(length);
 
-	#ifdef DEBUG
+	//needs to be set by compiler. DTYPE maybe?
+	int* buf = new int[size];
+	#ifdef NOT_DEFINED
 		fprintf(stderr,"[%d] about to receive data from Node %d.\n",rank,0);
 	#endif
-	MPI_Irecv((void*)buf, *size, MPI_INT, 0, data_tag, MPI_COMM_WORLD,  &reqs[2]);
+	//MPI_INT needs to be set by compiler. DTYPE maybe?
+	MPI_Irecv((void*)buf, size, MPI_INT, rank, xData, MPI_COMM_WORLD,  &reqs[4]);
 
 	//wait for everything to finish
 	MPI_Waitall(1,reqs,MPI_STATUSES_IGNORE);
-	#ifdef DEBUG
-		printf("[%d] received %dD data from %d.\n",rank,numDim,0); 
-		printf("[%d] received [%d][%d][%d] length data from  %d.\n",rank,length[2],length[1],length[0],0); 
+	#ifdef NOT_DEFINED 
+		printf("received %dD data from %d.\n",numDim,rank); 
+		printf("received [%d][%d][%d] length data from  %d.\n",length[2],length[1],length[0],rank); 
 	#endif
+
+	s.setBuffer(buf);
 
 }
 
+void receiveData(int rank, Node& n){
+	//receive number of task blocks that will be sent
+	int numTaskBlocks=0;
+	MPI_Status stat;
+	MPI_Recv((void*)&numTaskBlocks,1, MPI_INT, rank, xNumBlocks, MPI_COMM_WORLD, &stat);
+	
+	for(int block = 0; block<numTaskBlocks; ++block){
+		SubDomain3D s;
+		int device = -1;
+		receiveDataFromNode(rank, device, s);
+		if(-1 == device)
+		{
+			//add block to cpu queue
+			n.addSubDomain(s);
+		}
+		else
+		{
+			//add block to gpu queue
+			n.getChild(device).addSubDomain(s);
+		}
+	}
+}
+
+void processSubDomain(SubDomain3D &task, int timesteps, int bornMin, int bornMax, int dieMin, int dieMax){
+	//DTYPE?
+	int* buff = task.getBuffer();
+	int depth = task.getLength(0);
+	int height = task.getLength(1);
+	int width = task.getLength(2);
+	runCell(buff, depth, height, width, timesteps, bornMin, bornMax, dieMin, dieMax);
+
+}
 
 int bornMin = 5, bornMax = 8;
 int dieMax = 3, dieMin = 10;
@@ -263,6 +326,8 @@ int dieMax = 3, dieMin = 10;
 int main(int argc, char** argv)
 {
 	int numTasks, rank, rc, *buffer, buffSize,deviceCount=0;
+	Node myWork;
+
 	rc = MPI_Init(&argc, &argv);
 	if (rc != MPI_SUCCESS){
 		fprintf(stderr, "Error initializing MPI.\n");
@@ -271,6 +336,7 @@ int main(int argc, char** argv)
 
 	MPI_Comm_size(MPI_COMM_WORLD, &numTasks);
 	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+	myWork.setRank(rank);
 	
 	getNumberOfChildren(deviceCount);
 	printf("[%d] children:%d\n",rank,deviceCount);
@@ -301,6 +367,7 @@ int main(int argc, char** argv)
 		Balancer lb;
 		lb.balance(cluster,decomp);
 		
+		printCluster(cluster);
 		#ifdef DEBUG
   			fprintf(stderr,"[%d] decomposed data into %d chunks.\n",rank, decomp.getNumSubDomains());
  			fprintf(stderr,"[%d] sending data.",rank);
@@ -309,7 +376,9 @@ int main(int argc, char** argv)
 		//decomposition is working correctly
 		//then we will handle the load balancing aspect
 		//once we have the machine graph represented, then we can send the data.
-		//sendData(numTasks-1,decomp, data, J*K*L);
+		for(int node=1; node < cluster.getNumNodes(); ++node){
+			sendData(cluster.getNode(node));
+		}
 	}
 	else{
 		//send number of children to root
@@ -317,7 +386,18 @@ int main(int argc, char** argv)
 
 		timesteps = atoi(argv[4]);
 		pyramid_height= atoi(argv[5]);
-		receiveData(rank, buffer,&buffSize);
+		receiveData(0, myWork);
+#ifdef DEBUG
+		fprintf(stderr, "[%d] processing %d task blocks.\n",rank,myWork.numSubDomains());
+#endif
+		for(int task=0; task<myWork.numSubDomains(); ++task){
+			processSubDomain(myWork.getSubDomain(task),timesteps, bornMin, bornMax, dieMin, dieMax);
+		}
+		for(int child=0; child<myWork.getNumChildren(); ++child){
+#ifdef DEBUG
+			fprintf(stderr, "[%d] child [%d] processing %d task blocks.\n",rank,child,myWork.getChild(child).numSubDomains());
+#endif
+		}
 	}
 #ifdef STATISTICS
 	for (int i=40; i<=J; i += 20)
@@ -327,6 +407,7 @@ int main(int argc, char** argv)
 		//runCell(data, i, i, i, 90, bornMin, bornMax, dieMin, dieMax);
 	}
 #else
+
 	runCell(data, J, K, L, timesteps, bornMin, bornMax, dieMin, dieMax);
 
 #ifdef BENCH_PRINT

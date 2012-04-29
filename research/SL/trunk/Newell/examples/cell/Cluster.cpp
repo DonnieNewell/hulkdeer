@@ -1,4 +1,5 @@
 #include "Cluster.h"
+#include <cstdio>
 
 Cluster::Cluster(){
 
@@ -21,4 +22,10 @@ Node& Cluster::getNode(int index){
 
 int Cluster::getNumNodes(){
 	return nodes.size();
+}
+
+void printCluster(Cluster& c){
+  	for(int node=0; node < c.getNumNodes(); node++){
+		printf("node:%d has %d tasks.\n",node,c.getNode(node).numSubDomains());
+	}
 }

@@ -31,7 +31,7 @@ SubDomain3D::~SubDomain3D(){
 }
 
 void SubDomain3D::setBuffer(int* buff){
-    #ifdef DEBUG
+    #ifdef NOT_DEFINED
 	fprintf(stderr, "SubDomain3D::setBuffer(this=0x%x, buff=0x%x)\n",this,buff);
     #endif
     this->buffer=buff;

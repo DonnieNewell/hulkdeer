@@ -14,5 +14,5 @@ class Cluster{
 		int getNumNodes();
 };
 
-
+void printCluster(Cluster &c);
 #endif 
