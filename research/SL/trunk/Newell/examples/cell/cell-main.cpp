@@ -12,7 +12,9 @@
 #include <stdio.h>
 #include <time.h>
 #include "cell.h"
+#include "Cluster.h"
 #include "Decomposition.h"
+#include "Balancer.h"
 #include "../Model.h"
 #include "mpi.h"
 
@@ -180,28 +182,31 @@ void sendNumberOfChildren(const int dest_rank, const int numChildren){
 	
 }
 
-void receiveNumberOfChildren(int numTasks, int *numChildren){
+void receiveNumberOfChildren(int numTasks, Cluster &cluster){
 	#ifdef DEBUG
 		printf("receiving number of children.\n");
 	#endif
 	MPI_Request *reqs = (MPI_Request*)malloc(sizeof(MPI_Request)*(numTasks-1));	
 	
-	if(numChildren != NULL) free(numChildren);
 
-	numChildren = (int*)malloc((numTasks-1)*sizeof(int));
+	int* numChildren = (int*)malloc((numTasks-1)*sizeof(int));
 
 	for(int i=0; i<numTasks-1; i++){
 		//receive next count
 		MPI_Irecv((void*)&(numChildren[i]), 1, MPI_INT, i+1, children_tag, MPI_COMM_WORLD, &(reqs[i]));
 	}
 	MPI_Waitall(numTasks-1,reqs,MPI_STATUSES_IGNORE);
-#ifdef DEBUG
 	for(int task=0; task < numTasks-1; task++){
+#ifdef DEBUG
 		printf("[0]: child [%d] has %d children.\n",task+1, numChildren[task]);
-	}
 #endif
+		cluster.getNode(task+1).setNumChildren(numChildren[task]);
+	}
+
 	free(reqs);
 	reqs=NULL;
+	free(numChildren);
+	numChildren = NULL;
 }
 
 void sendData(Node& n){
@@ -268,13 +273,14 @@ int main(int argc, char** argv)
 	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 	
 	getNumberOfChildren(deviceCount);
-	printf("children:%d\n",deviceCount);
+	printf("[%d] children:%d\n",rank,deviceCount);
 
 	if(0==rank){
 	
 		//get the number of children from other nodes
-		int *numChildren=NULL;
-		receiveNumberOfChildren(numTasks, numChildren);
+		Cluster cluster(numTasks);
+		cluster.getNode(0).setNumChildren(deviceCount);
+		receiveNumberOfChildren(numTasks, cluster);
 	
  		#ifdef  DEBUG
 			fprintf(stderr, "[%d] initializing data.\n",rank);
@@ -290,7 +296,11 @@ int main(int argc, char** argv)
 		Decomposition decomp;
 		int numElements[3] = {J,K,L};
 		decomp.decompose(data,3,numElements);
-
+	
+		/* now perform the load balancing, assigning task blocks to each node */
+		Balancer lb;
+		lb.balance(cluster,decomp);
+		
 		#ifdef DEBUG
   			fprintf(stderr,"[%d] decomposed data into %d chunks.\n",rank, decomp.getNumSubDomains());
  			fprintf(stderr,"[%d] sending data.",rank);

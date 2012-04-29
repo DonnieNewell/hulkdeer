@@ -1,5 +1,6 @@
 #include "SubDomain3D.h"
 #include <cstddef>
+#include <cstdio>
 
 SubDomain3D::SubDomain3D(){
   offset[0]=0;
@@ -26,10 +27,13 @@ SubDomain3D::SubDomain3D(int xOffset,int xLength,int yOffset,int yLength,int zOf
   this->buffer = buffer;
 }
 SubDomain3D::~SubDomain3D(){
-	if(buffer != NULL) delete (buffer);
+//	if(buffer != NULL) delete (buffer);
 }
 
 void SubDomain3D::setBuffer(int* buff){
+    #ifdef DEBUG
+	fprintf(stderr, "SubDomain3D::setBuffer(this=0x%x, buff=0x%x)\n",this,buff);
+    #endif
     this->buffer=buff;
 }
 void SubDomain3D::setOffset(int dim, int off){
@@ -68,7 +72,7 @@ SubDomain3D& SubDomain3D::operator=(const SubDomain3D &sd) {
 		length[0]=sd.getLength(0);
 		length[1]=sd.getLength(1);
 		length[2]=sd.getLength(2);
-
+		buffer = sd.getBuffer();
 	}
 
     return *this;

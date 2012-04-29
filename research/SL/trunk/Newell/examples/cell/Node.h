@@ -13,12 +13,16 @@ class Node{
   public: 
     Node();
     Node(double);
+    Node(const Node&);
     ~Node();
     void addSubDomain(const SubDomain3D&);	
     void setWeight(double);
     void setRank(int);
+    void setNumChildren(int);
+    const int getNumChildren() const;
     const int getRank() const;
     SubDomain3D& getSubDomain(int index) ;	
+    Node& getChild(int index) ;	
     const int numSubDomains() const;
     const double getWeight() const;
 };

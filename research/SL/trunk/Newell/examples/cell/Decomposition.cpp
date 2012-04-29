@@ -18,9 +18,12 @@ Decomposition& Decomposition::operator=(const Decomposition& d){
   }
 return *this;
 }
-SubDomain3D Decomposition::getSubDomain(const int index)const {
-  SubDomain3D s = this->domain.at(index);
+SubDomain3D& Decomposition::getSubDomain(const int index) const{
+  SubDomain3D s =  this->domain.at(index);
   return s;
+}
+SubDomain3D& Decomposition::getSubDomain(const int index){
+  return this->domain.at(index);
 }
 
 int Decomposition::getNumSubDomains() const {
@@ -68,6 +71,8 @@ void Decomposition::decompose2D(int* buffer, const int numElementsRows,const int
     } 
   }
 }//end decompose2D
+
+
 void Decomposition::copyBlock(int* buffer, SubDomain3D& s, const int numElementsDepth,const int numElementsRows,const int numElementsCols){
     int* newBuff = NULL;
     int totalSize = s.getLength(0)*s.getLength(1)*s.getLength(2);
@@ -86,26 +91,26 @@ void Decomposition::copyBlock(int* buffer, SubDomain3D& s, const int numElements
         }
     }
     
-    //make sure there's not a memory leak
-    if(NULL != s.getBuffer()){ delete s.getBuffer(); }
-    
     //put new memory block in sub-domain
     s.setBuffer(newBuff);
 }//end copyBlock
 
 void Decomposition::decompose3D(int* buffer, const int numElementsDepth,const int numElementsRows,const int numElementsCols){
+#ifdef DEBUG
   fprintf(stdout, "entering decompose3D\n");
+#endif
   int width = 4;  
   int blockDimDepth = static_cast<int>((numElementsDepth/(double)width)+.5);
   int blockDimHeight =  static_cast<int>((numElementsRows/(double)width)+.5);
   int blockDimWidth =  static_cast<int>((numElementsCols/(double)width)+.5);
-  SubDomain3D s;
+#ifdef DEBUG
   fprintf(stdout, "clearing domain vector decompose3D\n");
+#endif
   domain.clear();
   for(int i=0; i < width; ++i){
     for(int j=0; j < width; ++j){
       for(int k=0; k < width; ++k){
-      
+	SubDomain3D s;
         s.setLength(0, blockDimDepth);
         s.setOffset(0, blockDimDepth*i);
         s.setLength(1, blockDimHeight);
@@ -117,6 +122,7 @@ void Decomposition::decompose3D(int* buffer, const int numElementsDepth,const in
         copyBlock(buffer,s,numElementsDepth, numElementsRows, numElementsCols);
       
 	domain.push_back(s);
+	s.setBuffer(NULL);
       }
     }
   }
