@@ -11,7 +11,7 @@ Cluster::~Cluster(){
 
 Cluster::Cluster(int numNodes){
 	nodes.resize(numNodes);
-	for(int rank=0;rank<nodes.size();++rank){
+	for(size_t rank=0;rank<nodes.size();++rank){
 		nodes.at(rank).setRank(rank);
 	}
 }

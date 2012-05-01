@@ -18,9 +18,8 @@ Decomposition& Decomposition::operator=(const Decomposition& d){
   }
 return *this;
 }
-SubDomain3D& Decomposition::getSubDomain(const int index) const{
-  SubDomain3D s =  this->domain.at(index);
-  return s;
+const SubDomain3D& Decomposition::getSubDomain(const int index) const{
+  return this->domain.at(index);
 }
 SubDomain3D& Decomposition::getSubDomain(const int index){
   return this->domain.at(index);

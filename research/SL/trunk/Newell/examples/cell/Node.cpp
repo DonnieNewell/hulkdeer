@@ -15,6 +15,16 @@ Node::Node(double wt):weight(wt){
 Node::~Node(){
 
 }
+Node& Node::operator=(const Node& rhs){
+	//if setting equal to itself, do nothing
+	if(this != &rhs){
+		this->weight = rhs.weight;
+		this->rank = rhs.rank;
+		this->subD = rhs.subD;
+		this->children = rhs.children;
+	}
+	return *this;
+}
 void Node::setRank(int newRank){
   this->rank = newRank;
 }

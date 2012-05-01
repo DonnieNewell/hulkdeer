@@ -27,7 +27,7 @@ SubDomain3D::SubDomain3D(int xOffset,int xLength,int yOffset,int yLength,int zOf
   this->buffer = buffer;
 }
 SubDomain3D::~SubDomain3D(){
-//	if(buffer != NULL) delete (buffer);
+//	if(buffer != NULL) delete [] buffer;
 }
 
 void SubDomain3D::setBuffer(int* buff){

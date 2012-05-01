@@ -16,7 +16,7 @@ void Balancer::balance(Cluster &cluster, Decomposition& decomp){
 	int subd_per_node = ceil(decomp.getNumSubDomains()/(float)cluster.getNumNodes());
 	for(int node = 0; node < cluster.getNumNodes(); ++node){
 #ifdef DEBUG
-		fprintf(stderr, "node:%d\n",node);
+		fprintf(stderr, "node:%d weight:%f gets %d tasks\n",node,cluster.getNode(node).getWeight(), subd_per_node);
 #endif
 		Node& n = cluster.getNode(node);
 		for(int subd=0; subd<subd_per_node; ++subd){
