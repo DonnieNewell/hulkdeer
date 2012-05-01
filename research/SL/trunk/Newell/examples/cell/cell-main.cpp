@@ -31,7 +31,7 @@ int*** space3D;
 int pyramid_height;
 int timesteps;
 
-enum MPITagType {xDim = 0, xLength = 1, xChildren = 2, xDevice = 3, xData = 4, xNumBlocks = 5, xOffset = 6};
+enum MPITagType {xDim = 0, xLength = 1, xChildren = 2, xDevice = 3, xData = 4, xNumBlocks = 5, xOffset = 6, xWeight = 7};
 // #define BENCH_PRINT
 
 void
@@ -233,7 +233,33 @@ void sendData(Node& n){
 	//wait for first send to finish
 	MPI_Waitall(1,&req, MPI_STATUSES_IGNORE);
 }
+void benchmarkNode(Node& n, SubDomain3D& s)
+{
+	//send task block to every device on that node
+	sendDataToNode(n.getRank(), -1, s);
 
+	//receive results for each device
+	int total = n.getNumChildren()+1;
+
+	MPI_Request* reqs = NULL;
+	reqs = new MPI_Request[total];
+	double *task_per_sec = new double[total];
+	
+	for(int device = 0; device < total; ++device)
+	{
+		MPI_Irecv((void*)&(task_per_sec[device]), 1, MPI_DOUBLE, n.getRank(), xWeight, MPI_COMM_WORLD,  &reqs[device]);
+	}
+
+	MPI_Waitall(total,reqs,MPI_STATUSES_IGNORE);
+
+
+	//clean up
+	delete [] task_per_sec;
+	task_per_sec = NULL;
+	delete [] reqs;
+	reqs = NULL;
+
+}
 
 /* output variables: buf, size */
 void receiveDataFromNode(int rank,int& device, SubDomain3D &s){
@@ -267,14 +293,17 @@ void receiveDataFromNode(int rank,int& device, SubDomain3D &s){
 
 	//allocates data memory and sets up 2d and 3d data pointers
 	//initData(length);
-
+	
 	//needs to be set by compiler. DTYPE maybe?
-	int* buf = new int[size];
+	//we assume that if the buffer is already allocated, that the size is correct.
+	if(s.getBuffer()==NULL)
+		s.setBuffer(new int[size]);
+
 	#ifdef NOT_DEFINED
 		fprintf(stderr,"[%d] about to receive data from Node %d.\n",rank,0);
 	#endif
 	//MPI_INT needs to be set by compiler. DTYPE maybe?
-	MPI_Irecv((void*)buf, size, MPI_INT, rank, xData, MPI_COMM_WORLD,  &reqs[4]);
+	MPI_Irecv((void*)s.getBuffer(), size, MPI_INT, rank, xData, MPI_COMM_WORLD,  &reqs[4]);
 
 	//wait for everything to finish
 	MPI_Waitall(1,reqs,MPI_STATUSES_IGNORE);
@@ -283,7 +312,6 @@ void receiveDataFromNode(int rank,int& device, SubDomain3D &s){
 		printf("received [%d][%d][%d] length data from  %d.\n",length[2],length[1],length[0],rank); 
 	#endif
 
-	s.setBuffer(buf);
 
 }
 
@@ -325,8 +353,9 @@ int dieMax = 3, dieMin = 10;
 
 int main(int argc, char** argv)
 {
-	int numTasks, rank, rc, *buffer, buffSize,deviceCount=0;
+	int numTasks, rank, rc, deviceCount=0;
 	Node myWork;
+	Cluster* cluster = NULL;
 
 	rc = MPI_Init(&argc, &argv);
 	if (rc != MPI_SUCCESS){
@@ -344,9 +373,9 @@ int main(int argc, char** argv)
 	if(0==rank){
 	
 		//get the number of children from other nodes
-		Cluster cluster(numTasks);
-		cluster.getNode(0).setNumChildren(deviceCount);
-		receiveNumberOfChildren(numTasks, cluster);
+		cluster = new Cluster(numTasks);
+		cluster->getNode(0).setNumChildren(deviceCount);
+		receiveNumberOfChildren(numTasks, *cluster);
 	
  		#ifdef  DEBUG
 			fprintf(stderr, "[%d] initializing data.\n",rank);
@@ -365,20 +394,20 @@ int main(int argc, char** argv)
 	
 		/* now perform the load balancing, assigning task blocks to each node */
 		Balancer lb;
-		lb.balance(cluster,decomp);
+		lb.balance(*cluster,decomp);
 		
-		printCluster(cluster);
-		#ifdef DEBUG
-  			fprintf(stderr,"[%d] decomposed data into %d chunks.\n",rank, decomp.getNumSubDomains());
- 			fprintf(stderr,"[%d] sending data.",rank);
-		#endif
-		//this is commented out so that it will compile and we can test that the domain 
-		//decomposition is working correctly
-		//then we will handle the load balancing aspect
-		//once we have the machine graph represented, then we can send the data.
-		for(int node=1; node < cluster.getNumNodes(); ++node){
-			sendData(cluster.getNode(node));
+		printCluster(*cluster);
+#ifdef DEBUG
+		fprintf(stderr,"[%d] decomposed data into %d chunks.\n",rank, decomp.getNumSubDomains());
+		fprintf(stderr,"[%d] sending data.",rank);
+#endif
+
+		//send the work to each node.
+		for(int node=1; node < cluster->getNumNodes(); ++node){
+			sendData(cluster->getNode(node));
 		}
+		//root's work is in the first node
+		myWork = cluster->getNode(0);
 	}
 	else{
 		//send number of children to root
@@ -387,17 +416,7 @@ int main(int argc, char** argv)
 		timesteps = atoi(argv[4]);
 		pyramid_height= atoi(argv[5]);
 		receiveData(0, myWork);
-#ifdef DEBUG
-		fprintf(stderr, "[%d] processing %d task blocks.\n",rank,myWork.numSubDomains());
-#endif
-		for(int task=0; task<myWork.numSubDomains(); ++task){
-			processSubDomain(myWork.getSubDomain(task),timesteps, bornMin, bornMax, dieMin, dieMax);
-		}
-		for(int child=0; child<myWork.getNumChildren(); ++child){
-#ifdef DEBUG
-			fprintf(stderr, "[%d] child [%d] processing %d task blocks.\n",rank,child,myWork.getChild(child).numSubDomains());
-#endif
-		}
+
 	}
 #ifdef STATISTICS
 	for (int i=40; i<=J; i += 20)
@@ -408,13 +427,47 @@ int main(int argc, char** argv)
 	}
 #else
 
-	runCell(data, J, K, L, timesteps, bornMin, bornMax, dieMin, dieMax);
-
+	// comment this out until we get the distributed solve working and consolidate all of this MPI code into one external function
+	//	runCell(data, J, K, L, timesteps, bornMin, bornMax, dieMin, dieMax);
+#ifdef DEBUG
+	fprintf(stderr, "[%d] processing %d task blocks.\n",rank,myWork.numSubDomains());
+#endif
+	for(int task=0; task<myWork.numSubDomains(); ++task){
+		processSubDomain(myWork.getSubDomain(task),timesteps, bornMin, bornMax, dieMin, dieMax);
+	}
+	for(int child=0; child<myWork.getNumChildren(); ++child){
+#ifdef DEBUG
+		fprintf(stderr, "[%d] child [%d] processing %d task blocks.\n",rank,child,myWork.getChild(child).numSubDomains());
+#endif
+	}
 #ifdef BENCH_PRINT
 	printResults(data, J, K, L);
 #endif
 #endif
 
+
+	if(0==rank)
+	{
+		if(cluster != NULL)
+		{
+			for(int r=1; r<numTasks; ++r)
+			{
+#ifdef DEBUG
+				fprintf(stderr, "[%d] receiving results from %d.\n",rank,r);
+#endif
+				receiveData(r,cluster->getNode(r));
+			}	
+		}
+	}
+	else
+	{
+#ifdef DEBUG
+		fprintf(stderr, "[%d] sending results to root.\n",rank);
+#endif
+		//send my work back to the root
+		myWork.setRank(0);
+		sendData(myWork);
+	}
 	MPI_Finalize();
 	delete [] data;
 	delete [] space2D;
