@@ -19,7 +19,7 @@ class Decomposition{
     ~Decomposition();
     Decomposition& operator=(const Decomposition&);
     void addSubDomain(SubDomain3D&);
-    SubDomain3D& getSubDomain(const int )const;
+    const SubDomain3D& getSubDomain(const int )const;
     SubDomain3D& getSubDomain(const int );
     int getNumSubDomains()const; 
     void decompose(int* buffer, const int numDimensions, const int numElements[]);

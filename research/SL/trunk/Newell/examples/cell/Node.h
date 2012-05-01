@@ -15,6 +15,7 @@ class Node{
     Node(double);
     Node(const Node&);
     ~Node();
+    Node& operator=(const Node& rhs);
     void addSubDomain(const SubDomain3D&);	
     void setWeight(double);
     void setRank(int);

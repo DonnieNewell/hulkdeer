@@ -367,6 +367,7 @@ void processSubDomain(int device, SubDomain3D &task, int timesteps, int bornMin,
 		if(-1==device)
 		{
 				//run on CPU
+				runCell(buff, depth, height, width, timesteps, bornMin, bornMax, dieMin, dieMax);
 
 		}
 		else
@@ -401,15 +402,20 @@ void benchmarkMyself(Node& n,SubDomain3D* pS, int timesteps, int bornMin, int bo
 		}
 		for(int device=0; device < total; ++device)
 		{
-				time_t start, end;
+				int iterations = 100;
+				clock_t start, end;
 
-				time(&start);
+				start = clock();
+				for(int itr=0; itr<iterations; ++itr){
+					processSubDomain(device-1, s, timesteps, bornMin, bornMax, dieMin, dieMax);
+				}
+				end = clock();
 
-				processSubDomain(device-1, s, timesteps, bornMin, bornMax, dieMin, dieMax);
-
-				time(&end);
-
-				double diff = difftime(end, start);
+				double diff = (end-start)/(double)CLOCKS_PER_SEC;
+	#ifdef DEBUG
+		fprintf(stderr,"device:%d took %f seconds for %d iterations.\n",device-1, diff, iterations);
+	#endif
+				diff /= iterations;
 				weight[device] = 1.0/diff; //how many iterations per second
 		}
 
