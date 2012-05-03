@@ -10,7 +10,13 @@ File:   pathfinder-main.cpp     Contains a main routine to drive the pathfinder 
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <time.h>
+#ifndef WIN32
+	#include <sys/time.h>
+#else
+	#include<time.h>
+#endif
+#define DTYPE int
+
 #include "cell.h"
 #include "Cluster.h"
 #include "Decomposition.h"
@@ -239,9 +245,6 @@ void sendData(Node& n){
 
 void benchmarkNode(Node& n, SubDomain3D& s)
 {
-	#ifdef DEBUG
-		fprintf(stderr, "inside benchmarkNode(node.rank:%d)\n",n.getRank());
-	#endif
 		//send task block to every device on that node
 		sendDataToNode(n.getRank(), -1, s);
 
@@ -275,10 +278,6 @@ void benchmarkNode(Node& n, SubDomain3D& s)
 		//clean up
 		delete [] task_per_sec;
 		task_per_sec = NULL;
-
-	#ifdef DEBUG
-		fprintf(stderr, "exiting benchmarkNode().\n");
-	#endif
 }
 
 /* output variables: buf, size */
@@ -290,15 +289,9 @@ void receiveDataFromNode(int rank,int& device, SubDomain3D &s){
 		//int *buffer = NULL;
 		//receive dimensionality of data
 		MPI_Irecv((void*)&device, 1, MPI_INT, rank, xDevice, MPI_COMM_WORLD,  &reqs[0]);
-#ifdef NOT_DEFINED
-		fprintf(stderr,"[%d] receiving dimensionality from Node %d.\n",rank,0);
-#endif
 		MPI_Irecv((void*)&numDim, 1, MPI_INT, rank, xDim, MPI_COMM_WORLD,  &reqs[1]);
 
 		//receive size of data
-#ifdef NOT_DEFINED 
-		fprintf(stderr,"[%d] receiving size of data from Node %d.\n",rank,0);
-#endif
 		MPI_Irecv((void*)length, 3, MPI_INT, rank, xLength, MPI_COMM_WORLD,  &reqs[2]);
 		MPI_Irecv((void*)offset, 3, MPI_INT, rank, xOffset, MPI_COMM_WORLD,  &reqs[3]);
 
@@ -319,20 +312,11 @@ void receiveDataFromNode(int rank,int& device, SubDomain3D &s){
 		if(s.getBuffer()==NULL)
 				s.setBuffer(new int[size]);
 
-#ifdef NOT_DEFINED
-		fprintf(stderr,"[%d] about to receive data from Node %d.\n",rank,0);
-#endif
 		//MPI_INT needs to be set by compiler. DTYPE maybe?
 		MPI_Irecv((void*)s.getBuffer(), size, MPI_INT, rank, xData, MPI_COMM_WORLD,  &reqs[4]);
 
 		//wait for everything to finish
 		MPI_Waitall(1,reqs,MPI_STATUSES_IGNORE);
-#ifdef NOT_DEFINED 
-		printf("received %dD data from %d.\n",numDim,rank); 
-		printf("received [%d][%d][%d] length data from  %d.\n",length[2],length[1],length[0],rank); 
-#endif
-
-
 }
 
 void receiveData(int rank, Node& n){
@@ -367,7 +351,8 @@ void processSubDomain(int device, SubDomain3D &task, int timesteps, int bornMin,
 		if(-1==device)
 		{
 				//run on CPU
-				runCell(buff, depth, height, width, timesteps, bornMin, bornMax, dieMin, dieMax);
+				//runCell(buff, depth, height, width, timesteps, bornMin, bornMax, dieMin, dieMax);
+				usleep(100000);
 
 		}
 		else
@@ -403,20 +388,32 @@ void benchmarkMyself(Node& n,SubDomain3D* pS, int timesteps, int bornMin, int bo
 		for(int device=0; device < total; ++device)
 		{
 				int iterations = 100;
-				clock_t start, end;
+				struct timeval start, end;
+				double total_sec = 0.0;	
 
-				start = clock();
+				gettimeofday(&start, NULL);                                       
+
 				for(int itr=0; itr<iterations; ++itr){
-					processSubDomain(device-1, s, timesteps, bornMin, bornMax, dieMin, dieMax);
+						processSubDomain(device-1, s, timesteps, bornMin, bornMax, dieMin, dieMax);
 				}
-				end = clock();
+		
+				gettimeofday(&end, NULL);                                       
 
-				double diff = (end-start)/(double)CLOCKS_PER_SEC;
-	#ifdef DEBUG
-		fprintf(stderr,"device:%d took %f seconds for %d iterations.\n",device-1, diff, iterations);
-	#endif
-				diff /= iterations;
-				weight[device] = 1.0/diff; //how many iterations per second
+				total_sec = ((end.tv_sec - start.tv_sec) +             
+								(end.tv_usec - start.tv_usec)/1000000.0);                       
+				weight[device] =  iterations / total_sec ;
+#ifdef DEBUG
+				fprintf(stderr,"[%d]device:%d of %d processes %f iter/sec.\n", n.getRank(),device-1, total, weight[device]);
+#endif
+				if(device==0)
+				{
+					n.setWeight(iterations / total_sec);
+				}
+				else
+				{
+					n.getChild(device-1).setWeight(iterations / total_sec);
+				}
+
 		}
 
 		if(0!=n.getRank())
@@ -447,6 +444,7 @@ int main(int argc, char** argv)
 		Node myWork;
 		Cluster* cluster = NULL;
 
+		struct timeval process_start, process_end;
 		rc = MPI_Init(&argc, &argv);
 		if (rc != MPI_SUCCESS){
 				fprintf(stderr, "Error initializing MPI.\n");
@@ -498,13 +496,17 @@ int main(int argc, char** argv)
 
 				/* now perform the load balancing, assigning task blocks to each node */
 				Balancer lb;
-				lb.balance(*cluster,decomp);
+				//passing a 0 means use cpu and gpu on all nodes
+				lb.perfBalance(*cluster,decomp, 0);
+				//lb.balance(*cluster,decomp, 0);
 
 				printCluster(*cluster);
 #ifdef DEBUG
 				fprintf(stderr,"[%d] decomposed data into %d chunks.\n",rank, decomp.getNumSubDomains());
 				fprintf(stderr,"[%d] sending data.",rank);
 #endif
+				gettimeofday(&process_start, NULL);                                       
+
 
 				//send the work to each node.
 				for(int node=1; node < cluster->getNumNodes(); ++node){
@@ -547,10 +549,10 @@ int main(int argc, char** argv)
 		for(int child=0; child<myWork.getNumChildren(); ++child){
 #ifdef DEBUG
 				fprintf(stderr, "[%d] child [%d] processing %d task blocks.\n",rank,child,myWork.getChild(child).numSubDomains());
+#endif
 				for(int task=0; task<myWork.getChild(child).numSubDomains(); ++task){
 						processSubDomain(child, myWork.getChild(child).getSubDomain(task),timesteps, bornMin, bornMax, dieMin, dieMax);
 				}
-#endif
 		}
 
 #endif
@@ -567,6 +569,12 @@ int main(int argc, char** argv)
 								fprintf(stderr, "[%d] received results from %d.\n",rank,r);
 #endif
 						}	
+					gettimeofday(&process_end, NULL);                                       
+
+					double total_sec = ((process_end.tv_sec - process_start.tv_sec) +             
+								(process_end.tv_usec - process_start.tv_usec)/1000000.0);                       
+					fprintf(stderr, "***********\nTOTAL TIME: %f.\n",total_sec);
+
 				}
 		}
 		else

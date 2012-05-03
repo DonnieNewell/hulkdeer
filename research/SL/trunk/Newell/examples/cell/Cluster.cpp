@@ -26,6 +26,13 @@ int Cluster::getNumNodes(){
 
 void printCluster(Cluster& c){
   	for(int node=0; node < c.getNumNodes(); node++){
-		printf("node:%d has %d tasks.\n",node,c.getNode(node).numSubDomains());
+		Node &n = c.getNode(node);
+		printf("node:%d weight:%f has %d tasks.\n",node,n.getWeight(),n.numSubDomains());
+		for(int child=0; child<n.getNumChildren(); ++child)
+		{
+			Node& ch = n.getChild(child);
+				printf("\tchild:%d weight:%f has %d tasks.\n",child,ch.getWeight(),ch.numSubDomains());
+			
+		}
 	}
 }
