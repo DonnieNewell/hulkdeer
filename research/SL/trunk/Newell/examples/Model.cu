@@ -213,7 +213,26 @@ dim3 initSAProps(int dims, dim3 input_size, dim3 stencil_size, int iterations, i
 
 void disposeSAProps(SAProps_t * SAPs)
 {
-    free(SAPs);
+	if(NULL != SAPs->CFAs)
+	{
+		free(SAPs->CFAs);
+		SAPs->CFAs=NULL;
+	}
+	if(NULL != SAPs->SACLs)
+	{
+		free(SAPs->SACLs);
+		SAPs->SACLs=NULL;
+	}
+	if(NULL != SAPs->CDPs)
+	{
+		free(SAPs->CDPs);
+		SAPs->CDPs=NULL;
+	}
+	if(NULL != SAPs)
+	{
+    	free(SAPs);
+		SAPs = NULL;
+	}
 }
 
 // TODO It would be better if this were not a macro.
@@ -511,7 +530,7 @@ int calcPyramidHeight(dim3 grid_dims, unsigned int oneIterTime, unsigned int two
     {   
         setupTime = MAX(setupTime, 1. * ekTime);
         fullTime = MAX(fullTime, magic * setupTime);
-        fprintf(stderr, "changed setup and full.\n");
+        //fprintf(stderr, "changed setup and full.\n");
     }
     
     // Let's use the model to calculate the best height.

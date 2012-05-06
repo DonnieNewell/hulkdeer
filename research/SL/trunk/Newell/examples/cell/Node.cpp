@@ -31,6 +31,10 @@ void Node::setRank(int newRank){
 }
 void Node::setNumChildren(int numChildren){
   children.resize(numChildren);
+	for(int child=0; child<numChildren; ++child)
+	{
+		children.at(child).setRank(child);
+	}
 }
 
 /*
@@ -59,7 +63,7 @@ const int Node::getNumChildren() const{
 void Node::setWeight(double newWeight){
   weight = newWeight;
 }
-void Node::addSubDomain(const SubDomain3D& sd){
+void Node::addSubDomain(SubDomain3D* sd){
   subD.push_back(sd);
 }
 const int Node::getRank() const{
@@ -83,13 +87,13 @@ const double Node::getWeight() const{
 Node& Node::getChild(int index) {
     return children.at(index);
 }
-SubDomain3D& Node::getSubDomain(int index) {
+SubDomain3D* Node::getSubDomain(int index) {
     return subD.at(index);
 }
 
-SubDomain3D Node::removeSubDomain() 
+SubDomain3D* Node::popSubDomain() 
 {
-	SubDomain3D s = subD.back();
+	SubDomain3D* s = subD.back();
 	subD.pop_back();
 	return s;
 }	

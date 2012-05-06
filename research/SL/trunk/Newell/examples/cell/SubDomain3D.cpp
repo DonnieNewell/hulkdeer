@@ -1,6 +1,7 @@
 #include "SubDomain3D.h"
 #include <cstddef>
 #include <cstdio>
+#include <cstring>
 
 SubDomain3D::SubDomain3D(){
   offset[0]=0;
@@ -15,7 +16,7 @@ SubDomain3D::SubDomain3D(){
 SubDomain3D::SubDomain3D(const SubDomain3D& sd){
     (*this) = sd;
   }
-SubDomain3D::SubDomain3D(int xOffset,int xLength,int yOffset,int yLength,int zOffset,int zLength, int* buffer){
+SubDomain3D::SubDomain3D(int xOffset,int xLength,int yOffset,int yLength,int zOffset,int zLength){
 
  
   offset[0]=xOffset;
@@ -24,18 +25,14 @@ SubDomain3D::SubDomain3D(int xOffset,int xLength,int yOffset,int yLength,int zOf
   length[0]=xLength;
   length[1]=yLength;
   length[2]=zLength;
-  this->buffer = buffer;
+	//DTYPE needed
+  this->buffer = new int[xLength*yLength*zLength];
 }
 SubDomain3D::~SubDomain3D(){
-//	if(buffer != NULL) delete [] buffer;
+	if(this->buffer != NULL) delete [] this->buffer;
+	this->buffer=NULL;
 }
 
-void SubDomain3D::setBuffer(int* buff){
-    #ifdef NOT_DEFINED
-	fprintf(stderr, "SubDomain3D::setBuffer(this=0x%x, buff=0x%x)\n",this,buff);
-    #endif
-    this->buffer=buff;
-}
 void SubDomain3D::setOffset(int dim, int off){
   if(0 <= dim && 3 > dim && 0 <= off)
     offset[dim] = off;
@@ -46,7 +43,7 @@ void SubDomain3D::setLength(int dim, int len){
 
 }
 int* SubDomain3D::getBuffer()const {
-        return this->buffer;
+  return this->buffer;
 }
 int SubDomain3D::getOffset(int dim)const {
 
@@ -64,16 +61,23 @@ int SubDomain3D::getLength(int dim)const{
 }
 SubDomain3D& SubDomain3D::operator=(const SubDomain3D &sd) {
 
-    // Only do assignment if RHS is a different object from this.
-	if (this != &sd) {
-		offset[0]=sd.getOffset(0);
-		offset[1]=sd.getOffset(1);
-		offset[2]=sd.getOffset(2);
-		length[0]=sd.getLength(0);
-		length[1]=sd.getLength(1);
-		length[2]=sd.getLength(2);
-		buffer = sd.getBuffer();
-	}
-
-    return *this;
+  // Only do assignment if RHS is a different object from this.
+  if (this != &sd) {
+    offset[0]=sd.getOffset(0);
+    offset[1]=sd.getOffset(1);
+    offset[2]=sd.getOffset(2);
+    length[0]=sd.getLength(0);
+    length[1]=sd.getLength(1);
+    length[2]=sd.getLength(2);
+    int size=length[0]*length[1]*length[2];
+    buffer = new int[size];
+    int*buf = sd.getBuffer();
+    if(NULL!=buf)
+    {
+      fprintf(stderr, "copying %d bytes subdomain.\n",sizeof(int)*size);
+      memcpy(buffer,sd.getBuffer(),sizeof(int)*size);
+    }
   }
+
+  return *this;
+}
