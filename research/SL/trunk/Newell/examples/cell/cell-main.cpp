@@ -348,7 +348,10 @@ void receiveData(int rank, Node& n){
   }
 }
 
-void processSubDomain(int device, SubDomain3D *task, int timesteps, int bornMin, int bornMax, int dieMin, int dieMax){
+void processSubDomain(int rank, int device, SubDomain3D *task, int timesteps, int bornMin, int bornMax, int dieMin, int dieMax){
+#ifdef DEBUG
+    fprintf(stderr, "[%d] processSubD(child[%d], SubDomain3D:%p.\n",rank,device,task);
+#endif
   //DTYPE?
   int* buff = task->getBuffer();
   int depth = task->getLength(0);
@@ -363,9 +366,6 @@ void processSubDomain(int device, SubDomain3D *task, int timesteps, int bornMin,
   }
   else
   {
-#ifdef NOT_DEFINED 
-    fprintf(stderr, "processSubD(child[%d], buff:0x%X, depth:%d, width:%d, height:%d\n",device,buff,depth, width, height);
-#endif
     //run on GPU
     runCell(buff, depth, height, width, timesteps, bornMin, bornMax, dieMin, dieMax);
   }
@@ -403,7 +403,7 @@ void benchmarkMyself(Node& n,SubDomain3D* pS, int timesteps, int bornMin, int bo
     gettimeofday(&start, NULL);                                       
 
     for(int itr=0; itr<iterations; ++itr){
-      processSubDomain(device-1, s, timesteps, bornMin, bornMax, dieMin, dieMax);
+      processSubDomain(rank, device-1, s, timesteps, bornMin, bornMax, dieMin, dieMax);
     }
 
     gettimeofday(&end, NULL);                                       
@@ -446,32 +446,22 @@ void benchmarkMyself(Node& n,SubDomain3D* pS, int timesteps, int bornMin, int bo
 #endif
 }
 
+void runDistributedCell(int rank, int numTasks, DTYPE *data, int x_max, int y_max,
+    int z_max, int iterations, int bornMin, int bornMax, 
+    int dieMin, int dieMax)
 
-
-
-int bornMin = 5, bornMax = 8;
-int dieMax = 3, dieMin = 10;
-
-int main(int argc, char** argv)
 {
-  int numTasks, rank, rc, deviceCount=0;
+  int deviceCount=0;
   Node myWork;
   Cluster* cluster = NULL;
-
   struct timeval process_start, process_end;
-  rc = MPI_Init(&argc, &argv);
-  if (rc != MPI_SUCCESS){
-    fprintf(stderr, "Error initializing MPI.\n");
-    MPI_Abort(MPI_COMM_WORLD, rc);
-  }
 
-  MPI_Comm_size(MPI_COMM_WORLD, &numTasks);
-  MPI_Comm_rank(MPI_COMM_WORLD, &rank);
   myWork.setRank(rank);
 
   getNumberOfChildren(deviceCount);
+#ifdef DEBUG
   printf("[%d] children:%d\n",rank,deviceCount);
-
+#endif
   if(0==rank){
 
     //get the number of children from other nodes
@@ -483,7 +473,6 @@ int main(int argc, char** argv)
     fprintf(stderr, "[%d] initializing data.\n",rank);
 #endif
 
-    init(argc, argv); //initialize data
 
 #ifdef DEBUG
     fprintf(stderr,"[%d] decomposing data.\n",rank);
@@ -511,11 +500,11 @@ int main(int argc, char** argv)
     /* now perform the load balancing, assigning task blocks to each node */
     Balancer lb;
     //passing a 0 means use cpu and gpu on all nodes
-    //lb.perfBalance(*cluster,decomp, 0);
-    lb.balance(*cluster,decomp, 0);
+    lb.perfBalance(*cluster,decomp, 0);
+    //lb.balance(*cluster,decomp, 0);
 
-    printCluster(*cluster);
 #ifdef DEBUG
+    printCluster(*cluster);
     fprintf(stderr,"[%d] decomposed data into %d chunks.\n",rank, decomp.getNumSubDomains());
     fprintf(stderr,"[%d] sending data.",rank);
 #endif
@@ -533,8 +522,6 @@ int main(int argc, char** argv)
     //send number of children to root
     sendNumberOfChildren(0,deviceCount);
 
-    timesteps = atoi(argv[4]);
-    pyramid_height= atoi(argv[5]);
 
 #ifdef DEBUG
     fprintf(stderr, "[%d] benchmarking Myself.\n",rank);
@@ -543,22 +530,11 @@ int main(int argc, char** argv)
     receiveData(0, myWork);
 
   }
-#ifdef STATISTICS
-  for (int i=40; i<=J; i += 20)
-  {
-    // Set iteration count so that kernel is called at least 30 times.
-    // The maximum pyramid height is 3, so iterations = 90.
-    //runCell(data, i, i, i, 90, bornMin, bornMax, dieMin, dieMax);
-  }
-#else
-
-  // comment this out until we get the distributed solve working and consolidate all of this MPI code into one external function
-  //	runCell(data, J, K, L, timesteps, bornMin, bornMax, dieMin, dieMax);
 #ifdef DEBUG
   fprintf(stderr, "[%d] processing %d task blocks.\n",rank,myWork.numSubDomains());
 #endif
   for(int task=0; task<myWork.numSubDomains(); ++task){
-    processSubDomain(-1, myWork.getSubDomain(task),timesteps, bornMin, bornMax, dieMin, dieMax);
+    processSubDomain(rank,-1, myWork.getSubDomain(task),timesteps, bornMin, bornMax, dieMin, dieMax);
   }
   for(int child=0; child<myWork.getNumChildren(); ++child){
 #ifdef DEBUG
@@ -566,11 +542,9 @@ int main(int argc, char** argv)
 #endif
     for(int task=0; task<myWork.getChild(child).numSubDomains(); ++task)
     {
-      processSubDomain(child, myWork.getChild(child).getSubDomain(task),timesteps, bornMin, bornMax, dieMin, dieMax);
+      processSubDomain(rank, child, myWork.getChild(child).getSubDomain(task),timesteps, bornMin, bornMax, dieMin, dieMax);
     }
   }
-
-#endif
 
 
   if(0==rank)
@@ -601,6 +575,49 @@ int main(int argc, char** argv)
     fprintf(stderr, "[%d] sent results to root.\n",rank);
 #endif
   }
+  if(NULL != cluster)
+  {
+    delete cluster;
+    cluster=NULL;
+  }
+
+} 
+
+
+int bornMin = 5, bornMax = 8;
+int dieMax = 3, dieMin = 10;
+
+int main(int argc, char** argv)
+{
+  int rc, numTasks, rank;  
+  rc = MPI_Init(&argc, &argv);
+  if (rc != MPI_SUCCESS){
+    fprintf(stderr, "Error initializing MPI.\n");
+    MPI_Abort(MPI_COMM_WORLD, rc);
+  }
+
+    timesteps = atoi(argv[4]);
+    pyramid_height= atoi(argv[5]);
+  MPI_Comm_size(MPI_COMM_WORLD, &numTasks);
+  MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+
+  if(0==rank)
+  {
+    init(argc, argv); //initialize data
+  }
+#ifdef STATISTICS
+  for (int i=40; i<=J; i += 20)
+  {
+    // Set iteration count so that kernel is called at least 30 times.
+    // The maximum pyramid height is 3, so iterations = 90.
+    runDistributedCell(rank, numTasks, data, i, i, i, 90, bornMin, bornMax, dieMin, dieMax);
+  }
+#else
+
+  // comment this out until we get the distributed solve working and consolidate all of this MPI code into one external function
+  runDistributedCell(rank, numTasks, data, J, K, L, timesteps, bornMin, bornMax, dieMin, dieMax);
+#endif
+
 #ifdef BENCH_PRINT
   if(rank==0)
   {	
@@ -608,11 +625,6 @@ int main(int argc, char** argv)
   }
 #endif
   MPI_Finalize();
-  if(NULL != cluster)
-  {
-    delete cluster;
-    cluster=NULL;
-  }
   delete [] data;
   delete [] space2D;
   delete [] space3D;

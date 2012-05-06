@@ -9,23 +9,23 @@ Decomposition::Decomposition(const Decomposition &d){
   *this = d;
 }
 Decomposition::~Decomposition(){
-	for(size_t s = 0; s<domain.size();++s)
-	{
-		if(NULL != domain.at(s))
-		{
-			delete domain.at(s);
-                        domain.at(s)=NULL;
-		}
-	}
-	domain.clear();
+  for(size_t s = 0; s<domain.size();++s)
+  {
+    if(NULL != domain.at(s))
+    {
+      delete domain.at(s);
+      domain.at(s)=NULL;
+    }
+  }
+  domain.clear();
 }
 Decomposition& Decomposition::operator=(const Decomposition& d){
   this->domain.clear();
   for ( int i=0; i<d.getNumSubDomains(); ++i){
-	SubDomain3D* s = new SubDomain3D(*(d.getSubDomain(i)));
+    SubDomain3D* s = new SubDomain3D(*(d.getSubDomain(i)));
     this->domain.push_back(s);
   }
-return *this;
+  return *this;
 }
 const SubDomain3D* Decomposition::getSubDomain(const int index) const{
   return this->domain.at(index);
@@ -43,7 +43,7 @@ int Decomposition::getNumSubDomains() const {
   return domain.size();
 }
 void Decomposition::addSubDomain(SubDomain3D* s){
-  
+
   domain.push_back(s);
 }
 void Decomposition::decompose1D(int* buffer, const int numElementsX){
@@ -54,18 +54,18 @@ void Decomposition::decompose1D(int* buffer, const int numElementsX){
 
     for(size_t i=0; i < domain.size(); ++i){
       SubDomain3D* s = domain.at(i);
-      
-      
+
+
       s->setLength(0, stride);
       s->setOffset(0, numElementsX - numLeftX);
-      
+
       numLeftX -= s->getLength(0);
     } //end for
   }//end if
 }//end decompose1D
 
 void Decomposition::decompose2D(int* buffer, const int numElementsRows,const int numElementsCols){
-   if(0<numElementsRows&&0<numElementsCols){
+  if(0<numElementsRows&&0<numElementsCols){
     int numLeftX=numElementsRows;
     int numLeftY=numElementsCols;
     const int num_chunks = 8;
@@ -78,7 +78,7 @@ void Decomposition::decompose2D(int* buffer, const int numElementsRows,const int
       s->setOffset(0, numElementsRows - numLeftX);
       s->setLength(1, y_chunk_width);
       s->setOffset(1, numElementsCols - numLeftY);
-      
+
       numLeftX -= s->getLength(0);
       numLeftY -= s->getLength(1);
     } 
@@ -87,27 +87,28 @@ void Decomposition::decompose2D(int* buffer, const int numElementsRows,const int
 
 
 void Decomposition::copyBlock( int* buffer, SubDomain3D* s, const int numElementsDepth, const int numElementsRows, const int numElementsCols){
-    
-    int *sBuff = s->getBuffer();
-    
-	if(NULL==sBuff)
-	{
-		fprintf(stderr,"copyBlock: subDomain has NULL Buffer.\n");
-		return;
-	}
-    //stage sub-domain data into contiguous memory
-    for(int depth = 0; depth < s->getLength(0); depth++){
-        for(int row = 0; row < s->getLength(1); row++){
-            for(int col = 0; col < s->getLength(2); col++){
-                int newIndex = depth*s->getLength(1)*s->getLength(2)+row*s->getLength(0)+col;
-                int oldIndex = (s->getOffset(0)+depth)*numElementsCols*numElementsRows +
-                                (s->getOffset(1)+row)*numElementsCols +
-                                (s->getOffset(2)+col);
-                sBuff[newIndex] = buffer[oldIndex];
-            }
-        }
+
+  //subDomain should already have memory allocated.
+  int *sBuff = s->getBuffer();
+
+  if(NULL==sBuff)
+  {
+    fprintf(stderr,"copyBlock: subDomain has NULL Buffer.\n");
+    return;
+  }
+  //stage sub-domain data into contiguous memory
+  for(int depth = 0; depth < s->getLength(0); depth++){
+    for(int row = 0; row < s->getLength(1); row++){
+      for(int col = 0; col < s->getLength(2); col++){
+        int newIndex = depth*s->getLength(1)*s->getLength(2)+row*s->getLength(0)+col;
+        int oldIndex = (s->getOffset(0)+depth)*numElementsCols*numElementsRows +
+          (s->getOffset(1)+row)*numElementsCols +
+          (s->getOffset(2)+col);
+        sBuff[newIndex] = buffer[oldIndex];
+      }
     }
-    
+  }
+
 }//end copyBlock
 
 void Decomposition::decompose3D(int* buffer, const int numElementsDepth,const int numElementsRows,const int numElementsCols){
@@ -136,13 +137,17 @@ void Decomposition::decompose3D(int* buffer, const int numElementsDepth,const in
       }
     }
   }
+#ifdef DEBUG
   fprintf(stdout,"domain.size():%zu\n",domain.size()); 
+#endif
 
 }//end decompose3D
 
 
 void Decomposition::decompose(int* buffer, const int numDimensions, const int numElements[3]){
+#ifdef DEBUG
   fprintf(stderr,"decompose(%d dimensions, [%d][%d][%d]\n",numDimensions,numElements[0],numElements[1],numElements[2]);
+#endif
   if(1 == numDimensions)
     decompose1D(buffer, numElements[0]);
   else if(2 == numDimensions)

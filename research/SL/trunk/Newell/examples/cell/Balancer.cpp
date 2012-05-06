@@ -47,12 +47,19 @@ void Balancer::perfBalance(Cluster &cluster, Decomposition& decomp, int config)
       if(0>diff) //child has extra work
       {
         int extra = abs(diff);
-        for(int block=0; block<extra; ++block)
+        for(int block=0; (block<extra) && (0 < c.numSubDomains()); ++block)
         {
           //move block from child to parent
-
-          root.addSubDomain(c.popSubDomain());
-          changed = true;
+          SubDomain3D* s = c.popSubDomain();
+          if(NULL == s)
+          {
+            fprintf(stderr, "perfBalance: ERROR NULL subdomain pointer.\n");
+          }
+          else
+          {
+            root.addSubDomain(s);
+            changed = true;
+          }
         }
       }
       else if(0<diff) //child needs more work
@@ -70,11 +77,19 @@ void Balancer::perfBalance(Cluster &cluster, Decomposition& decomp, int config)
       if(0>diff) //child has extra work
       {
         int extra = abs(diff);
-        for(int block=0; block<extra; ++block)
+        for(int block=0; (block<extra)&&(0<c.numSubDomains()); ++block)
         {
           //move block from child to parent
-          root.addSubDomain(c.popSubDomain());
-          changed = true;
+          SubDomain3D* s = c.popSubDomain();
+          if(NULL == s)
+          {
+            fprintf(stderr, "perfBalance: ERROR NULL subdomain pointer.\n");
+          }
+          else
+          {
+            root.addSubDomain(s);
+            changed = true;
+          }
         }
       }
       else if(0<diff) //child needs more work
@@ -101,13 +116,31 @@ void Balancer::perfBalance(Cluster &cluster, Decomposition& decomp, int config)
       if(id<=0) //local child
       {
         id = -1*id;
-        root.getChild(id).addSubDomain(root.popSubDomain());
-        changed=true;
+        SubDomain3D* s = root.popSubDomain();
+        if(NULL == s)
+        {
+          fprintf(stderr, "perfBalance: ERROR NULL subdomain pointer.\n");
+        }
+        else
+        {
+
+          root.getChild(id).addSubDomain(s);
+          changed=true;
+        }
       }
       else //request was from another node in cluster
       {
-        cluster.getNode(id).addSubDomain(root.popSubDomain());
-        changed=true;
+        SubDomain3D* s = root.popSubDomain();
+        if(NULL == s)
+        {
+          fprintf(stderr, "perfBalance: ERROR NULL subdomain pointer.\n");
+        }
+        else
+        {
+
+          cluster.getNode(id).addSubDomain(s);
+          changed=true;
+        }
       }
 
       //if there is still work left to do put it back on 

@@ -277,7 +277,7 @@ void runCell(DTYPE *host_data, int x_max, int y_max, int z_max, int iterations
             actualMinPyramid = i;
             actualMinTime = timePer;
         }
-        // fprintf(stderr, "Pyramid Height=%d, time=%u, Time per iteration=%f.\n", i, time, ((double)time/i));
+         fprintf(stderr, "Pyramid Height=%d, time=%u, Time per iteration=%f.\n", i, time, ((double)time/i));
     }
 
     // Now we can output some statistics.
@@ -331,7 +331,7 @@ void runCell(DTYPE *host_data, int x_max, int y_max, int z_max, int iterations
     gettimeofday(&endtime, NULL);                                       
     usec2 = ((endtime.tv_sec - starttime.tv_sec) * 1000000 +             
              (endtime.tv_usec - starttime.tv_usec));                       
-    fprintf(stderr, "Actual pyramid=%d, Actual iteration time=%Lu, Actual Total time=%lu\n", i, usec2, usec2+trainingusec);
+    fprintf(stderr, "Actual pyramid=%d, Actual iteration time=%u, Actual Total time=%u\n", i, usec2, usec2+trainingusec);
     }
 #endif
 
@@ -344,6 +344,8 @@ void runCell(DTYPE *host_data, int x_max, int y_max, int z_max, int iterations
         cudaFree(global_ro_data);
         global_ro_data = NULL;
     }
+
+	disposeSAProps(SAPs);
 }
 
 /**
