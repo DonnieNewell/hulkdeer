@@ -26,7 +26,7 @@ SubDomain3D::SubDomain3D(int xOffset,int xLength,int yOffset,int yLength,int zOf
   length[1]=yLength;
   length[2]=zLength;
   //DTYPE needed
-  this->buffer = new int[xLength*yLength*zLength];
+  this->buffer = new DTYPE[xLength*yLength*zLength];
 }
   SubDomain3D::~SubDomain3D(){
     if(this->buffer != NULL)
@@ -48,7 +48,7 @@ SubDomain3D::SubDomain3D(int xOffset,int xLength,int yOffset,int yLength,int zOf
       length[dim] = len;
 
   }
-int* SubDomain3D::getBuffer()const {
+DTYPE* SubDomain3D::getBuffer()const {
   return this->buffer;
 }
 int SubDomain3D::getOffset(int dim)const {
@@ -76,14 +76,14 @@ SubDomain3D& SubDomain3D::operator=(const SubDomain3D &sd) {
     length[1]=sd.getLength(1);
     length[2]=sd.getLength(2);
     int size=length[0]*length[1]*length[2];
-    buffer = new int[size];
-    int*buf = sd.getBuffer();
+    buffer = new DTYPE[size];
+    DTYPE*buf = sd.getBuffer();
     if(NULL!=buf)
     {
 #ifdef DEBUG
       fprintf(stderr, "copying %lu bytes subdomain.\n",sizeof(int)*size);
 #endif
-      memcpy(buffer,sd.getBuffer(),sizeof(int)*size);
+      memcpy(buffer,sd.getBuffer(),sizeof(DTYPE)*size);
     }
   }
 

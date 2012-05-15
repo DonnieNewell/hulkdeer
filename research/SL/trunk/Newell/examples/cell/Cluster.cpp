@@ -34,12 +34,12 @@ void printCluster(Cluster& c){
   for(int node=0; node < c.getNumNodes(); node++){
     Node &n = c.getNode(node);
     printf("node:%d weight:%f has %d tasks.\n",node,n.getWeight(),n.numSubDomains());
-    printNode(-1,n);
+//    printNode(-1,n);
     for(int child=0; child<n.getNumChildren(); ++child)
     {
       Node& ch = n.getChild(child);
       printf("\tchild:%d weight:%f has %d tasks.\n",child,ch.getWeight(),ch.numSubDomains());
-      printNode(n.getRank(),ch);
+//      printNode(n.getRank(),ch);
 
     }
   }

@@ -46,7 +46,7 @@ void Decomposition::addSubDomain(SubDomain3D* s){
 
   domain.push_back(s);
 }
-void Decomposition::decompose1D(int* buffer, const int numElementsX){
+void Decomposition::decompose1D(int* buffer, const int numElementsX, const int stencil_size[3], const int iterations){
   if(0<numElementsX){
     int numLeftX=numElementsX;
     const int num_chunks = 64;
@@ -64,7 +64,7 @@ void Decomposition::decompose1D(int* buffer, const int numElementsX){
   }//end if
 }//end decompose1D
 
-void Decomposition::decompose2D(int* buffer, const int numElementsRows,const int numElementsCols){
+void Decomposition::decompose2D(int* buffer, const int numElementsRows,const int numElementsCols, const int stencil_size[3], const int iterations){
   if(0<numElementsRows&&0<numElementsCols){
     int numLeftX=numElementsRows;
     int numLeftY=numElementsCols;
@@ -111,14 +111,18 @@ void Decomposition::copyBlock( int* buffer, SubDomain3D* s, const int numElement
 
 }//end copyBlock
 
-void Decomposition::decompose3D(int* buffer, const int numElementsDepth,const int numElementsRows,const int numElementsCols){
+void Decomposition::decompose3D(int* buffer, const int numElementsDepth,const int numElementsRows,const int numElementsCols, const int stencil_size[3], const int iterations){
 #ifdef DEBUG
   fprintf(stdout, "entering decompose3D\n");
 #endif
-  int width = 4;  
+  int width = 8;  
   int blockDimDepth = static_cast<int>((numElementsDepth/(double)width)+.5);
   int blockDimHeight =  static_cast<int>((numElementsRows/(double)width)+.5);
   int blockDimWidth =  static_cast<int>((numElementsCols/(double)width)+.5);
+
+  //calculate ghost zone
+  int border[3] = {iterations*stencil_size[0],iterations*stencil_size[1],iterations*stencil_size[2]};
+
 #ifdef DEBUG
   fprintf(stdout, "clearing domain vector decompose3D\n");
 #endif
@@ -126,8 +130,26 @@ void Decomposition::decompose3D(int* buffer, const int numElementsDepth,const in
   for(int i=0; i < width; ++i){
     for(int j=0; j < width; ++j){
       for(int k=0; k < width; ++k){
+        int depthOff = blockDimDepth*i;
+        //int depthOff = blockDimDepth*i-border[0];
+        depthOff = max(depthOff,0);
+        int heightOff = blockDimHeight*j;
+        //int heightOff = blockDimHeight*j-border[1];
+        heightOff = max(heightOff,0);
+        int widthOff = blockDimWidth*k;
+        //int widthOff = blockDimWidth*k-border[2];
+        widthOff = max(widthOff,0);
+        int depthLen= blockDimDepth;
+        //int depthLen= blockDimDepth + 2*border[0];
+        depthLen = (depthOff+depthLen > numElementsDepth)?numElementsDepth-depthOff:depthLen;
+        int heightLen = blockDimHeight;
+        //int heightLen = blockDimHeight + 2*border[1];
+        heightLen = (heightOff+heightLen > numElementsDepth)?numElementsDepth-heightOff:heightLen;
+        int widthLen = blockDimWidth;
+        //int widthLen = blockDimWidth + 2*border[2];
+        widthLen = (widthOff+widthLen > numElementsDepth)?numElementsDepth-widthOff:widthLen;
         SubDomain3D* s = NULL;
-        s= new SubDomain3D(blockDimDepth*i, blockDimDepth,blockDimHeight*j, blockDimHeight,blockDimWidth*k, blockDimWidth);
+        s= new SubDomain3D(depthOff, depthLen, heightOff, heightLen, widthOff, widthLen);
 
         //get data for this block from the buffer
         copyBlock(buffer,s,numElementsDepth, numElementsRows, numElementsCols);
@@ -144,15 +166,23 @@ void Decomposition::decompose3D(int* buffer, const int numElementsDepth,const in
 }//end decompose3D
 
 
-void Decomposition::decompose(int* buffer, const int numDimensions, const int numElements[3]){
+void Decomposition::decompose(DTYPE* buffer, const int numDimensions, const int numElements[3], const int stencil_size[3], const int iterations){
 #ifdef DEBUG
   fprintf(stderr,"decompose(%d dimensions, [%d][%d][%d]\n",numDimensions,numElements[0],numElements[1],numElements[2]);
 #endif
   if(1 == numDimensions)
-    decompose1D(buffer, numElements[0]);
+    decompose1D(buffer, numElements[0], stencil_size, iterations);
   else if(2 == numDimensions)
-    decompose2D(buffer, numElements[0],numElements[1]);
+    decompose2D(buffer, numElements[0],numElements[1], stencil_size, iterations);
   else if(3 == numDimensions)
-    decompose3D(buffer, numElements[0],numElements[1], numElements[2]);
+    decompose3D(buffer, numElements[0],numElements[1], numElements[2], stencil_size, iterations);
 }
+void printDecomposition(Decomposition& d)
+{
+  for(int s = 0; s < d.getNumSubDomains(); ++s)
+  {
+    fprintf(stderr, "s[%d] off[%d][%d][%d] len[%d][%d][%d].\n",s,d.getSubDomain(s)->getOffset(0),d.getSubDomain(s)->getOffset(1),d.getSubDomain(s)->getOffset(2),d.getSubDomain(s)->getLength(0),d.getSubDomain(s)->getLength(1),d.getSubDomain(s)->getLength(2));
 
+
+  }
+}

@@ -28,7 +28,6 @@ void sendDataToNode(int rank, int device, SubDomain3D* s){
   int length[3];
   int offset[3];
   for(int i=0;i<3;++i){
-    /* DEBUG: just send first work block */
     length[i]=s->getLength(i);
     offset[i]=s->getOffset(i);
     if(length[i]>0) numDim++;
@@ -149,17 +148,28 @@ void sendData(Node& n){
 
 void benchmarkNode(Node& n, SubDomain3D* s)
 {
+  struct timeval start, end;
+  double total_sec = 0.0;	
+
+  gettimeofday(&start, NULL);                                       
   //send task block to every device on that node
   sendDataToNode(n.getRank(), -1, s);
+  gettimeofday(&end, NULL);                                       
 
+  total_sec = ((end.tv_sec - start.tv_sec) +             
+      (end.tv_usec - start.tv_usec)/1000000.0);                       
+
+  fprintf(stderr, "it takes %f sec to send one task to node: %d.\n",total_sec,n.getRank());
+  //how fast is the connection between root and child nodes
+  n.setEdgeWeight(1/total_sec);
 #ifdef DEBUG
-  fprintf(stderr, "benchmarkNode(node.rank:%d): sent data to the node.\n",n.getRank());
+  fprintf(stderr, "benchmarkNode(node.rank:%d, edgeWeight:%f blocks/sec): sent data to the node.\n",n.getRank(), n.getEdgeWeight());
 #endif
   //receive results for each device
   int total = n.getNumChildren()+1;
 
   MPI_Request req;
-  double *task_per_sec = new double[total];
+  double *task_per_sec= new double[total];
 
   MPI_Irecv((void*)task_per_sec, total, MPI_DOUBLE, n.getRank(), xWeight, MPI_COMM_WORLD, &req);
 
@@ -168,14 +178,17 @@ void benchmarkNode(Node& n, SubDomain3D* s)
   //set set the appropriate fields in the node and its children
   for(int device = 0; device<total; ++device)
   {
+    double weight = task_per_sec[device];
     if(device == 0)
     {
       //the first weight is for the cpu
-      n.setWeight(task_per_sec[device]);
+      fprintf(stderr,"setting node[%d] weight to %f.\n",n.getRank(),weight);
+      n.setWeight(weight);
     }
     else
     {
-      n.getChild(device-1).setWeight(task_per_sec[device]);
+      fprintf(stderr,"setting node[%d].child[%d] weight to %f.\n",n.getRank(),device-1,weight);
+      n.getChild(device-1).setWeight(weight);
     }
   }
 
@@ -218,42 +231,15 @@ SubDomain3D* receiveDataFromNode(int rank,int& device){
   //		s.setBuffer(new int[size]);
 
   //MPI_INT needs to be set by compiler. DTYPE maybe?
-  MPI_Irecv((void*)s->getBuffer(), size, MPI_INT, rank, xData, MPI_COMM_WORLD,  &reqs[4]);
+  MPI_Irecv((void*)s->getBuffer(), size, MPI_INT, rank, xData, MPI_COMM_WORLD,  &reqs[0]);
 
   //wait for everything to finish
   MPI_Waitall(1,reqs,MPI_STATUSES_IGNORE);
   return s;
 }
-
-void receiveData(int rank, Node& n){
-  //receive number of task blocks that will be sent
-  int numTaskBlocks=0;
-  MPI_Status stat;
-  MPI_Recv((void*)&numTaskBlocks,1, MPI_INT, rank, xNumBlocks, MPI_COMM_WORLD, &stat);
-
-  for(int block = 0; block<numTaskBlocks; ++block){
-    SubDomain3D* s=NULL;
-    int device = -1;
-    s= receiveDataFromNode(rank, device);
-    if(-1 == device)
-    {
-      //add block to cpu queue
-      n.addSubDomain(s);
-    }
-    else
-    {
-      //add block to gpu queue
-      n.getChild(device).addSubDomain(s);
-    }
-  }
-}
-
 void processSubDomain(int rank, int device, SubDomain3D *task, int timesteps, int bornMin, int bornMax, int dieMin, int dieMax){
-#ifdef DEBUG
-    fprintf(stderr, "[%d] processSubD(child[%d], SubDomain3D:%p.\n",rank,device,task);
-#endif
   //DTYPE?
-  int* buff = task->getBuffer();
+  DTYPE* buff = task->getBuffer();
   int depth = task->getLength(0);
   int height = task->getLength(1);
   int width = task->getLength(2);
@@ -271,10 +257,42 @@ void processSubDomain(int rank, int device, SubDomain3D *task, int timesteps, in
   }
 }
 
+void receiveData(int rank, Node& n, bool processNow, int iterations=0, int bornMin=0, int bornMax=0, int dieMin=0, int dieMax=0){
+  //receive number of task blocks that will be sent
+  int numTaskBlocks=0;
+  MPI_Status stat;
+  MPI_Recv((void*)&numTaskBlocks,1, MPI_INT, rank, xNumBlocks, MPI_COMM_WORLD, &stat);
+
+  for(int block = 0; block<numTaskBlocks; ++block){
+    SubDomain3D* s=NULL;
+    int device = -1;
+    s= receiveDataFromNode(rank, device);
+    if(-1 == device)
+    {
+      if(processNow)
+      {
+        processSubDomain(rank,-1, s,iterations, bornMin, bornMax, dieMin, dieMax);
+      }
+      //add block to cpu queue
+      n.addSubDomain(s);
+    }
+    else
+    {
+      if(processNow)
+      {
+        processSubDomain(rank, device, s, iterations, bornMin, bornMax, dieMin, dieMax);
+      }
+      //add block to gpu queue
+      n.getChild(device).addSubDomain(s);
+    }
+  }
+}
+
+
 void benchmarkMyself(Node& n,SubDomain3D* pS, int timesteps, int bornMin, int bornMax, int dieMin, int dieMax)
 {
 
-    //printCudaDevices();
+  //printCudaDevices();
   //receive results for each device
   int total = n.getNumChildren()+1;
   MPI_Request req;
@@ -305,9 +323,6 @@ void benchmarkMyself(Node& n,SubDomain3D* pS, int timesteps, int bornMin, int bo
 
     for(int itr=0; itr<iterations; ++itr)
     {
-  #ifdef DEBUG
-      fprintf(stderr,"processSubDomain(rank:%d,device:%d,subd:%p,...);",rank,device-1,s);
-  #endif
       processSubDomain(rank, device-1, s, timesteps, bornMin, bornMax, dieMin, dieMax);
     }
 
@@ -315,17 +330,15 @@ void benchmarkMyself(Node& n,SubDomain3D* pS, int timesteps, int bornMin, int bo
 
     total_sec = ((end.tv_sec - start.tv_sec) +             
         (end.tv_usec - start.tv_usec)/1000000.0);                       
-    weight[device] =  iterations / total_sec ;
-#ifdef DEBUG
+    weight[device] =   iterations/total_sec ;
     fprintf(stderr,"[%d]device:%d of %d processes %f iter/sec.\n", n.getRank(),device-1, total, weight[device]);
-#endif
     if(device==0)
     {
-      n.setWeight(iterations / total_sec);
+      n.setWeight(weight[device]);
     }
     else
     {
-      n.getChild(device-1).setWeight(iterations / total_sec);
+      n.getChild(device-1).setWeight(weight[device]);
     }
 
   }
@@ -356,14 +369,21 @@ void runDistributedCell(int rank, int numTasks, DTYPE *data, int x_max, int y_ma
     int dieMin, int dieMax)
 
 {
+  //hack because we want the compiler to give us the 
+  //stencil size, but we don't want to have to include
+  //the cuda headers in every file, so we convert
+  // it to an int array for the time-being.
+  dim3 stencil_size(1,1,1);
+  int new_stencil_size[3]={stencil_size.z,stencil_size.y,stencil_size.x};
   int deviceCount=0;
   Node myWork;
   Cluster* cluster = NULL;
-  struct timeval process_start, process_end;
+  struct timeval process_start, process_end, balance_start, balance_end;
 
   myWork.setRank(rank);
 
   getNumberOfChildren(deviceCount);
+  myWork.setNumChildren(deviceCount);
 #ifdef DEBUG
   printf("[%d] children:%d\n",rank,deviceCount);
 #endif
@@ -386,8 +406,11 @@ void runDistributedCell(int rank, int numTasks, DTYPE *data, int x_max, int y_ma
     /* perform domain decomposition */
     Decomposition decomp;
     int numElements[3] = {z_max,y_max,x_max};
-    decomp.decompose(data,3,numElements);
+    decomp.decompose(data,3,numElements, new_stencil_size, iterations);
 
+#ifdef DEBUG
+    printDecomposition(decomp);
+#endif
     //this is inefficient, need to implement a function that uses Bcast
     for(int node=1; node<cluster->getNumNodes(); ++node)
     {
@@ -405,8 +428,14 @@ void runDistributedCell(int rank, int numTasks, DTYPE *data, int x_max, int y_ma
     /* now perform the load balancing, assigning task blocks to each node */
     Balancer lb;
     //passing a 0 means use cpu and gpu on all nodes
+    gettimeofday(&balance_start, NULL);                                       
     lb.perfBalance(*cluster,decomp, 0);
     //lb.balance(*cluster,decomp, 0);
+    printCluster(*cluster);
+    gettimeofday(&balance_end, NULL);                                       
+    double balance_sec = ((balance_end.tv_sec - balance_start.tv_sec) +             
+        (balance_end.tv_usec - balance_start.tv_usec)/1000000.0);                       
+    fprintf(stderr, "***********\nBALANCE TIME: %f.\n",balance_sec);
 
 #ifdef DEBUG
     printCluster(*cluster);
@@ -423,7 +452,8 @@ void runDistributedCell(int rank, int numTasks, DTYPE *data, int x_max, int y_ma
     //root's work is in the first node
     myWork = cluster->getNode(0);
   }
-  else{
+  else
+  {
     //send number of children to root
     sendNumberOfChildren(0,deviceCount);
 
@@ -432,33 +462,33 @@ void runDistributedCell(int rank, int numTasks, DTYPE *data, int x_max, int y_ma
     fprintf(stderr, "[%d] benchmarking Myself.\n",rank);
 #endif
     benchmarkMyself(myWork, NULL,iterations, bornMin, bornMax, dieMin, dieMax);
-    receiveData(0, myWork);
+    receiveData(0, myWork, true, iterations, bornMin, bornMax, dieMin, dieMax);
 
   }
 #ifdef DEBUG
   fprintf(stderr, "[%d] processing %d task blocks.\n",rank,myWork.numSubDomains());
 #endif
-  for(int task=0; task<myWork.numSubDomains(); ++task){
-    processSubDomain(rank,-1, myWork.getSubDomain(task),iterations, bornMin, bornMax, dieMin, dieMax);
-  }
-  for(int child=0; child<myWork.getNumChildren(); ++child){
-#ifdef DEBUG
-    fprintf(stderr, "[%d] child [%d] processing %d task blocks.\n",rank,child,myWork.getChild(child).numSubDomains());
-#endif
-    for(int task=0; task<myWork.getChild(child).numSubDomains(); ++task)
-    {
-      processSubDomain(rank, child, myWork.getChild(child).getSubDomain(task),iterations, bornMin, bornMax, dieMin, dieMax);
-    }
-  }
-
-
   if(0==rank)
   {
+    for(int task=0; task<myWork.numSubDomains(); ++task){
+      processSubDomain(rank,-1, myWork.getSubDomain(task),iterations, bornMin, bornMax, dieMin, dieMax);
+    }
+    for(int child=0; child<myWork.getNumChildren(); ++child){
+#ifdef DEBUG
+      fprintf(stderr, "[%d] child [%d] processing %d task blocks.\n",rank,child,myWork.getChild(child).numSubDomains());
+#endif
+      for(int task=0; task<myWork.getChild(child).numSubDomains(); ++task)
+      {
+        processSubDomain(rank, child, myWork.getChild(child).getSubDomain(task),iterations, bornMin, bornMax, dieMin, dieMax);
+      }
+    }//*/
+
+
     if(cluster != NULL)
     {
       for(int r=1; r<numTasks; ++r)
       {
-        receiveData(r,cluster->getNode(r));
+        receiveData(r,cluster->getNode(r),false);
 #ifdef DEBUG
         fprintf(stderr, "[%d] received results from %d.\n",rank,r);
 #endif

@@ -52,6 +52,7 @@ typedef priority_queue< WorkRequest, vector<WorkRequest>, greater<WorkRequest> >
 
 class Node{
   double weight;
+  double edgeWeight;
   int rank;
   vector<SubDomain3D*> subD;
   vector<Node> children;
@@ -63,6 +64,7 @@ class Node{
   ~Node();
   Node& operator=(const Node& rhs);
   void addSubDomain(SubDomain3D*);	
+  void setEdgeWeight(double);
   void setWeight(double);
   void setRank(int);
   void setNumChildren(int);
@@ -76,6 +78,7 @@ class Node{
   Node& getChild(int index) ;	
   const int numSubDomains() const;
   const double getWeight() const;
+  const double getEdgeWeight() const;
   const double getTotalWeight() const;
 };
 

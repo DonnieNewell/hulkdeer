@@ -176,11 +176,18 @@ void runCell(DTYPE *host_data, int x_max, int y_max, int z_max, int iterations
     dim3 input_size(x_max, y_max, z_max);
     dim3 stencil_size(1,1,1);
     //use the appropriate device
-    if(cudaSuccess != cudaSetDevice(device))
+    int curr_device = -1;
+    cudaGetDevice(&curr_device);
+    if(curr_device != device)
+  {
+   //cudaDeviceSynchronize(); 
+    cudaError_t err = cudaSetDevice(device);
+    if(cudaSuccess != err)
     {
-      fprintf(stderr, "runCell(): couldn't select appropriate GPU.\n");
+      fprintf(stderr, "runCell(): couldn't select GPU index:%d.\nERROR: %s\n",device,cudaGetErrorString(err));
       return;
     }
+  }
     // Allocate CUDA arrays in device memory 
 
     // Host to device

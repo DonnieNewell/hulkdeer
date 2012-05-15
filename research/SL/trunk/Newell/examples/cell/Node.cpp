@@ -5,6 +5,7 @@ Node::Node():weight(1.0){
 }
 Node::Node(const Node& n){
   weight=n.weight;
+  edgeWeight=n.edgeWeight;
   rank=n.rank;
   subD=n.subD;
   children = n.children;
@@ -20,6 +21,7 @@ Node& Node::operator=(const Node& rhs){
   //if setting equal to itself, do nothing
   if(this != &rhs){
     this->weight = rhs.weight;
+    this->edgeWeight = rhs.edgeWeight;
     this->rank = rhs.rank;
     this->subD = rhs.subD;
     this->children = rhs.children;
@@ -63,6 +65,9 @@ const int Node::getNumChildren() const{
 void Node::setWeight(double newWeight){
   weight = newWeight;
 }
+void Node::setEdgeWeight(double newEdgeWeight){
+  edgeWeight = newEdgeWeight;
+}
 void Node::addSubDomain(SubDomain3D* sd){
   subD.push_back(sd);
 }
@@ -81,6 +86,10 @@ const double Node::getTotalWeight() const{
   fprintf(stderr, "node[%d] weight:%f total_weight:%f.\n",rank,weight,total);
 #endif
   return total;
+}
+const double Node::getEdgeWeight() const{
+
+  return edgeWeight;
 }
 const double Node::getWeight() const{
 

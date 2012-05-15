@@ -141,8 +141,6 @@ int main(int argc, char** argv)
     runDistributedCell(rank, numTasks, data, i, i, i, 90, bornMin, bornMax, dieMin, dieMax);
   }
 #else
-
-  // comment this out until we get the distributed solve working and consolidate all of this MPI code into one external function
   runDistributedCell(rank, numTasks, data, J, K, L, timesteps, bornMin, bornMax, dieMin, dieMax);
 #endif
 
