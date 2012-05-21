@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <limits>
 #include "cell.h"
 #include "Cluster.h"
 #include "Decomposition.h"
@@ -17,7 +18,8 @@
 enum MPITagType {
   xDim = 0, xLength = 1, xChildren = 2, 
   xDevice = 3, xData = 4, xNumBlocks = 5, 
-  xOffset = 6, xWeight = 7, xWeightIndex = 8};
+  xOffset = 6, xWeight = 7, xWeightIndex = 8,
+  xEdgeWeight = 9};
 
 void sendDataToNode(int rank, int device, SubDomain3D* s){
 
@@ -161,21 +163,24 @@ void benchmarkNode(Node& n, SubDomain3D* s)
 
   fprintf(stderr, "it takes %f sec to send one task to node: %d.\n",total_sec,n.getRank());
   //how fast is the connection between root and child nodes
-  n.setEdgeWeight(1/total_sec);
+  //multiply by 2 to account for there and back
+  n.setEdgeWeight(1/(2*total_sec));
 #ifdef DEBUG
   fprintf(stderr, "benchmarkNode(node.rank:%d, edgeWeight:%f blocks/sec): sent data to the node.\n",n.getRank(), n.getEdgeWeight());
 #endif
   //receive results for each device
   int total = n.getNumChildren()+1;
 
-  MPI_Request req;
+  MPI_Request req[2];
   double *task_per_sec= new double[total];
+  double *edge_weight= new double[total-1];
 
-  MPI_Irecv((void*)task_per_sec, total, MPI_DOUBLE, n.getRank(), xWeight, MPI_COMM_WORLD, &req);
+  MPI_Irecv((void*)task_per_sec, total, MPI_DOUBLE, n.getRank(), xWeight, MPI_COMM_WORLD, &req[0]);
+  MPI_Irecv((void*)edge_weight, total-1, MPI_DOUBLE, n.getRank(), xEdgeWeight, MPI_COMM_WORLD, &req[1]);
 
-  MPI_Waitall(1,&req,MPI_STATUSES_IGNORE);
+  MPI_Waitall(2,req,MPI_STATUSES_IGNORE);
 
-  //set set the appropriate fields in the node and its children
+  //set the appropriate fields in the node and its children
   for(int device = 0; device<total; ++device)
   {
     double weight = task_per_sec[device];
@@ -187,14 +192,18 @@ void benchmarkNode(Node& n, SubDomain3D* s)
     }
     else
     {
+      double edgeWeight = edge_weight[device-1];
       fprintf(stderr,"setting node[%d].child[%d] weight to %f.\n",n.getRank(),device-1,weight);
       n.getChild(device-1).setWeight(weight);
+      n.getChild(device-1).setEdgeWeight(edgeWeight);
     }
   }
 
   //clean up
   delete [] task_per_sec;
   task_per_sec = NULL;
+  delete [] edge_weight;
+  edge_weight = NULL;
 }
 
 /* output variables: buf, size */
@@ -262,16 +271,25 @@ void receiveData(int rank, Node& n, bool processNow, int iterations=0, int bornM
   int numTaskBlocks=0;
   MPI_Status stat;
   MPI_Recv((void*)&numTaskBlocks,1, MPI_INT, rank, xNumBlocks, MPI_COMM_WORLD, &stat);
-
+  struct timeval start, end;
+  double receiveDataTime=0.0, processBlockTime=0.0;
   for(int block = 0; block<numTaskBlocks; ++block){
     SubDomain3D* s=NULL;
     int device = -1;
+    gettimeofday(&start, NULL);
     s= receiveDataFromNode(rank, device);
+    gettimeofday(&end, NULL);
+    receiveDataTime += ((end.tv_sec - start.tv_sec) +             
+        (end.tv_usec - start.tv_usec)/1000000.0);                       
     if(-1 == device)
     {
       if(processNow)
       {
+        gettimeofday(&start, NULL);
         processSubDomain(rank,-1, s,iterations, bornMin, bornMax, dieMin, dieMax);
+        gettimeofday(&end, NULL);
+        processBlockTime+= ((end.tv_sec - start.tv_sec) +             
+            (end.tv_usec - start.tv_usec)/1000000.0);                       
       }
       //add block to cpu queue
       n.addSubDomain(s);
@@ -280,14 +298,50 @@ void receiveData(int rank, Node& n, bool processNow, int iterations=0, int bornM
     {
       if(processNow)
       {
+        
+        gettimeofday(&start, NULL);
         processSubDomain(rank, device, s, iterations, bornMin, bornMax, dieMin, dieMax);
+        gettimeofday(&end, NULL);
+        processBlockTime+= ((end.tv_sec - start.tv_sec) +             
+            (end.tv_usec - start.tv_usec)/1000000.0);                       
       }
       //add block to gpu queue
       n.getChild(device).addSubDomain(s);
     }
   }
+  runCellCleanup();
+  fprintf(stderr, "node[%d] spend %f sec receiving sub-domains, %f sec processing sub-domains.\n",n.getRank(),receiveDataTime, processBlockTime);
 }
 
+double benchmarkPCIBus(SubDomain3D* pS, int gpuIndex)
+{
+  struct timeval start, end;
+  double total=0.0;
+  gettimeofday(&start, NULL);
+  DTYPE* devBuffer = NULL;
+  int currDevice = -1;
+  cudaGetDevice(&currDevice);
+  if(currDevice != gpuIndex)
+  {
+    if(cudaSetDevice(gpuIndex)!= cudaSuccess)
+    {
+      fprintf(stderr,"ERROR: benchmarkPCIBus(): couldn't set device to %d\n",gpuIndex);
+      return -1.0;
+    }
+  }
+  size_t size = sizeof(DTYPE)*pS->getLength(0)*pS->getLength(1)*pS->getLength(2);
+  cudaMalloc(&devBuffer, size);
+  cudaMemcpy((void*)devBuffer,(void*)pS->getBuffer(), size, cudaMemcpyHostToDevice);
+  cudaMemcpy((void*)pS->getBuffer(),(void*)devBuffer, size, cudaMemcpyDeviceToHost);
+  cudaFree(devBuffer);
+  devBuffer=NULL;
+  gettimeofday(&end, NULL);
+
+  total = ((end.tv_sec - start.tv_sec) +             
+      (end.tv_usec - start.tv_usec)/1000000.0);                       
+
+  return 1/total;
+}
 
 void benchmarkMyself(Node& n,SubDomain3D* pS, int timesteps, int bornMin, int bornMax, int dieMin, int dieMax)
 {
@@ -295,8 +349,9 @@ void benchmarkMyself(Node& n,SubDomain3D* pS, int timesteps, int bornMin, int bo
   //printCudaDevices();
   //receive results for each device
   int total = n.getNumChildren()+1;
-  MPI_Request req;
+  MPI_Request req[2];
   double *weight = new double[total];
+  double *edgeWeight = new double[total-1];
   SubDomain3D *s=NULL;
   int rank = -2;
   if(pS==NULL)
@@ -335,10 +390,13 @@ void benchmarkMyself(Node& n,SubDomain3D* pS, int timesteps, int bornMin, int bo
     if(device==0)
     {
       n.setWeight(weight[device]);
+      n.setEdgeWeight(numeric_limits<double>::max());
     }
     else
     {
       n.getChild(device-1).setWeight(weight[device]);
+      edgeWeight[device-1] =   benchmarkPCIBus(s,device-1);
+      n.getChild(device-1).setEdgeWeight(edgeWeight[device-1]);
     }
 
   }
@@ -346,22 +404,22 @@ void benchmarkMyself(Node& n,SubDomain3D* pS, int timesteps, int bornMin, int bo
   if(NULL==pS)
   {
     //send the result back to the host
-    MPI_Isend((void*)weight, total, MPI_DOUBLE, 0,xWeight, MPI_COMM_WORLD, &req);
+    MPI_Isend((void*)weight, total, MPI_DOUBLE, 0,xWeight, MPI_COMM_WORLD, &req[0]);
+    MPI_Isend((void*)edgeWeight, total-1, MPI_DOUBLE, 0,xEdgeWeight, MPI_COMM_WORLD, &req[1]);
 
-    MPI_Waitall(1,&req,MPI_STATUSES_IGNORE);
+    MPI_Waitall(2,req,MPI_STATUSES_IGNORE);
   }
 
   //clean up
   delete [] weight;
   weight = NULL;
+  delete [] edgeWeight;
+  edgeWeight = NULL;
   if(pS==NULL)
   {
     delete s;
     s=NULL;
   }
-#ifdef DEBUG
-  fprintf(stderr, "exiting benchmarkMyself().\n");
-#endif
 }
 
 void runDistributedCell(int rank, int numTasks, DTYPE *data, int x_max, int y_max,
@@ -384,24 +442,12 @@ void runDistributedCell(int rank, int numTasks, DTYPE *data, int x_max, int y_ma
 
   getNumberOfChildren(deviceCount);
   myWork.setNumChildren(deviceCount);
-#ifdef DEBUG
-  printf("[%d] children:%d\n",rank,deviceCount);
-#endif
-  if(0==rank){
-
+  if(0==rank)
+  {
     //get the number of children from other nodes
     cluster = new Cluster(numTasks);
     cluster->getNode(0).setNumChildren(deviceCount);
     receiveNumberOfChildren(numTasks, *cluster);
-
-#ifdef  DEBUG
-    fprintf(stderr, "[%d] initializing data.\n",rank);
-#endif
-
-
-#ifdef DEBUG
-    fprintf(stderr,"[%d] decomposing data.\n",rank);
-#endif
 
     /* perform domain decomposition */
     Decomposition decomp;
@@ -414,34 +460,22 @@ void runDistributedCell(int rank, int numTasks, DTYPE *data, int x_max, int y_ma
     //this is inefficient, need to implement a function that uses Bcast
     for(int node=1; node<cluster->getNumNodes(); ++node)
     {
-#ifdef DEBUG
-      fprintf(stderr, "benchmarking Node(%d).\n",node);
-#endif
       benchmarkNode(cluster->getNode(node), decomp.getSubDomain(0));
     }
 
-#ifdef DEBUG
-    fprintf(stderr, "[%d] benchmarking Myself.\n",rank);
-#endif
     benchmarkMyself(cluster->getNode(0),decomp.getSubDomain(0),iterations, bornMin, bornMax, dieMin, dieMax);
 
     /* now perform the load balancing, assigning task blocks to each node */
     Balancer lb;
-    //passing a 0 means use cpu and gpu on all nodes
     gettimeofday(&balance_start, NULL);                                       
-    lb.perfBalance(*cluster,decomp, 0);
+    lb.perfBalance(*cluster,decomp, 0); //passing a 0 means use cpu and gpu on all nodes
     //lb.balance(*cluster,decomp, 0);
     printCluster(*cluster);
     gettimeofday(&balance_end, NULL);                                       
     double balance_sec = ((balance_end.tv_sec - balance_start.tv_sec) +             
         (balance_end.tv_usec - balance_start.tv_usec)/1000000.0);                       
-    fprintf(stderr, "***********\nBALANCE TIME: %f.\n",balance_sec);
+    fprintf(stderr, "***********\nBALANCE TIME: %f seconds.\n",balance_sec);
 
-#ifdef DEBUG
-    printCluster(*cluster);
-    fprintf(stderr,"[%d] decomposed data into %d chunks.\n",rank, decomp.getNumSubDomains());
-    fprintf(stderr,"[%d] sending data.",rank);
-#endif
     gettimeofday(&process_start, NULL);                                       
 
 
@@ -456,42 +490,26 @@ void runDistributedCell(int rank, int numTasks, DTYPE *data, int x_max, int y_ma
   {
     //send number of children to root
     sendNumberOfChildren(0,deviceCount);
-
-
-#ifdef DEBUG
-    fprintf(stderr, "[%d] benchmarking Myself.\n",rank);
-#endif
     benchmarkMyself(myWork, NULL,iterations, bornMin, bornMax, dieMin, dieMax);
     receiveData(0, myWork, true, iterations, bornMin, bornMax, dieMin, dieMax);
-
   }
-#ifdef DEBUG
-  fprintf(stderr, "[%d] processing %d task blocks.\n",rank,myWork.numSubDomains());
-#endif
   if(0==rank)
   {
     for(int task=0; task<myWork.numSubDomains(); ++task){
       processSubDomain(rank,-1, myWork.getSubDomain(task),iterations, bornMin, bornMax, dieMin, dieMax);
     }
     for(int child=0; child<myWork.getNumChildren(); ++child){
-#ifdef DEBUG
-      fprintf(stderr, "[%d] child [%d] processing %d task blocks.\n",rank,child,myWork.getChild(child).numSubDomains());
-#endif
       for(int task=0; task<myWork.getChild(child).numSubDomains(); ++task)
       {
         processSubDomain(rank, child, myWork.getChild(child).getSubDomain(task),iterations, bornMin, bornMax, dieMin, dieMax);
       }
-    }//*/
+    }
 
-
-    if(cluster != NULL)
+    if(cluster != NULL) //root node
     {
       for(int r=1; r<numTasks; ++r)
       {
         receiveData(r,cluster->getNode(r),false);
-#ifdef DEBUG
-        fprintf(stderr, "[%d] received results from %d.\n",rank,r);
-#endif
       }	
       gettimeofday(&process_end, NULL);                                       
 
@@ -506,16 +524,12 @@ void runDistributedCell(int rank, int numTasks, DTYPE *data, int x_max, int y_ma
     //send my work back to the root
     myWork.setRank(0);
     sendData(myWork);
-#ifdef DEBUG
-    fprintf(stderr, "[%d] sent results to root.\n",rank);
-#endif
   }
   if(NULL != cluster)
   {
     delete cluster;
     cluster=NULL;
   }
-
 } 
 
 

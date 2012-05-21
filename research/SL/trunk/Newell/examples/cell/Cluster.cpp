@@ -33,12 +33,12 @@ void printNode(int parentRank,Node& n)
 void printCluster(Cluster& c){
   for(int node=0; node < c.getNumNodes(); node++){
     Node &n = c.getNode(node);
-    printf("node:%d weight:%f has %d tasks.\n",node,n.getWeight(),n.numSubDomains());
+    printf("node:%d weight:%f edgeWeight:%f has %d tasks.\n",node,n.getWeight(),n.getEdgeWeight(),n.numSubDomains());
 //    printNode(-1,n);
     for(int child=0; child<n.getNumChildren(); ++child)
     {
       Node& ch = n.getChild(child);
-      printf("\tchild:%d weight:%f has %d tasks.\n",child,ch.getWeight(),ch.numSubDomains());
+      printf("\tchild:%d weight:%f edgeWeight:%f has %d tasks.\n",child,ch.getWeight(), ch.getEdgeWeight(),ch.numSubDomains());
 //      printNode(n.getRank(),ch);
 
     }

@@ -17,6 +17,31 @@ Node::Node(double wt):weight(wt){
 Node::~Node(){
 
 }
+
+/**
+ * @brief estimates how long communication and processing will take
+ * @param extra additional tasks to estimate runtime for
+ * @return estimated runtime given current work
+ */ 
+const double Node::getTimeEst(int extra) const
+{
+  double est      = 0.0             ;
+  double procTime = 1.0 / weight    ;
+  double commTime = 1.0 / edgeWeight;
+  
+  est = (procTime + commTime) * (extra + subD.size());
+  
+  for(size_t c=0; c < children.size(); ++c)
+  {
+    const Node&  ch         = children.at(c)          ;
+    double chProcTime = 1.0 / ch.getWeight()    ;
+    double chCommTime = 1.0 / ch.getEdgeWeight();
+    est += (chCommTime + commTime + chProcTime) * ch.numSubDomains();
+  }
+
+  return est;
+}
+
 Node& Node::operator=(const Node& rhs){
   //if setting equal to itself, do nothing
   if(this != &rhs){
@@ -46,7 +71,7 @@ void Node::setNumChildren(int numChildren){
 int Node::getTotalWorkNeeded(const double runtime) const
 {
   //how many blocks could this subtree process in time
-  return (int) (this->getTotalWeight()*runtime);
+  return (int) min(this->getTotalWeight(),this->getMinEdgeWeight())*runtime;
 }
 
 /*
@@ -75,6 +100,20 @@ const int Node::getRank() const{
 
   return this->rank;
 }
+const double Node::getMinEdgeWeight() const
+{
+  double minWeight = edgeWeight;
+  for(size_t child=0; child<children.size(); ++child)
+  {
+    minWeight = min(children.at(child).getEdgeWeight(), minWeight);
+  }
+
+#ifdef DEBUG
+  fprintf(stderr, "node[%d] edgeWeight:%f min edge Weight:%f.\n",rank,edgeWeight,minWeight);
+#endif
+  return minWeight;
+}
+
 const double Node::getTotalWeight() const{
   double total = weight;
   for(size_t child=0; child<children.size(); ++child)

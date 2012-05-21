@@ -14,36 +14,49 @@ void Balancer::perfBalance(Cluster &cluster, Decomposition& decomp, int config)
 {
   WorkQueue wq;
   WorkRequest wr;
+  Node &root = cluster.getNode(0);
 
-  int num_blocks = decomp.getNumSubDomains();
+  size_t num_blocks = decomp.getNumSubDomains();
 
   //perform initial task distribution
-  this->balance(cluster, decomp, config);
+  // this->balance(cluster, decomp, config);
+  for(size_t i=0; i<num_blocks; ++i)
+  {
+    root.addSubDomain(decomp.popSubDomain());
+  }
 
   //get total iterations per second for cluster
   double total_weight = 0.0;
+  double min_edge_weight = 0.0;
   for(int node=0; node<cluster.getNumNodes(); ++node)
   {
     total_weight += cluster.getNode(node).getTotalWeight();
+    min_edge_weight += cluster.getNode(node).getMinEdgeWeight();
   }
 
-  //how long will it take with ideal distribution?
-  double runtime_estimate = num_blocks / total_weight;
+  //quick estimation of runtime
+  double procTime = num_blocks / total_weight;
+  double commTime = num_blocks / min_edge_weight;
+  double timeEst = procTime + commTime * commTime;
 
-  fprintf(stderr, "perfBalance(): execution should take %f seconds.\n",runtime_estimate);	
+  fprintf(stderr, "perfBalance(): execution should take %f seconds with total weight:%f, min edge weight:%f.\n",timeEst, total_weight, min_edge_weight);	
 
   bool changed;
 
-  Node &root = cluster.getNode(0);
+  /*
+     need to change the way that work requests are created because
+     they now need to store the estimated runtime instead of amount 
+     requested.
+   */
   int counter = 0; //DEBUG purposes
   do{
-    changed=false;
-    counter++;
+    changed = false;
+    counter++      ;
     //balance the work between nodes and root
     for(int child=1; child<cluster.getNumNodes(); ++child)
     {
-      Node& c = cluster.getNode(child);
-      int diff = c.getTotalWorkNeeded(runtime_estimate)-c.numTotalSubDomains();
+      Node& c    = cluster.getNode(child);
+      int   diff = c.getTotalWorkNeeded(timeEst)-c.numTotalSubDomains();
       if(0>diff) //child has extra work
       {
         int extra = abs(diff);
@@ -64,7 +77,7 @@ void Balancer::perfBalance(Cluster &cluster, Decomposition& decomp, int config)
       }
       else if(0<diff) //child needs more work
       {
-        wr.setAmount(diff);
+        wr.setTimeDiff(timeEst-c.getTimeEst(0));
         wr.setIndex(child);
         wq.push(wr);
       }
@@ -73,7 +86,7 @@ void Balancer::perfBalance(Cluster &cluster, Decomposition& decomp, int config)
     for(int child=0; child<root.getNumChildren(); ++child)
     {
       Node& c = root.getChild(child);
-      int diff = c.getTotalWorkNeeded(runtime_estimate)-c.numTotalSubDomains();
+      int diff = c.getTotalWorkNeeded(timeEst)-c.numTotalSubDomains();
       if(0>diff) //child has extra work
       {
         int extra = abs(diff);
@@ -94,7 +107,7 @@ void Balancer::perfBalance(Cluster &cluster, Decomposition& decomp, int config)
       }
       else if(0<diff) //child needs more work
       {
-        wr.setAmount(diff);
+        wr.setTimeDiff(timeEst - c.getTimeEst(0));
         wr.setIndex(-1*child);//hack so I know to give to one of root's children
         wq.push(wr);
       }
@@ -112,6 +125,7 @@ void Balancer::perfBalance(Cluster &cluster, Decomposition& decomp, int config)
       WorkRequest tmp = wq.top();
       wq.pop();
 
+      double newTimeDiff = 0.0;
       int id = tmp.getIndex();
       if(id<=0) //local child
       {
@@ -123,8 +137,8 @@ void Balancer::perfBalance(Cluster &cluster, Decomposition& decomp, int config)
         }
         else
         {
-
           root.getChild(id).addSubDomain(s);
+          newTimeDiff = timeEst - root.getChild(id).getTimeEst(0);
           changed=true;
         }
       }
@@ -137,24 +151,26 @@ void Balancer::perfBalance(Cluster &cluster, Decomposition& decomp, int config)
         }
         else
         {
-
           cluster.getNode(id).addSubDomain(s);
+          newTimeDiff = timeEst - cluster.getNode(id).getTimeEst(0);
           changed=true;
         }
       }
 
       //if there is still work left to do put it back on 
       // the queue so that it will reorder correctly
-      tmp.setAmount(tmp.getAmount()-1);
-      if(0 < tmp.getAmount())
+      if(0 < newTimeDiff)
+      {
+        tmp.setTimeDiff(newTimeDiff);
         wq.push(tmp);
+      }  
     }
 
 
     //balance the work within each node
     for(int node=0; node<cluster.getNumNodes(); ++node)
     {
-      changed |= balanceNode(cluster.getNode(node),runtime_estimate);
+      changed |= balanceNode(cluster.getNode(node),timeEst);
     }
   }while(changed);
 
@@ -238,7 +254,7 @@ bool Balancer::balanceNode(Node& n, double runtime){
     }
     else if(0<diff) //child needs more work
     {
-      wr.setAmount(diff);
+      wr.setTimeDiff(runtime - c.getTimeEst(0));
       wr.setIndex(child);
       wq.push(wr);
     }
@@ -253,18 +269,23 @@ bool Balancer::balanceNode(Node& n, double runtime){
   while(0 < n.numSubDomains() && //there are blocks left to give
       !wq.empty()) //there are requests left to fill
   {
+    double timeDiff = 0.0;
     //get largest request
     WorkRequest tmp = wq.top();
     wq.pop();
 
     n.getChild(tmp.getIndex()).addSubDomain(n.popSubDomain());
+    timeDiff = runtime - n.getChild(tmp.getIndex()).getTimeEst(0);
     changed=true;
 
     //if there is still work left to do put it back on 
     // the queue so that it will reorder correctly
-    tmp.setAmount(tmp.getAmount()-1);
-    if(0 < tmp.getAmount())
+
+    if(0 < timeDiff)
+    {
+      tmp.setTimeDiff(timeDiff);
       wq.push(tmp);
+    }  
   }
 
   /*

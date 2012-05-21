@@ -22,7 +22,7 @@ class Decomposition{
     const SubDomain3D* getSubDomain(const int )const;
     SubDomain3D* getSubDomain(const int );
     SubDomain3D* popSubDomain();
-    int getNumSubDomains()const; 
+    size_t getNumSubDomains()const; 
     void decompose(int* buffer, const int numDimensions, const int numElements[],const int stencil_size[], const int);
 };    
 

@@ -21,7 +21,7 @@ Decomposition::~Decomposition(){
 }
 Decomposition& Decomposition::operator=(const Decomposition& d){
   this->domain.clear();
-  for ( int i=0; i<d.getNumSubDomains(); ++i){
+  for ( size_t i=0; i<d.getNumSubDomains(); ++i){
     SubDomain3D* s = new SubDomain3D(*(d.getSubDomain(i)));
     this->domain.push_back(s);
   }
@@ -39,7 +39,7 @@ SubDomain3D* Decomposition::getSubDomain(const int index){
   return this->domain.at(index);
 }
 
-int Decomposition::getNumSubDomains() const {
+size_t Decomposition::getNumSubDomains() const {
   return domain.size();
 }
 void Decomposition::addSubDomain(SubDomain3D* s){
@@ -179,9 +179,9 @@ void Decomposition::decompose(DTYPE* buffer, const int numDimensions, const int 
 }
 void printDecomposition(Decomposition& d)
 {
-  for(int s = 0; s < d.getNumSubDomains(); ++s)
+  for(size_t s = 0; s < d.getNumSubDomains(); ++s)
   {
-    fprintf(stderr, "s[%d] off[%d][%d][%d] len[%d][%d][%d].\n",s,d.getSubDomain(s)->getOffset(0),d.getSubDomain(s)->getOffset(1),d.getSubDomain(s)->getOffset(2),d.getSubDomain(s)->getLength(0),d.getSubDomain(s)->getLength(1),d.getSubDomain(s)->getLength(2));
+    fprintf(stderr, "s[%u] off[%d][%d][%d] len[%d][%d][%d].\n",s,d.getSubDomain(s)->getOffset(0),d.getSubDomain(s)->getOffset(1),d.getSubDomain(s)->getOffset(2),d.getSubDomain(s)->getLength(0),d.getSubDomain(s)->getLength(1),d.getSubDomain(s)->getLength(2));
 
 
   }

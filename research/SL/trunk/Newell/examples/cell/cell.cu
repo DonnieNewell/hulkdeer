@@ -167,6 +167,10 @@ void runCellKernel(dim3 input_size, dim3 stencil_size,
 static DTYPE *global_ro_data = NULL;
 
 /**
+ * this depends on all blocks being the same size
+ */
+static DTYPE *device_input=NULL, *device_output=NULL;
+/**
  * Function exported to do the entire stencil computation.
  */
 void runCell(DTYPE *host_data, int x_max, int y_max, int z_max, int iterations
@@ -181,6 +185,8 @@ void runCell(DTYPE *host_data, int x_max, int y_max, int z_max, int iterations
     if(curr_device != device)
   {
    //cudaDeviceSynchronize(); 
+    //changing devices, so we need to deallocate previous input/output buffers
+    runCellCleanup();
     cudaError_t err = cudaSetDevice(device);
     if(cudaSuccess != err)
     {
@@ -191,11 +197,13 @@ void runCell(DTYPE *host_data, int x_max, int y_max, int z_max, int iterations
     // Allocate CUDA arrays in device memory 
 
     // Host to device
-    DTYPE *device_input, *device_output;
     int num_bytes = input_size.x * input_size.y * input_size.z * sizeof(DTYPE);
+    if(NULL==device_input && NULL==device_output)
+        {
+          cudaMalloc((void **) &device_output, num_bytes);
+          cudaMalloc((void **) &device_input, num_bytes);
+        }
     //cudaMalloc((void **) &cuArray, num_bytes);
-    cudaMalloc((void **) &device_output, num_bytes);
-    cudaMalloc((void **) &device_input, num_bytes);
     cudaMemcpy(device_input, host_data, num_bytes, cudaMemcpyHostToDevice);
     //cudaChannelFormatDesc channelDesc = cudaCreateChannelDesc<DTYPE>(); 
     //cudaArray* cuArray; 
@@ -350,15 +358,24 @@ void runCell(DTYPE *host_data, int x_max, int y_max, int z_max, int iterations
 
     // Device to host
     cudaMemcpy(host_data, device_input, num_bytes, cudaMemcpyDeviceToHost);
-    cudaFree(device_input);
-    cudaFree(device_output);
-    if (global_ro_data != NULL)
+   if (global_ro_data != NULL)
     {
-        cudaFree(global_ro_data);
-        global_ro_data = NULL;
+      cudaFree(global_ro_data);
+      global_ro_data = NULL;
     }
 
 	disposeSAProps(SAPs);
+}
+
+void runCellCleanup()
+{
+  if (device_input != NULL && device_output != NULL)
+  {
+    cudaFree(device_input);
+    device_input=NULL;
+    cudaFree(device_output);
+    device_output=NULL;
+  }
 }
 
 /**

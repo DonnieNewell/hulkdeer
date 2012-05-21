@@ -10,39 +10,39 @@ using namespace std;
 class WorkRequest
 {
   private:
-    pair<int,int> req;
+    pair<double,int> req;
   public:
     WorkRequest()
     {
-      req.first=0;
-      req.second=0;
+      req.first  = 0.0;
+      req.second = 0  ;
     }
     WorkRequest(const WorkRequest& rhs)
     {
       if(this != &rhs)
       {
-        req.first = rhs.getAmount();
-        req.second = rhs.getIndex();
+        req.first   = rhs.getTimeDiff();
+        req.second  = rhs.getIndex()   ;
       }
     }
-    WorkRequest(int amount, int index)
+    WorkRequest(double timeDiff, int index )
     {
-      req.first=amount;
-      req.second=index;
+      req.first  = timeDiff;
+      req.second = index   ;
     }
 
     ~WorkRequest(){ }
     bool operator<(const WorkRequest& rhs)const
     {
-      return req.first < rhs.getAmount();
+      return req.first < rhs.getTimeDiff();
     }
 
     bool operator>(const WorkRequest& rhs)const
     {
-      return req.first > rhs.getAmount();
+      return req.first > rhs.getTimeDiff();
     }
-    int getAmount() const { return req.first; }
-    int setAmount(int newAmount) { return req.first = newAmount; }
+    double getTimeDiff() const { return req.first; }
+    double setTimeDiff(double newTimeDiff) { return req.first = newTimeDiff; }
     int getIndex() const { return req.second; }
     int setIndex(int newIndex) { return req.second = newIndex; }
 };
@@ -70,6 +70,7 @@ class Node{
   void setNumChildren(int);
   const int getNumChildren() const;
   const int getRank() const;
+  const double getTimeEst(int extra) const;
   int getWorkNeeded(const double runtime) const;
   int getTotalWorkNeeded(const double runtime) const;
   const int numTotalSubDomains() const;
@@ -80,6 +81,7 @@ class Node{
   const double getWeight() const;
   const double getEdgeWeight() const;
   const double getTotalWeight() const;
+  const double getMinEdgeWeight() const;
 };
 
 #endif
