@@ -419,6 +419,43 @@ void benchmarkMyself(Node& n,SubDomain3D* pS, int timesteps, int bornMin, int bo
   }
 }
 
+/* 
+  TODO
+  takes a subdomain containing results and copies it into original
+  buffer, accounting for invalid ghost zone around edges 
+*/
+void copy_result_block(DTYPE* buffer, SubDomain3D* s, int pyramidHeight)
+{
+  
+}
+
+void copy_results(DTYPE* buffer, Cluster &cluster, int pyramidHeight)
+{
+  if(NULL == buffer) return;
+
+  /* get work from all parents and children in cluster */
+  for(int n = 0; n < cluster.getNumNodes(); ++n)
+  {
+    Node &node = cluster.getNode(n);
+    int num = node.numSubDomains();
+    for(int block =0; block < num; ++block)
+    {
+      copy_result_block(buffer, node.getSubDomain(block), pyramidHeight);
+    }
+
+    for(int c = 0; c < node.getNumChildren(); ++c)
+    {
+      Node &child = node.getChild(c);
+      num = child.numSubDomains();
+
+      for(int block =0; block < num; ++block)
+      {
+        copy_result_block(buffer, child.getSubDomain(block), pyramidHeight);
+      }
+    }
+  }
+}
+
 void runDistributedCell(int rank, int numTasks, DTYPE *data, int x_max, int y_max,
     int z_max, int iterations, int bornMin, int bornMax, 
     int dieMin, int dieMax)
@@ -492,6 +529,7 @@ void runDistributedCell(int rank, int numTasks, DTYPE *data, int x_max, int y_ma
   }
   if(0==rank)
   {
+    /* PROCESS ROOT NODE WORK */
       gettimeofday(&comp_start, NULL);                                       
     for(int task=0; task<myWork.numSubDomains(); ++task){
       processSubDomain(rank,-1, myWork.getSubDomain(task),iterations, bornMin, bornMax, dieMin, dieMax);
@@ -507,9 +545,10 @@ void runDistributedCell(int rank, int numTasks, DTYPE *data, int x_max, int y_ma
       double time_root_compute= ((comp_end.tv_sec - comp_start.tv_sec) +             
           (comp_end.tv_usec - comp_start.tv_usec)/1000000.0);                       
       fprintf(stderr, "***********\nroot node spent: %f sec processing it's work.\n",time_root_compute);
-    if(cluster != NULL) //root node
+    if(cluster != NULL) 
     {
       gettimeofday(&rec_start, NULL);                                       
+      /* receives results, needs to be asynchronous */
       for(int r=1; r<numTasks; ++r)
       {
         receiveData(r,cluster->getNode(r),false);
