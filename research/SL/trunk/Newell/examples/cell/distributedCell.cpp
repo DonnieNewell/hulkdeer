@@ -15,6 +15,7 @@
 #endif
 
 #define DTYPE int
+#define PYRAMID_HEIGHT 1
 
 enum MPITagType {
   xDim        = 0, xLength  = 1, xChildren    = 2, 
@@ -448,7 +449,7 @@ void runDistributedCell(int rank, int numTasks, DTYPE *data, int x_max, int y_ma
     /* perform domain decomposition */
     Decomposition decomp;
     int numElements[3] = {z_max,y_max,x_max};
-    decomp.decompose(data,3,numElements, new_stencil_size, iterations);
+    decomp.decompose(data,3,numElements, new_stencil_size, PYRAMID_HEIGHT);
 
 #ifdef DEBUG
     printDecomposition(decomp);

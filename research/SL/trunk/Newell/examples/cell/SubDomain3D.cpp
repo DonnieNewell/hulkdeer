@@ -36,7 +36,8 @@ SubDomain3D::SubDomain3D( int id[3],    int xOffset,  int xLength,
   length[0] = xLength ;
   length[1] = yLength ;
   length[2] = zLength ;
-  this->buffer = new DTYPE[xLength*yLength*zLength];
+  this->buffer = new DTYPE[xLength*yLength*zLength]();
+  
 }
 
 SubDomain3D::~SubDomain3D()
@@ -109,7 +110,7 @@ SubDomain3D& SubDomain3D::operator=(const SubDomain3D &sd)
     length[1] = sd.getLength(1);
     length[2] = sd.getLength(2);
     int size  = length[0]*length[1]*length[2];
-    buffer    = new DTYPE[size];
+    buffer    = new DTYPE[size]();
     DTYPE*buf = sd.getBuffer();
     
     if(NULL!=buf)

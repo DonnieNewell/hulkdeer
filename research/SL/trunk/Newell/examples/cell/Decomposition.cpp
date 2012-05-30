@@ -115,11 +115,12 @@ void Decomposition::copyBlock(  int* buffer,
   //subDomain should already have memory allocated.
   int *sBuff = s->getBuffer();
 
-  if(NULL==sBuff)
+  if(NULL == sBuff)
   {
     fprintf(stderr,"copyBlock: subDomain has NULL Buffer.\n");
     return;
   }
+
   //stage sub-domain data into contiguous memory
   for(int depth = 0; depth < s->getLength(0); depth++)
   {
@@ -127,10 +128,24 @@ void Decomposition::copyBlock(  int* buffer,
     {
       for(int col = 0; col < s->getLength(2); col++)
       {
-        int newIndex = depth*s->getLength(1)*s->getLength(2)+row*s->getLength(0)+col;
-        int oldIndex =  (s->getOffset(0)+depth)*numElementsCols*numElementsRows +
-                        (s->getOffset(1)+row)*numElementsCols +
-                        (s->getOffset(2)+col);
+        //make sure index is valid
+        int d = s->getOffset(0) + depth ;
+        int r = s->getOffset(1) + row   ;
+        int c = s->getOffset(2) + col   ;
+
+        //don't copy if we aren't inside valid range
+        if( d < 0 || d >= numElementsDepth  || 
+            r < 0 || r >= numElementsRows   || 
+            c < 0 || c >= numElementsCols   ) continue;
+
+        int newIndex =  depth * s->getLength(1) * s->getLength(2) +
+                        row * s->getLength(0) +
+                        col ;
+
+        int oldIndex =  d * numElementsCols * numElementsRows +
+                        r * numElementsCols +
+                        c ;
+
         sBuff[newIndex] = buffer[oldIndex];
       }
     }
@@ -162,24 +177,16 @@ void Decomposition::decompose3D(int* buffer,
       for(int k=0; k < width; ++k)
       {
         int id[3]     = {i, j, k};
-        int depthOff  = blockDimDepth *i;
-        int heightOff = blockDimHeight*j;
-        int widthOff  = blockDimWidth *k;
-        depthOff  = max(depthOff, 0);
-        heightOff = max(heightOff,0);
-        widthOff  = max(widthOff, 0);
 
-        int depthLen = blockDimDepth;
-        depthLen = 
-          (depthOff+depthLen > numElementsDepth) ? numElementsDepth-depthOff : depthLen;
+        //offset to account for ghost zone, may be negative
+        int depthOff  = blockDimDepth  * i - border[0];
+        int heightOff = blockDimHeight * j - border[1];
+        int widthOff  = blockDimWidth  * k - border[2];
 
-        int heightLen = blockDimHeight;
-        heightLen = 
-          (heightOff+heightLen > numElementsDepth) ? numElementsDepth-heightOff : heightLen;
-
-        int widthLen = blockDimWidth;
-        widthLen = 
-          (widthOff+widthLen > numElementsDepth) ? numElementsDepth-widthOff : widthLen;
+        //length may be too large when added to offset
+        int depthLen  = blockDimDepth   + 2*border[0];
+        int heightLen = blockDimHeight  + 2*border[1];
+        int widthLen  = blockDimWidth   + 2*border[2];
 
         SubDomain3D* s = NULL;
         s= new SubDomain3D( id,         depthOff,   depthLen, 
@@ -201,15 +208,15 @@ void Decomposition::decompose(  DTYPE* buffer,
                                 const int numDimensions, 
                                 const int numElements[3], 
                                 const int stencil_size[3], 
-                                const int iterations)
+                                const int pyramidHeight)
 {
   if(1 == numDimensions)
-    decompose1D(buffer, numElements[0], stencil_size, iterations);
+    decompose1D(buffer, numElements[0], stencil_size, pyramidHeight);
   else if(2 == numDimensions)
-    decompose2D(buffer, numElements[0], numElements[1], stencil_size, iterations);
+    decompose2D(buffer, numElements[0], numElements[1], stencil_size, pyramidHeight);
   else if(3 == numDimensions)
     decompose3D(buffer,       numElements[0], numElements[1], numElements[2], 
-                stencil_size, iterations);
+                stencil_size, pyramidHeight);
 }
 
 void printDecomposition(Decomposition& d)
