@@ -39,7 +39,7 @@ void Balancer::perfBalance(Cluster &cluster, Decomposition& decomp, int config)
   double commTime = num_blocks / min_edge_weight;
   double timeEst = procTime + commTime * commTime;
 
-  fprintf(stderr, "perfBalance(): execution should take %f seconds with total weight:%f, min edge weight:%f.\n",timeEst, total_weight, min_edge_weight);	
+  fprintf(stderr, "perfBalance(): execution should take %f seconds with total weight:%e, min edge weight:%e.\n",timeEst, total_weight, min_edge_weight);	
 
   bool changed;
 

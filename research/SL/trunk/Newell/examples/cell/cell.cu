@@ -170,21 +170,24 @@ static DTYPE *global_ro_data = NULL;
  * this depends on all blocks being the same size
  */
 static DTYPE *device_input=NULL, *device_output=NULL;
+
+static int pyramid_height=-1; 
 /**
  * Function exported to do the entire stencil computation.
  */
 void runCell(DTYPE *host_data, int x_max, int y_max, int z_max, int iterations
-                    , int bornMin, int bornMax, int dieMin, int dieMax, int device)
+    , int bornMin, int bornMax, int dieMin, int dieMax, int device)
 {
-    // User-specific parameters
-    dim3 input_size(x_max, y_max, z_max);
-    dim3 stencil_size(1,1,1);
-    //use the appropriate device
-    int curr_device = -1;
-    cudaGetDevice(&curr_device);
-    if(curr_device != device)
+  // User-specific parameters
+  dim3 input_size   (x_max, y_max, z_max);
+  dim3 stencil_size (1,1,1);
+  //use the appropriate device
+  int     curr_device = -1;
+  struct  timeval start, end;
+
+  cudaGetDevice(&curr_device);
+  if(curr_device != device)
   {
-   //cudaDeviceSynchronize(); 
     //changing devices, so we need to deallocate previous input/output buffers
     runCellCleanup();
     cudaError_t err = cudaSetDevice(device);
@@ -194,187 +197,127 @@ void runCell(DTYPE *host_data, int x_max, int y_max, int z_max, int iterations
       return;
     }
   }
-    // Allocate CUDA arrays in device memory 
+  
+// Allocate CUDA arrays in device memory 
+  int num_bytes = input_size.x * input_size.y * input_size.z * sizeof(DTYPE);
+  if(NULL==device_input && NULL==device_output)
+  {
+    fprintf(stderr, "allocating gpu memory.\n");
+    cudaMalloc((void **) &device_output, num_bytes);
+    cudaMalloc((void **) &device_input,  num_bytes);
+  }
+  cudaMemcpy(device_input, host_data, num_bytes, cudaMemcpyHostToDevice);
 
-    // Host to device
-    int num_bytes = input_size.x * input_size.y * input_size.z * sizeof(DTYPE);
-    if(NULL==device_input && NULL==device_output)
-        {
-          cudaMalloc((void **) &device_output, num_bytes);
-          cudaMalloc((void **) &device_input, num_bytes);
-        }
-    //cudaMalloc((void **) &cuArray, num_bytes);
-    cudaMemcpy(device_input, host_data, num_bytes, cudaMemcpyHostToDevice);
-    //cudaChannelFormatDesc channelDesc = cudaCreateChannelDesc<DTYPE>(); 
-    //cudaArray* cuArray; 
-    //cudaMallocArray(&cuArray, &channelDesc, input_size.x * input_size.y * input_size.z, 1, cudaArraySurfaceLoadStore);
-    //cudaBindSurfaceToArray(surfRef, cuArray);
+  // Setup the structure that holds parameters for the application.
+  // And from that, get the block size.
+  char* KernelName = "runCellKernel";
+  dim3  tile_size = initSAProps(3, input_size, stencil_size, iterations, sizeof(DTYPE), KernelName);
+  dim3  border, 
+        tile_data_size, 
+        grid_dims;
 
-	
-#ifdef STATISTICS
-    struct timeval trainingstarttime, trainingendtime;
-    unsigned int trainingusec;
-    gettimeofday(&trainingstarttime, NULL);                                       
-#endif
-
-    // Setup the structure that holds parameters for the application.
-    // And from that, get the block size.
-    char * KernelName = "runCellKernel";
-    dim3 tile_size = initSAProps(3, input_size, stencil_size, iterations, sizeof(DTYPE), KernelName);
-
-    dim3 border, tile_data_size, grid_dims;
-
-    // Now ready for the training period.
-    // Need to get some timings of small kernel runs.
-    // TODO It would be faster if these could be 0 and 1 heights instead of 1 and 2.
-    int pyramid_height = 2;
-    filldim3(&border, pyramid_height * stencil_size.x, pyramid_height * stencil_size.y, pyramid_height * stencil_size.z);
-    filldim3(&tile_data_size, tile_size.x - 2*border.x, tile_size.y - 2*border.y, tile_size.z - 2*border.z);
-    filldim3(&grid_dims, div_ceil(input_size.x, tile_data_size.x), div_ceil(input_size.y, tile_data_size.y)*div_ceil(input_size.z, tile_data_size.z));
+  // Now ready for the training period.
+  // Need to get some timings of small kernel runs.
+  // TODO It would be faster if these could be 0 and 1 heights instead of 1 and 2.
+  if(-1 == pyramid_height)
+  {  
+    pyramid_height = 2;
+    filldim3( &border,         
+              pyramid_height * stencil_size.x,          
+              pyramid_height * stencil_size.y,  
+              pyramid_height * stencil_size.z);
+    filldim3( &tile_data_size, 
+              tile_size.x - 2*border.x,                 
+              tile_size.y - 2*border.y,         
+              tile_size.z - 2*border.z);
+    filldim3( &grid_dims,      
+              div_ceil(input_size.x, tile_data_size.x), 
+              div_ceil(input_size.y, tile_data_size.y)*div_ceil(input_size.z, tile_data_size.z));
     unsigned int twoIterTime;
-    timeInMicroSeconds(twoIterTime, (runCellKernel<<< grid_dims, tile_size >>>(
-                                    input_size, stencil_size, device_input, device_output,
-                                    pyramid_height, global_ro_data
-                                    , bornMin, bornMax, dieMin, dieMax)));
+    timeInMicroSeconds(twoIterTime, 
+            (runCellKernel<<< grid_dims, tile_size >>>(   input_size, 
+                                          stencil_size,   device_input, 
+                                          device_output,  pyramid_height, 
+                                          global_ro_data, bornMin,    bornMax, 
+                                          dieMin,         dieMax )));
     pyramid_height = 1;
-    filldim3(&border, pyramid_height * stencil_size.x, pyramid_height * stencil_size.y, pyramid_height * stencil_size.z);
-    filldim3(&tile_data_size, tile_size.x - 2*border.x, tile_size.y - 2*border.y, tile_size.z - 2*border.z);
-    filldim3(&grid_dims, div_ceil(input_size.x, tile_data_size.x), div_ceil(input_size.y, tile_data_size.y)*div_ceil(input_size.z, tile_data_size.z));
+    filldim3( &border,          
+              pyramid_height * stencil_size.x,  
+              pyramid_height * stencil_size.y, 
+              pyramid_height * stencil_size.z);
+    filldim3( &tile_data_size,  
+              tile_size.x - 2*border.x,         
+              tile_size.y - 2*border.y, 
+              tile_size.z - 2*border.z);
+    filldim3( &grid_dims,       
+              div_ceil(input_size.x, tile_data_size.x), 
+              div_ceil(input_size.y, tile_data_size.y)*div_ceil(input_size.z, tile_data_size.z));
     unsigned int oneIterTime;
-    timeInMicroSeconds(oneIterTime, (runCellKernel<<< grid_dims, tile_size >>>(
-                                    input_size, stencil_size, device_input, device_output,
-                                    pyramid_height, global_ro_data
-                                    , bornMin, bornMax, dieMin, dieMax)));
+    timeInMicroSeconds(oneIterTime, 
+                      (runCellKernel<<< grid_dims, tile_size >>>( input_size,     
+                                          stencil_size,   device_input,   
+                                          device_output,  pyramid_height, 
+                                          global_ro_data, bornMin,    bornMax, 
+                                          dieMin,         dieMax)));
 
-#ifdef STATISTICS
-/////////////////////////////////////////////////////////////////////////////////////
-// Start of code to gather statistics to hone model.  Remove in final version.
-////////////////////////////////////////////////////////////////////////////////////
-
-    fprintf(stderr, "***********************************Start of a new Run****************************************\n");
-    fprintf(stderr, "Data Size=%d, Tile Size=%d Iteration Count=%d\n", input_size.x, tile_size.x, iterations);
-
-    // Precalculate the pyramid height so we can get stats on the calculated value.
-    int calcMinPyramid = calcPyramidHeight(grid_dims, oneIterTime, twoIterTime);
-
-    gettimeofday(&trainingendtime, NULL);
-    trainingusec = ((trainingendtime.tv_sec - trainingstarttime.tv_sec) * 1000000 +             
-                    (trainingendtime.tv_usec - trainingstarttime.tv_usec));                       
-
-    // Get second best for same reason.
-    int secondMinPyramid = getSecond(calcMinPyramid);
-
-    // Gather statistics to help hone model.
-    double calcMinTime, secondMinTime;
-    double actualMinTime = 1000000000;
-    int actualMinPyramid;
-    // Now let's just try them all to see what the optimal pyramid height is.
-    for (int i=1; i<tile_size.x/(2 * stencil_size.x); i++)
-    {
-        int pyramid_height = i;
-
-        // Now we can calculate the other sizes.
-        dim3 border(pyramid_height * stencil_size.x,
-                    pyramid_height * stencil_size.y,
-                    pyramid_height * stencil_size.z);
-        dim3 tile_data_size(tile_size.x - 2*border.x,
-                            tile_size.y - 2*border.y,
-                            tile_size.z - 2*border.z);
-        dim3 grid_dims(div_ceil(input_size.x, tile_data_size.x),
-                       div_ceil(input_size.y, tile_data_size.y)*
-                       div_ceil(input_size.z, tile_data_size.z));
-
-        uint32_t time;
-        timeInMicroSeconds(time, (runCellKernel<<< grid_dims, tile_size >>>(
-                                      input_size, stencil_size, device_input, device_output,
-                                      i, global_ro_data
-                                      , bornMin, bornMax, dieMin, dieMax)));
-        
-        double timePer = ((double)time)/i;
-        if (i == calcMinPyramid) calcMinTime = timePer;
-        if (i == secondMinPyramid) secondMinTime = timePer;
-        if (timePer < actualMinTime)
-        {
-            actualMinPyramid = i;
-            actualMinTime = timePer;
-        }
-         fprintf(stderr, "Pyramid Height=%d, time=%u, Time per iteration=%f.\n", i, time, ((double)time/i));
-    }
-
-    // Now we can output some statistics.
-    double firstError = ((1. - (actualMinTime/calcMinTime)) * 100.);
-    double secondError = ((1. - (actualMinTime/secondMinTime)) * 100.);
-    fprintf(stderr, "Size %d BestHeight %d CalcHeight %d %%Slowdown %4.2f CalcSecond %d %%Slowdown %4.2f MinSlowdown %4.2f\n", 
-            input_size.x, actualMinPyramid, calcMinPyramid, firstError, secondMinPyramid, secondError, MIN(firstError, secondError));
-
-/////////////////////////////////////////////////////////////////////////////////////
-// End of code to gather statistics to hone model.  Remove in final version.
-////////////////////////////////////////////////////////////////////////////////////
-#endif
-
-#ifdef STATISTICS
-
-    for (int i=1; i<tile_size.x/(2 * stencil_size.x); i++)
-    {
-        struct timeval starttime, endtime;
-        unsigned int usec2;
-        gettimeofday(&starttime, NULL);                                       
-
-        pyramid_height=i;
-
-#else
     // Now we can calculate the pyramid height.
     pyramid_height = calcPyramidHeight(grid_dims, oneIterTime, twoIterTime);
-#endif
+  }
+  // And use the result to calculate various sizes.
+  filldim3( &border, 
+            pyramid_height * stencil_size.x, 
+            pyramid_height * stencil_size.y, 
+            pyramid_height * stencil_size.z);
+  filldim3( &tile_data_size, 
+            tile_size.x - 2*border.x, 
+            tile_size.y - 2*border.y, 
+            tile_size.z - 2*border.z);
+  filldim3( &grid_dims, 
+            div_ceil(input_size.x, tile_data_size.x), 
+            div_ceil(input_size.y, tile_data_size.y)*div_ceil(input_size.z, tile_data_size.z));
 
-    // And use the result to calculate various sizes.
-    filldim3(&border, pyramid_height * stencil_size.x, pyramid_height * stencil_size.y, pyramid_height * stencil_size.z);
-    filldim3(&tile_data_size, tile_size.x - 2*border.x, tile_size.y - 2*border.y, tile_size.z - 2*border.z);
-    filldim3(&grid_dims, div_ceil(input_size.x, tile_data_size.x), div_ceil(input_size.y, tile_data_size.y)*div_ceil(input_size.z, tile_data_size.z));
+  gettimeofday(&start, NULL);
+  // Run computation
+  int tmp_pyramid_height = pyramid_height;
+  for (int iter = 0; iter < iterations; iter += pyramid_height)
+  {
+    if (iter + pyramid_height > iterations)
+      tmp_pyramid_height = iterations - iter;
 
-    // Run computation
-    for (int iter = 0; iter < iterations; iter += pyramid_height)
-    {
-        if (iter + pyramid_height > iterations)
-            pyramid_height = iterations - iter;
-        runCellKernel<<< grid_dims, tile_size >>>(
-            input_size, stencil_size, device_input, device_output,
-            pyramid_height, global_ro_data
-            , bornMin, bornMax, dieMin, dieMax);
-        DTYPE *temp = device_input;
-        device_input = device_output;
-        device_output = temp;
-    }
+    runCellKernel<<< grid_dims, tile_size >>>(
+        input_size,         stencil_size,   device_input, device_output,
+        tmp_pyramid_height, global_ro_data, bornMin,      bornMax,      dieMin, 
+        dieMax);
 
-#ifdef STATISTICS
-    // Synch the threads to make sure everything is done before taking a timing.
-    CUDA_SAFE_THREAD_SYNC();
-    gettimeofday(&endtime, NULL);                                       
-    usec2 = ((endtime.tv_sec - starttime.tv_sec) * 1000000 +             
-             (endtime.tv_usec - starttime.tv_usec));                       
-    fprintf(stderr, "Actual pyramid=%d, Actual iteration time=%u, Actual Total time=%u\n", i, usec2, usec2+trainingusec);
-    }
-#endif
+    DTYPE *temp   = device_input  ;
+    device_input  = device_output ;
+    device_output = temp  ;
+  }
+  gettimeofday(&end, NULL);
 
-    // Device to host
-    cudaMemcpy(host_data, device_input, num_bytes, cudaMemcpyDeviceToHost);
-   if (global_ro_data != NULL)
-    {
-      cudaFree(global_ro_data);
-      global_ro_data = NULL;
-    }
+  double total_sec = ((end.tv_sec   - start.tv_sec) +             
+                      (end.tv_usec  - start.tv_usec) / 1000000.0);                       
 
-	disposeSAProps(SAPs);
+  // Device to host
+  cudaMemcpy(host_data, device_input, num_bytes, cudaMemcpyDeviceToHost);
+  if (global_ro_data != NULL)
+  {
+    cudaFree(global_ro_data);
+    global_ro_data = NULL;
+  }
+
+  //disposeSAProps(SAPs);
+  SAPs = NULL;
 }
 
 void runCellCleanup()
 {
   if (device_input != NULL && device_output != NULL)
   {
-    cudaFree(device_input);
-    device_input=NULL;
-    cudaFree(device_output);
-    device_output=NULL;
+    cudaFree(device_input)  ;
+    device_input = NULL     ;
+    cudaFree(device_output) ;
+    device_output = NULL    ;
   }
 }
 
@@ -383,7 +326,7 @@ void runCellCleanup()
  */
 void runCellSetData(DTYPE *host_data, int num_elements)
 {
-    int num_bytes = sizeof(DTYPE) * num_elements;
-    cudaMalloc((void **) &global_ro_data, num_bytes);
-    cudaMemcpy(global_ro_data, host_data, num_bytes, cudaMemcpyHostToDevice);
+  int num_bytes = sizeof(DTYPE) * num_elements;
+  cudaMalloc((void **) &global_ro_data, num_bytes);
+  cudaMemcpy(global_ro_data, host_data, num_bytes, cudaMemcpyHostToDevice);
 }

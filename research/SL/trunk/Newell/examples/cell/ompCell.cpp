@@ -77,7 +77,6 @@ void runOMPCellKernel(dim3 input_size, dim3 stencil_size,
     , int bornMin, int bornMax, int dieMin, int dieMax)
 {
   dim3 border;
-  int bx, by, bz, tx, ty, tz, ex, ey, ez, uidx, iter, inside=1;
   DTYPE value;
 
   border.x = border.y = border.z = 0;
@@ -87,8 +86,9 @@ void runOMPCellKernel(dim3 input_size, dim3 stencil_size,
     border.x += stencil_size.x;
     border.y += stencil_size.y;
     border.z += stencil_size.z;
-
+    int uidx = -1;
     // (x, y, z) is the location in the input of this thread.
+  #pragma omp parallel for private(uidx) shared(output)
     for(int z = border.z; z<input_size.z-border.z; ++z)
     {
       for(int y = border.y; y<input_size.y-border.y; ++y)
@@ -99,9 +99,8 @@ void runOMPCellKernel(dim3 input_size, dim3 stencil_size,
           // uidx = ez + input_size.y * (ey * input_size.x + ex);
           uidx = x + input_size.x * (y + z * input_size.y);
 
-          value = OMPCellValue(input_size, x, y, z, input
+          output[uidx] = OMPCellValue(input_size, x, y, z, input
               , bornMin, bornMax, dieMin, dieMax);
-          output[uidx] = value;
         }
       }
     }
@@ -134,10 +133,6 @@ void runOMPCell(DTYPE *host_data, int x_max, int y_max, int z_max, int iteration
   stencil_size.y=1;
   stencil_size.z=1;
 
-  //use the appropriate device
-  int curr_device = -1;
-
-  // Host to device
   int size = input_size.x * input_size.y * input_size.z;
   if(NULL==device_input && NULL==device_output)
   {
@@ -147,8 +142,6 @@ void runOMPCell(DTYPE *host_data, int x_max, int y_max, int z_max, int iteration
   
   memcpy((void*)device_input, (void*)host_data, size*sizeof(DTYPE));
 
-  dim3 border;
-  
   // Now we can calculate the pyramid height.
   int pyramid_height = 1;
 
