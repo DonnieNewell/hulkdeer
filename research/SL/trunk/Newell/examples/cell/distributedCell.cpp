@@ -352,16 +352,12 @@ void benchmarkMyself(Node* n, SubDomain3D* pS, int timesteps, int bornMin,
     int iterations = 100;
     struct timeval start, end;
     double total_sec = 0.0;
-
     gettimeofday(&start, NULL);
-
     for (int itr = 0; itr < iterations; ++itr) {
       processSubDomain(device-1, s, timesteps, bornMin, bornMax, dieMin,
                         dieMax);
     }
-
     gettimeofday(&end, NULL);
-
     total_sec = secondsElapsed(start, end);
     weight[device] = iterations/total_sec;
     fprintf(stderr, "[%d]device:%d of %d processes %f iter/sec.\n",
@@ -461,12 +457,40 @@ void processWork(Node* machine, const int kIterations, const int kPyramidHeight,
     if (iter + kPyramidHeight > kIterations) {
       currentPyramidHeight = kIterations - iter;
     }
+    /* The data is initially sent with the ghost zones */
+    if (0 < iter) { updateBorderCells(machine); }
     processCPUWork(machine, currentPyramidHeight, kBornMin, kBornMax,
                     kDieMin, kDieMax);
     processGPUWork(machine, currentPyramidHeight, kBornMin, kBornMax,
                     kDieMin, kDieMax);
-    updateBorderCells(machine);
   }
+}
+
+void getResultsFromCluster(Cluster* cluster) {
+  /* TODO receives results, needs to be asynchronous */
+  for (int nodeRank = 1; nodeRank < cluster->getNumNodes(); ++nodeRank) {
+    receiveData(nodeRank, &(cluster->getNode(nodeRank)),false);
+  }
+}
+
+void sendWorkToCluster(Cluster* cluster) {
+  /* TODO needs to be parallel.
+      send the work to each node. */
+  for (unsigned int node = 1; node < cluster->getNumNodes(); ++node) {
+    sendData(&(cluster->getNode(node)));
+  }
+}
+
+void benchmarkCluster(Cluster* cluster, SubDomain3D* data,
+                      const int kIterations,
+                      const int kBornMin, const int kBornMax,
+                      const int kDieMin, const int kDieMax) {
+  /* TODO this is inefficient, need to implement a function that uses Bcast */
+  for (unsigned int node = 1; node < cluster->getNumNodes(); ++node) {
+    benchmarkNode(&(cluster->getNode(node)), data);
+  }
+  benchmarkMyself(&(cluster->getNode(0)), data, kIterations, kBornMin, kBornMax,
+                  kDieMin, kDieMax);
 }
 
 void runDistributedCell(int rank, int numTasks, DTYPE *data, int x_max,
@@ -493,42 +517,29 @@ void runDistributedCell(int rank, int numTasks, DTYPE *data, int x_max,
     cluster = new Cluster(numTasks);
     cluster->getNode(0).setNumChildren(deviceCount);
     receiveNumberOfChildren(numTasks, cluster);
-
     /* perform domain decomposition */
     Decomposition decomp;
     int numElements[3] = {z_max, y_max, x_max};
     decomp.decompose(data, 3, numElements, new_stencil_size, PYRAMID_HEIGHT);
-
 #ifdef DEBUG
     printDecomposition(decomp);
 #endif
-    // this is inefficient, need to implement a function that uses Bcast
-    for (unsigned int node = 1; node < cluster->getNumNodes(); ++node) {
-      benchmarkNode(&(cluster->getNode(node)), decomp.getSubDomain(0));
-    }
-
-    benchmarkMyself(&(cluster->getNode(0)), decomp.getSubDomain(0), iterations,
-        bornMin, bornMax, dieMin, dieMax);
-
+    benchmarkCluster(cluster, decomp.getSubDomain(0), iterations,
+                      bornMin, bornMax, dieMin, dieMax);
     /* now perform the load balancing, assigning task blocks to each node */
     Balancer lb;
     gettimeofday(&balance_start, NULL);
     // passing a 0 means use cpu and gpu on all nodes
     lb.perfBalance(*cluster, decomp, 0);
     // lb.balance(*cluster, decomp, 0);
-    printBlockLocations(*cluster);  // DEBUG
-    printCluster(*cluster);  // DEBUG
     gettimeofday(&balance_end, NULL);
+    // printBlockLocations(*cluster);  // DEBUG
+    printCluster(*cluster);  // DEBUG
     double balance_sec = secondsElapsed(balance_start, balance_end);
     fprintf(stderr, "***********\nBALANCE TIME: %f seconds.\n", balance_sec);
-
     gettimeofday(&process_start, NULL);
-
-    // send the work to each node.
-    for (unsigned int node = 1; node < cluster->getNumNodes(); ++node) {
-      sendData(&(cluster->getNode(node)));
-    }
-    // TODO Is this a deep copy??
+    sendWorkToCluster(cluster);
+   // TODO Is this a deep copy??
     // root's work is in the first node
     myWork = cluster->getNode(0);
     /* PROCESS ROOT NODE WORK */
@@ -540,15 +551,17 @@ void runDistributedCell(int rank, int numTasks, DTYPE *data, int x_max,
     fprintf(stdout, "*********\nroot processing time: %f sec\n",
         time_root_compute);
     if (cluster != NULL) {
+      gettimeofday(&rec_start, NULL);
+      getResultsFromCluster(cluster);
       gettimeofday(&rec_end, NULL);
+
       gettimeofday(&process_end, NULL);
       double time_root_receive = secondsElapsed(rec_start, rec_end);
       fprintf(stdout, "***********\nroot receive time: %f sec\n",
           time_root_receive);
       double total_sec = secondsElapsed(process_start, process_end);
       fprintf(stdout, "***********\nTOTAL TIME: %f.\n", total_sec);
-    }
-    if (NULL != cluster) {
+
       delete cluster;
       cluster = NULL;
     }
