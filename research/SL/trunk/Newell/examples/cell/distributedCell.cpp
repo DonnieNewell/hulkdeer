@@ -430,8 +430,7 @@ void copy_results(DTYPE* buffer, Cluster* cluster, int pyramidHeight) {
 */
 void updateBorderCells(Node* node) { }
 
-void processCPUWork(Node* machine, const int kIterations,
-                    const int kPyramidHeight, const int kBornMin,
+void processCPUWork(Node* machine, const int kPyramidHeight, const int kBornMin,
                     const int kBornMax, const int kDieMin, const int kDieMax) {
   for (unsigned int task = 0; task < machine->numSubDomains(); ++task) {
     processSubDomain(kCPUIndex, machine->getSubDomain(task), kPyramidHeight,
@@ -439,8 +438,7 @@ void processCPUWork(Node* machine, const int kIterations,
   }
 }
 
-void processGPUWork(Node* machine, const int kIterations,
-                    const int kPyramidHeight, const int kBornMin,
+void processGPUWork(Node* machine, const int kPyramidHeight, const int kBornMin,
                     const int kBornMax, const int kDieMin, const int kDieMax) {
   for (unsigned int gpuIndex = 0;
        gpuIndex < machine->getNumChildren();
@@ -458,16 +456,16 @@ void processGPUWork(Node* machine, const int kIterations,
 void processWork(Node* machine, const int kIterations, const int kPyramidHeight,
                 const int kBornMin, const int kBornMax, const int kDieMin,
                 const int kDieMax) {
-  unsigned int currentPyramidHeight = kPyramidHeight;
-  for (unsigned int iter = 0; iter < iterations; iter += kPyramidHeight) {
-    if (iter + kPyramidHeight > iterations) {
-      currentPyramidHeight = iterations - iter;
+  int currentPyramidHeight = kPyramidHeight;
+  for (int iter = 0; iter < kIterations; iter += kPyramidHeight) {
+    if (iter + kPyramidHeight > kIterations) {
+      currentPyramidHeight = kIterations - iter;
     }
-    processCPUWork(machine, kIterations, currentPyramidHeight,
-                    kBornMin, kBornMax, kDieMin, kDieMax);
-    processGPUWork(machine, kIterations, currentPyramidHeight,
-                    kBornMin, kBornMax, kDieMin, kDieMax);
-    updateBorderCells(&myWork);
+    processCPUWork(machine, currentPyramidHeight, kBornMin, kBornMax,
+                    kDieMin, kDieMax);
+    processGPUWork(machine, currentPyramidHeight, kBornMin, kBornMax,
+                    kDieMin, kDieMax);
+    updateBorderCells(machine);
   }
 }
 
