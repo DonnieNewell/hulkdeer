@@ -25,6 +25,14 @@ enum MPITagType {
   xOffset     = 6, xWeight  = 7 , xWeightIndex  = 8,
   xEdgeWeight = 9, xId      = 10, xGridDim      = 11  };
 
+const int kCPUIndex = -1;
+
+double secondsElapsed(struct timeval start, struct timeval stop) {
+
+    return static_cast<double>((stop.tv_sec - start.tv_sec) +
+                                (stop.tv_usec - start.tv_usec)/1000000.0);
+}
+
 void sendDataToNode(int rank, int device, SubDomain3D* s) {
   // first send number of dimensions
   int numDim  = 0;
@@ -108,7 +116,7 @@ void receiveNumberOfChildren(int numTasks, Cluster* cluster) {
 void sendData(Node* n) {
   // count how many task blocks, total, are going to be sent
   int total = n->numSubDomains();
-  for (int child = 0; child < n->getNumChildren(); ++child) {
+  for (unsigned int child = 0; child < n->getNumChildren(); ++child) {
     total += n->getChild(child).numSubDomains();
   }
 
@@ -118,11 +126,11 @@ void sendData(Node* n) {
             MPI_COMM_WORLD, &req);
 
   int device = -1;
-  for (int i = 0; i< n->numSubDomains(); ++i) {
+  for (unsigned int i = 0; i < n->numSubDomains(); ++i) {
     sendDataToNode(n->getRank(), device, n->getSubDomain(i));
   }
-  for (int child = 0; child < n->getNumChildren(); ++child) {
-    for (int i = 0; i< n->getChild(child).numSubDomains(); ++i) {
+  for (unsigned int child = 0; child < n->getNumChildren(); ++child) {
+    for (unsigned int i = 0; i < n->getChild(child).numSubDomains(); ++i) {
       sendDataToNode(n->getRank(), child, n->getChild(child).getSubDomain(i));
     }
   }
@@ -138,14 +146,12 @@ void benchmarkNode(Node* n, SubDomain3D* s) {
   sendDataToNode(n->getRank(), -1, s);
   gettimeofday(&end, NULL);
 
-  total_sec = ((end.tv_sec - start.tv_sec) +
-      (end.tv_usec - start.tv_usec)/1000000.0);
-
+  total_sec = secondsElapsed(start, end);
   // how fast is the connection between root and child nodes
   // multiply by 2 to account for there and back
   n->setEdgeWeight(1/(2*total_sec));
   // receive results for each device
-  int total = n->getNumChildren()+1;
+  unsigned int total = n->getNumChildren()+1;
 
   MPI_Request req[2];
   double *task_per_sec = new double[total];
@@ -158,7 +164,7 @@ void benchmarkNode(Node* n, SubDomain3D* s) {
   MPI_Waitall(2, req, MPI_STATUSES_IGNORE);
 
   // set the appropriate fields in the node and its children
-  for (int device = 0; device < total; ++device) {
+  for (unsigned int device = 0; device < total; ++device) {
     double weight = task_per_sec[device];
     if (device == 0) {
       // the first weight is for the cpu
@@ -232,7 +238,7 @@ SubDomain3D* receiveDataFromNode(int rank, int* device) {
   return s;
 }
 
-void processSubDomain(int rank, int device, SubDomain3D *task, int timesteps,
+void processSubDomain(int device, SubDomain3D *task, int timesteps,
                       int bornMin, int bornMax, int dieMin, int dieMax) {
   // DTYPE?
   DTYPE* buff = task->getBuffer();
@@ -250,12 +256,11 @@ void processSubDomain(int rank, int device, SubDomain3D *task, int timesteps,
     runCell(buff, depth, height, width, timesteps, bornMin, bornMax, dieMin,
             dieMax, device);
     gettimeofday(&end, NULL);
-    double kerneltime = ((end.tv_sec - start.tv_sec) +
-        (end.tv_usec - start.tv_usec)/1000000.0);
+    double kerneltime = secondsElapsed(start, end);
   }
 }
 
-void receiveData(int rank, Node* n, bool processNow, int iterations = 0,
+void receiveData(int rank, Node* n, bool processNow, int pyramidHeight = 1,
                   int bornMin = 0, int bornMax = 0, int dieMin = 0,
                   int dieMax = 0) {
   // receive number of task blocks that will be sent
@@ -271,27 +276,24 @@ void receiveData(int rank, Node* n, bool processNow, int iterations = 0,
     gettimeofday(&start, NULL);
     s = receiveDataFromNode(rank, &device);
     gettimeofday(&end, NULL);
-    receiveDataTime += ((end.tv_sec - start.tv_sec) +
-        (end.tv_usec - start.tv_usec)/1000000.0);
+    receiveDataTime += secondsElapsed(start, end);
     if (-1 == device) {
       if (processNow) {
         gettimeofday(&start, NULL);
-        processSubDomain(rank, -1, s, iterations, bornMin, bornMax,
+        processSubDomain(device, s, pyramidHeight, bornMin, bornMax,
                           dieMin, dieMax);
         gettimeofday(&end, NULL);
-        processBlockTime+= ((end.tv_sec - start.tv_sec) +
-            (end.tv_usec - start.tv_usec)/1000000.0);
+        processBlockTime+= secondsElapsed(start, end);
       }
       // add block to cpu queue
       n->addSubDomain(s);
     } else {
       if (processNow) {
         gettimeofday(&start, NULL);
-        processSubDomain(rank, device, s, iterations, bornMin, bornMax,
+        processSubDomain(device, s, pyramidHeight, bornMin, bornMax,
                           dieMin, dieMax);
         gettimeofday(&end, NULL);
-        processBlockTime+= ((end.tv_sec - start.tv_sec) +
-            (end.tv_usec - start.tv_usec)/1000000.0);
+        processBlockTime += secondsElapsed(start, end);
       }
       // add block to gpu queue
       n->getChild(device).addSubDomain(s);
@@ -315,10 +317,8 @@ double benchmarkPCIBus(SubDomain3D* pS, int gpuIndex) {
       return -1.0;
     }
   }
-  size_t size = sizeof(DTYPE) *
-                pS->getLength(0) *
-                pS->getLength(1) *
-                pS->getLength(2);
+  size_t size = sizeof(DTYPE) * pS->getLength(0) *
+                pS->getLength(1) * pS->getLength(2);
   cudaMalloc(&devBuffer, size);
   cudaMemcpy(static_cast<void*>(devBuffer), static_cast<void*>(pS->getBuffer()),
               size, cudaMemcpyHostToDevice);
@@ -327,17 +327,14 @@ double benchmarkPCIBus(SubDomain3D* pS, int gpuIndex) {
   cudaFree(devBuffer);
   devBuffer = NULL;
   gettimeofday(&end, NULL);
-
-  total = ((end.tv_sec - start.tv_sec) +
-      (end.tv_usec - start.tv_usec)/1000000.0);
-
+  total = secondsElapsed(start, end);
   return 1 / total;
 }
 
 void benchmarkMyself(Node* n, SubDomain3D* pS, int timesteps, int bornMin,
                       int bornMax, int dieMin, int dieMax) {
   // receive results for each device
-  int total = n->getNumChildren()+1;
+  unsigned int total = n->getNumChildren()+1;
   MPI_Request req[2];
   double *weight = new double[total];
   double *edgeWeight = new double[total-1];
@@ -351,7 +348,7 @@ void benchmarkMyself(Node* n, SubDomain3D* pS, int timesteps, int bornMin,
   } else {
     s = pS;
   }
-  for (int device = 0; device < total; ++device) {
+  for (unsigned int device = 0; device < total; ++device) {
     int iterations = 100;
     struct timeval start, end;
     double total_sec = 0.0;
@@ -359,14 +356,13 @@ void benchmarkMyself(Node* n, SubDomain3D* pS, int timesteps, int bornMin,
     gettimeofday(&start, NULL);
 
     for (int itr = 0; itr < iterations; ++itr) {
-      processSubDomain(rank, device-1, s, timesteps, bornMin, bornMax, dieMin,
+      processSubDomain(device-1, s, timesteps, bornMin, bornMax, dieMin,
                         dieMax);
     }
 
     gettimeofday(&end, NULL);
 
-    total_sec = ((end.tv_sec - start.tv_sec) +
-                (end.tv_usec - start.tv_usec)/1000000.0);
+    total_sec = secondsElapsed(start, end);
     weight[device] = iterations/total_sec;
     fprintf(stderr, "[%d]device:%d of %d processes %f iter/sec.\n",
             n->getRank(), device-1, total, weight[device]);
@@ -411,27 +407,73 @@ void copy_results(DTYPE* buffer, Cluster* cluster, int pyramidHeight) {
   if (NULL == buffer) return;
 
   /* get work from all parents and children in cluster */
-  for (int n = 0; n < cluster->getNumNodes(); ++n) {
+  for (unsigned int n = 0; n < cluster->getNumNodes(); ++n) {
     Node &node = cluster->getNode(n);
-    int num = node.numSubDomains();
-    for (int block =0; block < num; ++block) {
+    unsigned int num = node.numSubDomains();
+    for (unsigned int block =0; block < num; ++block) {
       copy_result_block(buffer, node.getSubDomain(block), pyramidHeight);
     }
 
-    for (int c = 0; c < node.getNumChildren(); ++c) {
-      Node &child = node.getChild(c);
-      num = child.numSubDomains();
+    for (unsigned int c = 0; c < node.getNumChildren(); ++c) {
+      Node* child = &(node.getChild(c));
+      num = child->numSubDomains();
 
-      for (int block =0; block < num; ++block) {
-        copy_result_block(buffer, child.getSubDomain(block), pyramidHeight);
+      for (unsigned int block =0; block < num; ++block) {
+        copy_result_block(buffer, child->getSubDomain(block), pyramidHeight);
       }
     }
   }
 }
 
+/*
+  TODO
+*/
+void updateBorderCells(Node* node) { }
+
+void processCPUWork(Node* machine, const int kIterations,
+                    const int kPyramidHeight, const int kBornMin,
+                    const int kBornMax, const int kDieMin, const int kDieMax) {
+  for (unsigned int task = 0; task < machine->numSubDomains(); ++task) {
+    processSubDomain(kCPUIndex, machine->getSubDomain(task), kPyramidHeight,
+                      kBornMin, kBornMax, kDieMin, kDieMax);
+  }
+}
+
+void processGPUWork(Node* machine, const int kIterations,
+                    const int kPyramidHeight, const int kBornMin,
+                    const int kBornMax, const int kDieMin, const int kDieMax) {
+  for (unsigned int gpuIndex = 0;
+       gpuIndex < machine->getNumChildren();
+       ++gpuIndex) {
+      Node* currentDevice = &(machine->getChild(gpuIndex));
+    for (unsigned int task = 0;
+            task < currentDevice->numSubDomains();
+            ++task) {
+        processSubDomain(gpuIndex, currentDevice->getSubDomain(task),
+                          kPyramidHeight, kBornMin, kBornMax, kDieMin, kDieMax);
+    }
+  }
+}
+
+void processWork(Node* machine, const int kIterations, const int kPyramidHeight,
+                const int kBornMin, const int kBornMax, const int kDieMin,
+                const int kDieMax) {
+  unsigned int currentPyramidHeight = kPyramidHeight;
+  for (unsigned int iter = 0; iter < iterations; iter += kPyramidHeight) {
+    if (iter + kPyramidHeight > iterations) {
+      currentPyramidHeight = iterations - iter;
+    }
+    processCPUWork(machine, kIterations, currentPyramidHeight,
+                    kBornMin, kBornMax, kDieMin, kDieMax);
+    processGPUWork(machine, kIterations, currentPyramidHeight,
+                    kBornMin, kBornMax, kDieMin, kDieMax);
+    updateBorderCells(&myWork);
+  }
+}
+
 void runDistributedCell(int rank, int numTasks, DTYPE *data, int x_max,
-                        int y_max, int z_max, int iterations, int bornMin,
-                        int bornMax, int dieMin, int dieMax) {
+    int y_max, int z_max, int iterations, int bornMin,
+    int bornMax, int dieMin, int dieMax) {
   // hack because we want the compiler to give us the
   // stencil size, but we don't want to have to include
   // the cuda headers in every file, so we convert
@@ -439,10 +481,11 @@ void runDistributedCell(int rank, int numTasks, DTYPE *data, int x_max,
   dim3 stencil_size(1, 1, 1);
   int new_stencil_size[3] = {stencil_size.z, stencil_size.y, stencil_size.x};
   int deviceCount = 0;
+  const int kPyramidHeight = 1;
   Node myWork;
   Cluster* cluster = NULL;
   struct timeval rec_start, rec_end, comp_start, comp_end, process_start,
-                  process_end, balance_start, balance_end;
+                 process_end, balance_start, balance_end;
 
   myWork.setRank(rank);
   getNumberOfChildren(&deviceCount);
@@ -462,12 +505,12 @@ void runDistributedCell(int rank, int numTasks, DTYPE *data, int x_max,
     printDecomposition(decomp);
 #endif
     // this is inefficient, need to implement a function that uses Bcast
-    for (int node = 1; node < cluster->getNumNodes(); ++node) {
+    for (unsigned int node = 1; node < cluster->getNumNodes(); ++node) {
       benchmarkNode(&(cluster->getNode(node)), decomp.getSubDomain(0));
     }
 
     benchmarkMyself(&(cluster->getNode(0)), decomp.getSubDomain(0), iterations,
-                    bornMin, bornMax, dieMin, dieMax);
+        bornMin, bornMax, dieMin, dieMax);
 
     /* now perform the load balancing, assigning task blocks to each node */
     Balancer lb;
@@ -475,67 +518,50 @@ void runDistributedCell(int rank, int numTasks, DTYPE *data, int x_max,
     // passing a 0 means use cpu and gpu on all nodes
     lb.perfBalance(*cluster, decomp, 0);
     // lb.balance(*cluster, decomp, 0);
-    printBlockLocations(*cluster);
-    printCluster(*cluster);
+    printBlockLocations(*cluster);  // DEBUG
+    printCluster(*cluster);  // DEBUG
     gettimeofday(&balance_end, NULL);
-    double balance_sec = ((balance_end.tv_sec - balance_start.tv_sec) +
-        (balance_end.tv_usec - balance_start.tv_usec)/1000000.0);
+    double balance_sec = secondsElapsed(balance_start, balance_end);
     fprintf(stderr, "***********\nBALANCE TIME: %f seconds.\n", balance_sec);
 
     gettimeofday(&process_start, NULL);
 
     // send the work to each node.
-    for (int node = 1; node < cluster->getNumNodes(); ++node) {
+    for (unsigned int node = 1; node < cluster->getNumNodes(); ++node) {
       sendData(&(cluster->getNode(node)));
     }
+    // TODO Is this a deep copy??
     // root's work is in the first node
     myWork = cluster->getNode(0);
+    /* PROCESS ROOT NODE WORK */
+    gettimeofday(&comp_start, NULL);
+    processWork(&myWork, iterations, kPyramidHeight, bornMin, bornMax,
+                dieMin, dieMax);
+    gettimeofday(&comp_end, NULL);
+    double time_root_compute= secondsElapsed(comp_start, comp_end);
+    fprintf(stdout, "*********\nroot processing time: %f sec\n",
+        time_root_compute);
+    if (cluster != NULL) {
+      gettimeofday(&rec_end, NULL);
+      gettimeofday(&process_end, NULL);
+      double time_root_receive = secondsElapsed(rec_start, rec_end);
+      fprintf(stdout, "***********\nroot receive time: %f sec\n",
+          time_root_receive);
+      double total_sec = secondsElapsed(process_start, process_end);
+      fprintf(stdout, "***********\nTOTAL TIME: %f.\n", total_sec);
+    }
+    if (NULL != cluster) {
+      delete cluster;
+      cluster = NULL;
+    }
   } else {
     // send number of children to root
     sendNumberOfChildren(0, deviceCount);
     benchmarkMyself(&myWork, NULL, iterations, bornMin, bornMax,
-                    dieMin, dieMax);
+        dieMin, dieMax);
     receiveData(0, &myWork, true, iterations, bornMin, bornMax, dieMin, dieMax);
-  }
-  if (0 == rank) {
-    /* PROCESS ROOT NODE WORK */
-      gettimeofday(&comp_start, NULL);
-    for (int task = 0; task < myWork.numSubDomains(); ++task) {
-      SubDomain3D* taskBlock = myWork.getSubDomain(task);
-      processSubDomain(rank, -1, taskBlock, iterations, bornMin, bornMax,
-                        dieMin, dieMax);
-    }
-    for (int child = 0; child < myWork.getNumChildren(); ++child) {
-      Node &currentDevice = myWork.getChild(child);
-      for (int task = 0; task < currentDevice.numSubDomains(); ++task) {
-        processSubDomain(rank, child, currentDevice.getSubDomain(task),
-                          iterations, bornMin, bornMax, dieMin, dieMax);
-      }
-    }
-
-    gettimeofday(&comp_end, NULL);
-    double time_root_compute= ((comp_end.tv_sec - comp_start.tv_sec) +
-        (comp_end.tv_usec - comp_start.tv_usec)/1000000.0);
-    fprintf(stdout, "*********\nroot processing time: %f sec\n",
-            time_root_compute);
-    if (cluster != NULL) {
-      gettimeofday(&rec_end, NULL);
-      gettimeofday(&process_end, NULL);
-      double time_root_receive= ((rec_end.tv_sec - rec_start.tv_sec) +
-          (rec_end.tv_usec - rec_start.tv_usec)/1000000.0);
-      fprintf(stdout, "***********\nroot receive time: %f sec\n",
-              time_root_receive);
-      double total_sec = ((process_end.tv_sec - process_start.tv_sec) +
-          (process_end.tv_usec - process_start.tv_usec)/1000000.0);
-      fprintf(stdout, "***********\nTOTAL TIME: %f.\n", total_sec);
-    }
-  } else {
     // send my work back to the root
     myWork.setRank(0);
     sendData(&myWork);
-  }
-  if (NULL != cluster) {
-    delete cluster;
-    cluster = NULL;
   }
 }
