@@ -23,12 +23,12 @@ enum MPITagType {
   xDim        = 0, xLength  = 1 , xChildren     = 2,
   xDevice     = 3, xData    = 4 , xNumBlocks    = 5,
   xOffset     = 6, xWeight  = 7 , xWeightIndex  = 8,
-  xEdgeWeight = 9, xId      = 10, xGridDim      = 11  };
+  xEdgeWeight = 9, xId      = 10, xGridDim      = 11,
+  xNeighbor   = 12 };
 
 const int kCPUIndex = -1;
 
 double secondsElapsed(struct timeval start, struct timeval stop) {
-
     return static_cast<double>((stop.tv_sec - start.tv_sec) +
                                 (stop.tv_usec - start.tv_usec)/1000000.0);
 }
@@ -82,7 +82,6 @@ void getNumberOfChildren(int* numChildren) {
     *numChildren = 0;
   }
 }
-
 
 void sendNumberOfChildren(const int dest_rank, const int numChildren) {
   MPI_Request req;
@@ -392,8 +391,8 @@ void benchmarkMyself(Node* n, SubDomain3D* pS, int timesteps, int bornMin,
   }
 }
 
+// TODO(den4gr)
 /*
-  TODO
   takes a subdomain containing results and copies it into original
   buffer, accounting for invalid ghost zone around edges
 */
@@ -421,60 +420,383 @@ void copy_results(DTYPE* buffer, Cluster* cluster, int pyramidHeight) {
   }
 }
 
+bool isSegmentFace(NeighborTag neighbor) {
+  return xFace5 >= neighbor && xFace0 <= neighbor;
+}
+
+bool isSegmentPole(NeighborTag neighbor) {
+  return xPole0 <= neighbor && xPole11 >= neighbor;
+}
+
+bool isSegmentCorner(NeighborTag neighbor) {
+ return xCorner0 <= neighbor && xCorner7 >= neighbor;
+}
+
+void getCornerDimensions(NeighborTag neighbor, int* segmentLength,
+                          int* segmentOffset, SubDomain3D* dataBlock,
+                          const int kBorder[3]) {
+  if (xCorner0 == neighbor) {
+    segmentLength[0] = kBorder[0];
+    segmentLength[1] = kBorder[1];
+    segmentLength[2] = kBorder[2];
+    segmentOffset[0] = kBorder[0];
+    segmentOffset[1] = kBorder[1];
+    segmentOffset[2] = kBorder[2];
+  } else if (xCorner1 == neighbor) {
+    segmentLength[0] = kBorder[0];
+    segmentLength[1] = kBorder[1];
+    segmentLength[2] = kBorder[2];
+    segmentOffset[0] = kBorder[0];
+    segmentOffset[1] = kBorder[1];
+    segmentOffset[2] = dataBlock->getLength(2) - 2 * kBorder[2];
+  } else if (xCorner2 == neighbor) {
+    segmentLength[0] = kBorder[0];
+    segmentLength[1] = kBorder[1];
+    segmentLength[2] = kBorder[2];
+    segmentOffset[0] = kBorder[0];
+    segmentOffset[1] = dataBlock->getLength(1) - 2 * kBorder[1];
+    segmentOffset[2] = kBorder[2];
+  } else if (xCorner3 == neighbor) {
+    segmentLength[0] = kBorder[0];
+    segmentLength[1] = kBorder[1];
+    segmentLength[2] = kBorder[2];
+    segmentOffset[0] = kBorder[0];
+    segmentOffset[1] = dataBlock->getLength(1) - 2 * kBorder[1];
+    segmentOffset[2] = dataBlock->getLength(2) - 2 * kBorder[2];
+  } else if (xCorner4 == neighbor) {
+    segmentLength[0] = kBorder[0];
+    segmentLength[1] = kBorder[1];
+    segmentLength[2] = kBorder[2];
+    segmentOffset[0] = dataBlock->getLength(0) - 2 * kBorder[0];
+    segmentOffset[1] = kBorder[1];
+    segmentOffset[2] = kBorder[2];
+  } else if (xCorner5 == neighbor) {
+    segmentLength[0] = kBorder[0];
+    segmentLength[1] = kBorder[1];
+    segmentLength[2] = kBorder[2];
+    segmentOffset[0] = dataBlock->getLength(0) - 2 * kBorder[0];
+    segmentOffset[1] = kBorder[1];
+    segmentOffset[2] = dataBlock->getLength(2) - 2 * kBorder[2];
+  } else if (xCorner6 == neighbor) {
+    segmentLength[0] = kBorder[0];
+    segmentLength[1] = kBorder[1];
+    segmentLength[2] = kBorder[2];
+    segmentOffset[0] = dataBlock->getLength(0) - 2 * kBorder[0];
+    segmentOffset[1] = dataBlock->getLength(1) - 2 * kBorder[1];
+    segmentOffset[2] = kBorder[2];
+  } else if (xCorner7 == neighbor) {
+    segmentLength[0] = kBorder[0];
+    segmentLength[1] = kBorder[1];
+    segmentLength[2] = kBorder[2];
+    segmentOffset[0] = dataBlock->getLength(0) - 2 * kBorder[0];
+    segmentOffset[1] = dataBlock->getLength(1) - 2 * kBorder[1];
+    segmentOffset[2] = dataBlock->getLength(2) - 2 * kBorder[2];
+  }
+}
+
+void getFaceDimensions(NeighborTag neighbor, int* segmentLength,
+    int* segmentOffset, SubDomain3D* dataBlock,
+    const int kBorder[3]) {
+  if (xFace0 == neighbor) {
+    segmentLength[0] = kBorder[0];
+    segmentLength[1] = dataBlock->getLength(1) - 2 * kBorder[1];
+    segmentLength[2] = dataBlock->getLength(2) - 2 * kBorder[2];
+    segmentOffset[0] = kBorder[0];
+    segmentOffset[1] = kBorder[1];
+    segmentOffset[2] = kBorder[2];
+  } else if (xFace1 == neighbor) {
+    segmentLength[0] = kBorder[0];
+    segmentLength[1] = dataBlock->getLength(1) - 2 * kBorder[1];
+    segmentLength[2] = dataBlock->getLength(2) - 2 * kBorder[2];
+    segmentOffset[0] = dataBlock->getLength(0) - 2 * kBorder[0];
+    segmentOffset[1] = kBorder[1];
+    segmentOffset[2] = kBorder[2];
+  } else if (xFace2 == neighbor) {
+    segmentLength[0] = dataBlock->getLength(0) - 2 * kBorder[0];
+    segmentLength[1] = kBorder[1];
+    segmentLength[2] = dataBlock->getLength(2) - 2 * kBorder[2];
+    segmentOffset[0] = kBorder[0];
+    segmentOffset[1] = kBorder[1];
+    segmentOffset[2] = kBorder[2];
+  } else if (xFace3 == neighbor) {
+    segmentLength[0] = dataBlock->getLength(0) - 2 * kBorder[0];
+    segmentLength[1] = kBorder[1];
+    segmentLength[2] = dataBlock->getLength(2) - 2 * kBorder[2];
+    segmentOffset[0] = kBorder[0];
+    segmentOffset[1] = dataBlock->getLength(1) - 2 * kBorder[1];
+    segmentOffset[2] = kBorder[2];
+  } else if (xFace4 == neighbor) {
+    segmentLength[0] = dataBlock->getLength(0) - 2 * kBorder[0];
+    segmentLength[1] = dataBlock->getLength(1) - 2 * kBorder[1];
+    segmentLength[2] = kBorder[2];
+    segmentOffset[0] = kBorder[0];
+    segmentOffset[1] = kBorder[1];
+    segmentOffset[2] = kBorder[2];
+  } else if (xFace5 == neighbor) {
+    segmentLength[0] = dataBlock->getLength(0) - 2 * kBorder[0];
+    segmentLength[1] = dataBlock->getLength(1) - 2 * kBorder[1];
+    segmentLength[2] = kBorder[2];
+    segmentOffset[0] = kBorder[0];
+    segmentOffset[1] = kBorder[1];
+    segmentOffset[2] = dataBlock->getLength(2) - 2 * kBorder[2];
+  }
+}
+
+void getPoleDimensions(NeighborTag neighbor, int* segmentLength,
+                          int* segmentOffset, SubDomain3D* dataBlock,
+                          const int kBorder[3]) {
+  if (xPole0 == neighbor) {
+    segmentLength[0] = kBorder[0];
+    segmentLength[1] = kBorder[1];
+    segmentLength[2] = dataBlock->getLength(2) - 2 * kBorder[2];
+    segmentOffset[0] = kBorder[0];
+    segmentOffset[1] = kBorder[1];
+    segmentOffset[2] = kBorder[2];
+  } else if (xPole1 == neighbor) {
+    segmentLength[0] = kBorder[0];
+    segmentLength[1] = kBorder[1];
+    segmentLength[2] = dataBlock->getLength(2) - 2 * kBorder[2];
+    segmentOffset[0] = kBorder[0];
+    segmentOffset[1] = dataBlock->getLength(1) - 2 * kBorder[1];
+    segmentOffset[2] = kBorder[2];
+  } else if (xPole2 == neighbor) {
+    segmentLength[0] = kBorder[0];
+    segmentLength[1] = kBorder[1];
+    segmentLength[2] = dataBlock->getLength(2) - 2 * kBorder[2];
+    segmentOffset[0] = dataBlock->getLength(0) - 2 * kBorder[0];
+    segmentOffset[1] = dataBlock->getLength(1) - 2 * kBorder[1];
+    segmentOffset[2] = kBorder[2];
+  } else if (xPole3 == neighbor) {
+    segmentLength[0] = kBorder[0];
+    segmentLength[1] = kBorder[1];
+    segmentLength[2] = dataBlock->getLength(2) - 2 * kBorder[2];
+    segmentOffset[0] = dataBlock->getLength(0) - 2 * kBorder[0];
+    segmentOffset[1] = kBorder[1];
+    segmentOffset[2] = kBorder[2];
+  } else if (xPole4 == neighbor) {
+    segmentLength[0] = kBorder[0];
+    segmentLength[1] = dataBlock->getLength(1) - 2 * kBorder[1];
+    segmentLength[2] = kBorder[2];
+    segmentOffset[0] = kBorder[0];
+    segmentOffset[1] = kBorder[1];
+    segmentOffset[2] = kBorder[2];
+  } else if (xPole5 == neighbor) {
+    segmentLength[0] = kBorder[0];
+    segmentLength[1] = dataBlock->getLength(1) - 2 * kBorder[1];
+    segmentLength[2] = kBorder[2];
+    segmentOffset[0] = kBorder[0];
+    segmentOffset[1] = kBorder[1];
+    segmentOffset[2] = dataBlock->getLength(2) - 2 * kBorder[2];
+  } else if (xPole6 == neighbor) {
+    segmentLength[0] = kBorder[0];
+    segmentLength[1] = dataBlock->getLength(1) - 2 * kBorder[1];
+    segmentLength[2] = kBorder[2];
+    segmentOffset[0] = dataBlock->getLength(0) - 2 * kBorder[0];
+    segmentOffset[1] = kBorder[1];
+    segmentOffset[2] = dataBlock->getLength(2) - 2 * kBorder[2];
+  } else if (xPole7 == neighbor) {
+    segmentLength[0] = kBorder[0];
+    segmentLength[1] = dataBlock->getLength(1) - 2 * kBorder[1];
+    segmentLength[2] = kBorder[2];
+    segmentOffset[0] = dataBlock->getLength(0) - 2 * kBorder[0];
+    segmentOffset[1] = kBorder[1];
+    segmentOffset[2] = kBorder[2];
+  } else if (xPole8 == neighbor) {
+    segmentLength[0] = dataBlock->getLength(0) - 2 * kBorder[0];
+    segmentLength[1] = kBorder[1];
+    segmentLength[2] = kBorder[2];
+    segmentOffset[0] = kBorder[0];
+    segmentOffset[1] = kBorder[1];
+    segmentOffset[2] = kBorder[2];
+  } else if (xPole9 == neighbor) {
+    segmentLength[0] = dataBlock->getLength(0) - 2 * kBorder[0];
+    segmentLength[1] = kBorder[1];
+    segmentLength[2] = kBorder[2];
+    segmentOffset[0] = kBorder[0];
+    segmentOffset[1] = kBorder[1];
+    segmentOffset[2] = dataBlock->getLength(2) - 2 * kBorder[2];
+  } else if (xPole10 == neighbor) {
+    segmentLength[0] = dataBlock->getLength(0) - 2 * kBorder[0];
+    segmentLength[1] = kBorder[1];
+    segmentLength[2] = kBorder[2];
+    segmentOffset[0] = kBorder[0];
+    segmentOffset[1] = dataBlock->getLength(1) - 2 * kBorder[1];
+    segmentOffset[2] = dataBlock->getLength(2) - 2 * kBorder[2];
+  } else if (xPole11 == neighbor) {
+    segmentLength[0] = dataBlock->getLength(0) - 2 * kBorder[0];
+    segmentLength[1] = kBorder[1];
+    segmentLength[2] = kBorder[2];
+    segmentOffset[0] = kBorder[0];
+    segmentOffset[1] = dataBlock->getLength(1) - 2 * kBorder[1];
+    segmentOffset[2] = kBorder[2];
+  }
+}
+
+// TODO(den4gr)
+void getSegmentDimensions(NeighborTag neighbor, int* segmentLength,
+    int* segmentOffset, SubDomain3D* dataBlock,
+    const int kBorder[3]) {
+  int blockLength[3] = {  dataBlock->getLength(0),
+    dataBlock->getLength(1),
+    dataBlock->getLength(2) };
+  if (isSegmentFace(neighbor)) {
+    getFaceDimensions(neighbor, segmentLength, segmentOffset, dataBlock,
+                      kBorder);
+  } else if (isSegmentPole(neighbor)) {
+    getPoleDimensions(neighbor, segmentLength, segmentOffset, dataBlock,
+                      kBorder);
+  } else if (isSegmentCorner(neighbor)) {
+    getCornerDimensions(neighbor, segmentLength, segmentOffset, dataBlock,
+                        kBorder);
+  }
+}
+
+//TODO(den4gr)
+/* copies to/from the buffer based on the bool flag */
+void copySegment(NeighborTag neighbor, SubDomain3D* dataBlock,
+    DTYPE* sendBuffer, const int kBorder[3], const bool kCopyToBuffer) {
+  int segmentLength[3] = { 0 };
+  int segmentOffset[3] = { 0 };
+  int blockLength[3] = {  dataBlock->getLength(0),
+                          dataBlock->getLength(1),
+                          dataBlock->getLength(2) };
+  getSegmentDimensions(neighbor, segmentLength, segmentOffset, dataBlock,
+      kBorder);
+  for (int i = 0; i < segmentLength[0]; ++i) {
+    for (int j = 0; j < segmentLength[1]; ++j) {
+      for (int k = 0; k < segmentLength[2]; ++k) {
+        int bufferIndex = i * segmentLength[1] * segmentLength[2] +
+                        j * segmentLength[2] +
+                        k;
+        int blockI = i + segmentOffset[0];
+        int blockJ = j + segmentOffset[1];
+        int blockK = k + segmentOffset[2];
+        int blockIndex =  blockI * blockLength[1] * blockLength[2] +
+                        blockJ * blockLength[2] +
+                        blockK;
+        if (kCopyToBuffer)
+          sendBuffer[bufferIndex] = dataBlock->getBuffer()[blockIndex];
+        else
+          dataBlock->getBuffer()[blockIndex] = sendBuffer[bufferIndex];
+      }
+    }
+  }
+}
+
+//TODO(den4gr)
+void exchangeSegments(NeighborTag neighbor, SubDomain3D* dataBlock,
+                      DTYPE* sendBuffer, DTYPE* receiveBuffer) {
+  /* non-blocking send buffer to node */
+
+  /* blocking receive buffer from node */
+
+  /* wait for send to finish */
+}
+
+
 /*
-  TODO
-*/
-void updateBorderCells(Node* node) { }
+   TODO(den4gr)
+ */
+void updateAllStaleData(Node* node, const int kPyramidHeight) {
+
+}
+
+/*
+   TODO(den4gr)
+ */
+void updateStaleBlockData(SubDomain3D* dataBlock, const int kBorder[3]) {
+  const int kDepth  = dataBlock->getLength(0) - 2 * kBorder[0];
+  const int kWidth  = dataBlock->getLength(1) - 2 * kBorder[1];
+  const int kHeight = dataBlock->getLength(2) - 2 * kBorder[2];
+  const int kNumAdjacentBlocks = 26;
+  int maxSegmentSize = 0, maxPoleSize = 0;
+  DTYPE* sendBuffer = NULL;
+  DTYPE* receiveBuffer = NULL;
+  /* check size of six faces */
+  maxSegmentSize = max(kBorder[0] * kWidth * kHeight,
+      max(kBorder[2] * kDepth * kHeight,
+        kBorder[1] * kDepth * kWidth));
+  /* check size of 12 poles */
+  maxPoleSize = max(kBorder[0] * kBorder[1] * kWidth,
+      max(kBorder[1] * kBorder[2] * kDepth,
+        kBorder[0] * kBorder[2] * kHeight));
+  maxSegmentSize = max(maxSegmentSize, maxPoleSize);
+  /* check size of 8 corners */
+  maxSegmentSize = max(maxSegmentSize, kBorder[0] * kBorder[1] * kBorder[2]);
+  /* create send and receive buffer that are large enough for
+     largest halo segment */
+  sendBuffer = new DTYPE[maxSegmentSize];
+  receiveBuffer = new DTYPE[maxSegmentSize];
+
+  /* LOOP: over all halo segments */
+  for (NeighborTag neighbor = xNeighborBegin;
+      neighbor < xNeighborEnd;
+      ++neighbor) {
+    /* copy halo segment to buffer */
+    bool copyBlockToBuffer = true;
+    copySegment(neighbor, dataBlock, sendBuffer, kBorder, copyBlockToBuffer);
+    exchangeSegments(neighbor, dataBlock, sendBuffer, receiveBuffer);
+    /* copy receive buffer into subdomain */
+    copyBlockToBuffer = false;
+    copySegment(neighbor, dataBlock, sendBuffer, kBorder, copyBlockToBuffer);
+  }
+  delete [] sendBuffer;
+  sendBuffer = NULL;
+  delete [] receiveBuffer;
+  receiveBuffer = NULL;
+}
 
 void processCPUWork(Node* machine, const int kPyramidHeight, const int kBornMin,
-                    const int kBornMax, const int kDieMin, const int kDieMax) {
+    const int kBornMax, const int kDieMin, const int kDieMax) {
   for (unsigned int task = 0; task < machine->numSubDomains(); ++task) {
     processSubDomain(kCPUIndex, machine->getSubDomain(task), kPyramidHeight,
-                      kBornMin, kBornMax, kDieMin, kDieMax);
+        kBornMin, kBornMax, kDieMin, kDieMax);
   }
 }
 
 void processGPUWork(Node* machine, const int kPyramidHeight, const int kBornMin,
-                    const int kBornMax, const int kDieMin, const int kDieMax) {
+    const int kBornMax, const int kDieMin, const int kDieMax) {
   for (unsigned int gpuIndex = 0;
-       gpuIndex < machine->getNumChildren();
-       ++gpuIndex) {
-      Node* currentDevice = &(machine->getChild(gpuIndex));
+      gpuIndex < machine->getNumChildren();
+      ++gpuIndex) {
+    Node* currentDevice = &(machine->getChild(gpuIndex));
     for (unsigned int task = 0;
-            task < currentDevice->numSubDomains();
-            ++task) {
-        processSubDomain(gpuIndex, currentDevice->getSubDomain(task),
-                          kPyramidHeight, kBornMin, kBornMax, kDieMin, kDieMax);
+        task < currentDevice->numSubDomains();
+        ++task) {
+      processSubDomain(gpuIndex, currentDevice->getSubDomain(task),
+          kPyramidHeight, kBornMin, kBornMax, kDieMin, kDieMax);
     }
   }
 }
 
 void processWork(Node* machine, const int kIterations, const int kPyramidHeight,
-                const int kBornMin, const int kBornMax, const int kDieMin,
-                const int kDieMax) {
+    const int kBornMin, const int kBornMax, const int kDieMin,
+    const int kDieMax) {
   int currentPyramidHeight = kPyramidHeight;
-  for (int iter = 0; iter < kIterations; iter += kPyramidHeight) {
+  const int kFirstIteration = 0;
+  for (int iter = kFirstIteration; iter < kIterations; iter += kPyramidHeight) {
     if (iter + kPyramidHeight > kIterations) {
       currentPyramidHeight = kIterations - iter;
     }
     /* The data is initially sent with the ghost zones */
-    if (0 < iter) { updateBorderCells(machine); }
+    if (kFirstIteration < iter) { updateAllStaleData(machine, kPyramidHeight); }
     processCPUWork(machine, currentPyramidHeight, kBornMin, kBornMax,
-                    kDieMin, kDieMax);
+        kDieMin, kDieMax);
     processGPUWork(machine, currentPyramidHeight, kBornMin, kBornMax,
-                    kDieMin, kDieMax);
+        kDieMin, kDieMax);
   }
 }
 
 void getResultsFromCluster(Cluster* cluster) {
-  /* TODO receives results, needs to be asynchronous */
+  /* TODO(den4gr) receives results, needs to be asynchronous */
+  const bool kNoInterleavedCompute = false;
   for (int nodeRank = 1; nodeRank < cluster->getNumNodes(); ++nodeRank) {
-    receiveData(nodeRank, &(cluster->getNode(nodeRank)),false);
+    receiveData(nodeRank, &(cluster->getNode(nodeRank)), kNoInterleavedCompute);
   }
 }
 
 void sendWorkToCluster(Cluster* cluster) {
-  /* TODO needs to be parallel.
+  /* TODO(den4gr) needs to be parallel.
       send the work to each node. */
   for (unsigned int node = 1; node < cluster->getNumNodes(); ++node) {
     sendData(&(cluster->getNode(node)));
@@ -485,7 +807,7 @@ void benchmarkCluster(Cluster* cluster, SubDomain3D* data,
                       const int kIterations,
                       const int kBornMin, const int kBornMax,
                       const int kDieMin, const int kDieMax) {
-  /* TODO this is inefficient, need to implement a function that uses Bcast */
+  /* TODO(den4gr) this is inefficient, need to use Bcast */
   for (unsigned int node = 1; node < cluster->getNumNodes(); ++node) {
     benchmarkNode(&(cluster->getNode(node)), data);
   }
@@ -513,12 +835,15 @@ void runDistributedCell(int rank, int numTasks, DTYPE *data, int x_max,
   getNumberOfChildren(&deviceCount);
   myWork.setNumChildren(deviceCount);
   if (0 == rank) {
+    Decomposition decomp;
+    Balancer lb;
+    double balance_sec = -1.0, time_root_compute = -1.0;
+    double time_root_receive = -1.0, total_sec = -1.0;
     // get the number of children from other nodes
     cluster = new Cluster(numTasks);
     cluster->getNode(0).setNumChildren(deviceCount);
     receiveNumberOfChildren(numTasks, cluster);
     /* perform domain decomposition */
-    Decomposition decomp;
     int numElements[3] = {z_max, y_max, x_max};
     decomp.decompose(data, 3, numElements, new_stencil_size, PYRAMID_HEIGHT);
 #ifdef DEBUG
@@ -527,50 +852,53 @@ void runDistributedCell(int rank, int numTasks, DTYPE *data, int x_max,
     benchmarkCluster(cluster, decomp.getSubDomain(0), iterations,
                       bornMin, bornMax, dieMin, dieMax);
     /* now perform the load balancing, assigning task blocks to each node */
-    Balancer lb;
     gettimeofday(&balance_start, NULL);
     // passing a 0 means use cpu and gpu on all nodes
     lb.perfBalance(*cluster, decomp, 0);
     // lb.balance(*cluster, decomp, 0);
     gettimeofday(&balance_end, NULL);
-    // printBlockLocations(*cluster);  // DEBUG
     printCluster(*cluster);  // DEBUG
-    double balance_sec = secondsElapsed(balance_start, balance_end);
+    balance_sec = secondsElapsed(balance_start, balance_end);
     fprintf(stderr, "***********\nBALANCE TIME: %f seconds.\n", balance_sec);
     gettimeofday(&process_start, NULL);
     sendWorkToCluster(cluster);
-   // TODO Is this a deep copy??
+    // TODO(den4gr) Is this a deep copy??
     // root's work is in the first node
     myWork = cluster->getNode(0);
     /* PROCESS ROOT NODE WORK */
     gettimeofday(&comp_start, NULL);
     processWork(&myWork, iterations, kPyramidHeight, bornMin, bornMax,
-                dieMin, dieMax);
+        dieMin, dieMax);
     gettimeofday(&comp_end, NULL);
-    double time_root_compute= secondsElapsed(comp_start, comp_end);
+    time_root_compute= secondsElapsed(comp_start, comp_end);
     fprintf(stdout, "*********\nroot processing time: %f sec\n",
         time_root_compute);
-    if (cluster != NULL) {
-      gettimeofday(&rec_start, NULL);
-      getResultsFromCluster(cluster);
-      gettimeofday(&rec_end, NULL);
 
-      gettimeofday(&process_end, NULL);
-      double time_root_receive = secondsElapsed(rec_start, rec_end);
-      fprintf(stdout, "***********\nroot receive time: %f sec\n",
-          time_root_receive);
-      double total_sec = secondsElapsed(process_start, process_end);
-      fprintf(stdout, "***********\nTOTAL TIME: %f.\n", total_sec);
+    gettimeofday(&rec_start, NULL);
+    getResultsFromCluster(cluster);
+    gettimeofday(&rec_end, NULL);
 
-      delete cluster;
-      cluster = NULL;
-    }
+    gettimeofday(&process_end, NULL);
+    time_root_receive = secondsElapsed(rec_start, rec_end);
+    fprintf(stdout, "***********\nroot receive time: %f sec\n",
+        time_root_receive);
+    total_sec = secondsElapsed(process_start, process_end);
+    fprintf(stdout, "***********\nTOTAL TIME: %f.\n", total_sec);
+
+    delete cluster;
+    cluster = NULL;
   } else {
+    const bool kInterleaveProcessing = true;
+    int remainingIterations = 0;
     // send number of children to root
     sendNumberOfChildren(0, deviceCount);
     benchmarkMyself(&myWork, NULL, iterations, bornMin, bornMax,
         dieMin, dieMax);
-    receiveData(0, &myWork, true, iterations, bornMin, bornMax, dieMin, dieMax);
+    receiveData(0, &myWork, kInterleaveProcessing, kPyramidHeight,
+                bornMin, bornMax, dieMin, dieMax);
+    remainingIterations = iterations - kPyramidHeight;
+    processWork(&myWork, remainingIterations, kPyramidHeight, bornMin, bornMax,
+                dieMin, dieMax);
     // send my work back to the root
     myWork.setRank(0);
     sendData(&myWork);
