@@ -1,9 +1,9 @@
 #include "Node.h"
 #include <stdio.h>
 
-Node::Node():weight(1.0){
-}
-Node::Node(const Node& n){
+Node::Node():weight(1.0) { }
+
+Node::Node(const Node& n) {
   weight=n.weight;
   edgeWeight=n.edgeWeight;
   rank=n.rank;
@@ -11,40 +11,32 @@ Node::Node(const Node& n){
   children = n.children;
 }
 
-Node::Node(double wt):weight(wt){
+Node::Node(double wt):weight(wt) { }
 
-}
-Node::~Node(){
-
-}
+Node::~Node() { }
 
 /**
  * @brief estimates how long communication and processing will take
  * @param extra additional tasks to estimate runtime for
  * @return estimated runtime given current work
- */ 
-const double Node::getTimeEst(int extra) const
-{
-  double est      = 0.0             ;
-  double procTime = 1.0 / weight    ;
+ */
+const double Node::getTimeEst(int extra) const {
+  double est      = 0.0;
+  double procTime = 1.0 / weight;
   double commTime = 1.0 / edgeWeight;
-  
   est = (procTime + commTime) * (extra + subD.size());
-  
-  for(size_t c=0; c < children.size(); ++c)
-  {
-    const Node&  ch         = children.at(c)          ;
-    double chProcTime = 1.0 / ch.getWeight()    ;
+  for (size_t c=0; c < children.size(); ++c) {
+    const Node&  ch         = children.at(c);
+    double chProcTime = 1.0 / ch.getWeight();
     double chCommTime = 1.0 / ch.getEdgeWeight();
     est += (chCommTime + commTime + chProcTime) * ch.numSubDomains();
   }
-
   return est;
 }
 
-Node& Node::operator=(const Node& rhs){
+Node& Node::operator=(const Node& rhs) {
   //if setting equal to itself, do nothing
-  if(this != &rhs){
+  if (this != &rhs) {
     this->weight = rhs.weight;
     this->edgeWeight = rhs.edgeWeight;
     this->rank = rhs.rank;
@@ -53,13 +45,13 @@ Node& Node::operator=(const Node& rhs){
   }
   return *this;
 }
-void Node::setRank(int newRank){
+void Node::setRank(int newRank) {
   this->rank = newRank;
 }
-void Node::setNumChildren(int numChildren){
+
+void Node::setNumChildren(int numChildren) {
   children.resize(numChildren);
-  for(int child=0; child<numChildren; ++child)
-  {
+  for (int child=0; child < numChildren; ++child) {
     children.at(child).setRank(child);
   }
 }
@@ -67,9 +59,8 @@ void Node::setNumChildren(int numChildren){
 /*
    @param runtime expected runtime
    @return task blocks needed to fill runtime for subtree
- */    
-int Node::getTotalWorkNeeded(const double runtime) const
-{
+ */
+int Node::getTotalWorkNeeded(const double runtime) const {
   //how many blocks could this subtree process in time
   return (int) min(this->getTotalWeight(),this->getMinEdgeWeight())*runtime;
 }
@@ -77,47 +68,48 @@ int Node::getTotalWorkNeeded(const double runtime) const
 /*
    @param runtime expected runtime
    @return task blocks needed to fill runtime
- */    
-int Node::getWorkNeeded(const double runtime) const
-{
+ */
+int Node::getWorkNeeded(const double runtime) const {
   //how many blocks could this node process in time
   return (int)(runtime*weight);
 }
 
-const int Node::getNumChildren() const{
+const unsigned int Node::getNumChildren() const {
   return children.size();
 }
-void Node::setWeight(double newWeight){
+
+void Node::setWeight(double newWeight) {
   weight = newWeight;
 }
-void Node::setEdgeWeight(double newEdgeWeight){
+
+void Node::setEdgeWeight(double newEdgeWeight) {
   edgeWeight = newEdgeWeight;
 }
-void Node::addSubDomain(SubDomain3D* sd){
+
+void Node::addSubDomain(SubDomain3D* sd) {
   subD.push_back(sd);
 }
-const int Node::getRank() const{
 
+const int Node::getRank() const {
   return this->rank;
 }
-const double Node::getMinEdgeWeight() const
-{
+
+const double Node::getMinEdgeWeight() const {
   double minWeight = edgeWeight;
-  for(size_t child=0; child<children.size(); ++child)
-  {
+  for (size_t child=0; child < children.size(); ++child) {
     minWeight = min(children.at(child).getEdgeWeight(), minWeight);
   }
 
 #ifdef DEBUG
-  fprintf(stderr, "node[%d] edgeWeight:%f min edge Weight:%f.\n",rank,edgeWeight,minWeight);
+  fprintf(stderr, "node[%d] edgeWeight:%f min edge Weight:%f.\n",
+          rank, edgeWeight, minWeight);
 #endif
   return minWeight;
 }
 
-const double Node::getTotalWeight() const{
+const double Node::getTotalWeight() const {
   double total = weight;
-  for(size_t child=0; child<children.size(); ++child)
-  {
+  for (size_t child=0; child < children.size(); ++child) {
     total += children.at(child).getWeight();
   }
 
@@ -126,38 +118,80 @@ const double Node::getTotalWeight() const{
 #endif
   return total;
 }
-const double Node::getEdgeWeight() const{
 
+const double Node::getEdgeWeight() const {
   return edgeWeight;
 }
-const double Node::getWeight() const{
 
+const double Node::getWeight() const {
   return weight;
 }
-Node& Node::getChild(int index) {
+
+const Node& Node::getChild(int index) const {
   return children.at(index);
 }
-SubDomain3D* Node::getSubDomain(int index) {
+
+Node& Node::getChild(int index) {
+  const Node& node = static_cast<const Node &>( *this );
+  return const_cast<Node &>( node.getChild(index) );
+}
+
+SubDomain3D* Node::getSubDomain(int index) const {
   return subD.at(index);
 }
 
-SubDomain3D* Node::popSubDomain() 
-{
+SubDomain3D* Node::globalGetSubDomain(int index) const {
+  int currentIndex = index;
+  if (this->numSubDomains() > currentIndex) {
+    return this->getSubDomain(currentIndex);
+  } else {
+    currentIndex -= this->numSubDomains();
+    for (unsigned int gpuIndex = 0;
+        gpuIndex < this->getNumChildren();
+        ++gpuIndex) {
+      const Node& kGpu = this->getChild(gpuIndex);
+      if (kGpu.numSubDomains() > currentIndex) {
+        return kGpu.getSubDomain(currentIndex);
+      }
+      currentIndex -= kGpu.numSubDomains();
+    }
+  }
+  return NULL;
+}
+
+SubDomain3D* Node::getSubDomainLinear(int index) const {
+  for (int blockIndex = 0; blockIndex < numSubDomains(); ++blockIndex) {
+    SubDomain3D* block = getSubDomain(blockIndex);
+    if (block->getLinIndex() == index) {
+      return block;
+    }
+  }
+  for (int gpuIndex = 0; gpuIndex < getNumChildren(); ++gpuIndex) {
+    const Node& gpu = this->getChild(gpuIndex);
+    for (int blockIndex = 0; blockIndex < gpu.numSubDomains(); ++blockIndex) {
+      SubDomain3D* block = gpu.getSubDomain(blockIndex);
+      if (block->getLinIndex() == index) {
+        return block;
+      }
+    }
+  }
+  return NULL;
+}
+
+SubDomain3D* Node::popSubDomain() {
   SubDomain3D* s = subD.back();
   subD.pop_back();
   return s;
-}	
-const int Node::numSubDomains() const{
+}
+
+const unsigned int Node::numSubDomains() const {
   return subD.size();
 }
 
-const int Node::numTotalSubDomains() const{
-  int total = subD.size();
-
-  for(size_t child=0; child<children.size(); ++child)
-  {
+const unsigned int Node::numTotalSubDomains() const {
+  unsigned int total = subD.size();
+  for (size_t child=0; child < children.size(); ++child) {
     total += children.at(child).numSubDomains();
   }
-
   return total;
 }

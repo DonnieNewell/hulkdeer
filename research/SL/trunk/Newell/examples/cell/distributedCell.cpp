@@ -9,6 +9,8 @@ Copyright 2012 Donald Newell
 #include < time.h>
 #endif
 #include <limits>
+#include <fstream>
+#include <sstream>
 #include "mpi.h"
 #include "cell.h"
 #include "ompCell.h"
@@ -24,7 +26,7 @@ enum MPITagType {
   xDevice     = 3, xData    = 4 , xNumBlocks    = 5,
   xOffset     = 6, xWeight  = 7 , xWeightIndex  = 8,
   xEdgeWeight = 9, xId      = 10, xGridDim      = 11,
-  xNeighbor   = 12 };
+  xNeighborData   = 12, xNeighborIndex = 13, xNeighbors = 14 };
 
 const int kCPUIndex = -1;
 
@@ -33,12 +35,13 @@ double secondsElapsed(struct timeval start, struct timeval stop) {
                                 (stop.tv_usec - start.tv_usec)/1000000.0);
 }
 
-void sendDataToNode(int rank, int device, SubDomain3D* s) {
+void sendDataToNode(const int rank, int device, SubDomain3D* s) {
   // first send number of dimensions
   int numDim  = 0;
-  MPI_Request reqs[7];
+  MPI_Request reqs[8];
   int length[3];
   int offset[3];
+  const int kNumNeighbors3D = 26;
   const int* kTmpId      = s->getId();
   const int* kTmpGridDim = s->getGridDim();
   int tmpId[3] = {kTmpId[0], kTmpId[1], kTmpId[2]};
@@ -60,6 +63,8 @@ void sendDataToNode(int rank, int device, SubDomain3D* s) {
             MPI_COMM_WORLD, &reqs[2]);
   MPI_Isend(static_cast<void*>(offset), 3, MPI_INT, rank, xOffset,
             MPI_COMM_WORLD, &reqs[3]);
+  MPI_Isend(static_cast<void*>(s->getNeighbors()), kNumNeighbors3D, MPI_INT,
+            rank, xNeighbors, MPI_COMM_WORLD,  &reqs[7]);
 
   // third send data
   // first we have to stage the data into contiguous memory
@@ -69,7 +74,7 @@ void sendDataToNode(int rank, int device, SubDomain3D* s) {
   }
   MPI_Isend(static_cast <void*>(s->getBuffer()), total_size, MPI_INT, rank,
              xData, MPI_COMM_WORLD, &reqs[4]);
-  MPI_Waitall(7, reqs, MPI_STATUSES_IGNORE);
+  MPI_Waitall(8, reqs, MPI_STATUSES_IGNORE);
 }
 
 void getNumberOfChildren(int* numChildren) {
@@ -114,11 +119,7 @@ void receiveNumberOfChildren(int numTasks, Cluster* cluster) {
 
 void sendData(Node* n) {
   // count how many task blocks, total, are going to be sent
-  int total = n->numSubDomains();
-  for (unsigned int child = 0; child < n->getNumChildren(); ++child) {
-    total += n->getChild(child).numSubDomains();
-  }
-
+  int total = n->numTotalSubDomains();
   // send node number of blocks
   MPI_Request req;
   MPI_Isend(static_cast<void*>(&total), 1, MPI_INT, n->getRank(), xNumBlocks,
@@ -186,12 +187,15 @@ void benchmarkNode(Node* n, SubDomain3D* s) {
 
 /* output variables: buf, size */
 SubDomain3D* receiveDataFromNode(int rank, int* device) {
-  MPI_Request reqs[6];
+  MPI_Request reqs[7];
   int numDim =  0;
   int id[3]     = {-1, -1, -1};
   int gridDim[3]= {-1, -1, -1};
   int length[3];
   int offset[3];
+  const int kNumNeighbors3D = 26;
+  int neighbors[kNumNeighbors3D] = { 0 };
+
   // receive dimensionality of data
   MPI_Irecv(static_cast<void*>(id), 3, MPI_INT, rank, xId, MPI_COMM_WORLD,
             &reqs[4]);
@@ -207,12 +211,14 @@ SubDomain3D* receiveDataFromNode(int rank, int* device) {
             MPI_COMM_WORLD,  &reqs[2]);
   MPI_Irecv(static_cast<void*>(offset), 3, MPI_INT, rank, xOffset,
             MPI_COMM_WORLD,  &reqs[3]);
+  MPI_Irecv(static_cast<void*>(neighbors), kNumNeighbors3D, MPI_INT, rank,
+            xNeighbors, MPI_COMM_WORLD,  &reqs[6]);
 
-  MPI_Waitall(6, reqs, MPI_STATUSES_IGNORE);
+  MPI_Waitall(7, reqs, MPI_STATUSES_IGNORE);
 
   SubDomain3D *s = new SubDomain3D(id, offset[0], length[0], offset[1],
                                    length[1], offset[2], length[2], gridDim[0],
-                                   gridDim[1], gridDim[2]);
+                                   gridDim[1], gridDim[2], neighbors);
   int size = 1;
   for (int i =0; i < numDim; ++i) {
     s->setLength(i, length[i]);
@@ -248,7 +254,7 @@ void processSubDomain(int device, SubDomain3D *task, int timesteps,
   if (-1 == device) {
     // run on CPU
     runOMPCell(buff, depth, height, width, timesteps, bornMin, bornMax, dieMin,
-                dieMax, device);
+                dieMax);
   } else {
     // run on GPU
     gettimeofday(&start, NULL);
@@ -339,6 +345,7 @@ void benchmarkMyself(Node* n, SubDomain3D* pS, int timesteps, int bornMin,
   double *edgeWeight = new double[total-1];
   SubDomain3D *s = NULL;
   int rank = -2;
+
   if (pS == NULL) {
     s = receiveDataFromNode(0, &rank);
     if (-1 != rank) {
@@ -351,6 +358,7 @@ void benchmarkMyself(Node* n, SubDomain3D* pS, int timesteps, int bornMin,
     int iterations = 100;
     struct timeval start, end;
     double total_sec = 0.0;
+
     gettimeofday(&start, NULL);
     for (int itr = 0; itr < iterations; ++itr) {
       processSubDomain(device-1, s, timesteps, bornMin, bornMax, dieMin,
@@ -396,9 +404,37 @@ void benchmarkMyself(Node* n, SubDomain3D* pS, int timesteps, int bornMin,
   takes a subdomain containing results and copies it into original
   buffer, accounting for invalid ghost zone around edges
 */
-void copy_result_block(DTYPE* buffer, SubDomain3D* s, int pyramidHeight) { }
+void copy_result_block(DTYPE* buffer, SubDomain3D* s, const int kBorder[3],
+                        const int kBufferSize[3]) {
+  const int kLength[3] = { s->getLength(0) - 2 * kBorder[0],
+                          s->getLength(1) - 2 * kBorder[1],
+                          s->getLength(2) - 2 * kBorder[2] };
+  const int kOffset[3] = { s->getOffset(0) + kBorder[0],
+                          s->getOffset(1) + kBorder[1],
+                          s->getOffset(2) + kBorder[2] };
+  for (int i = 0; i < kLength[0]; ++i) {
+    for (int j = 0; j < kLength[1]; ++j) {
+      for (int k = 0; k < kLength[2]; ++k) {
+        int destI = i + kOffset[0];
+        int destJ = j + kOffset[1];
+        int destK = k + kOffset[2];
+        int srcI = i + kBorder[0];
+        int srcJ = j + kBorder[1];
+        int srcK = k + kBorder[2];
+        int destIndex = destI * kBufferSize[1] * kBufferSize[2] +
+                        destJ * kBufferSize[2] +
+                        destK;
+        int srcIndex = srcI * kLength[1] * kLength[2] +
+                        srcJ * kLength[2] +
+                        srcK;
+        buffer[destIndex] = s->getBuffer()[srcIndex];
+      }
+    }
+  }
+}
 
-void copy_results(DTYPE* buffer, Cluster* cluster, int pyramidHeight) {
+void copy_results(DTYPE* buffer, Cluster* cluster, const int kBorder[3],
+                  const int kBufferSize[3]) {
   if (NULL == buffer) return;
 
   /* get work from all parents and children in cluster */
@@ -406,7 +442,7 @@ void copy_results(DTYPE* buffer, Cluster* cluster, int pyramidHeight) {
     Node &node = cluster->getNode(n);
     unsigned int num = node.numSubDomains();
     for (unsigned int block =0; block < num; ++block) {
-      copy_result_block(buffer, node.getSubDomain(block), pyramidHeight);
+      copy_result_block(buffer, node.getSubDomain(block), kBorder, kBufferSize);
     }
 
     for (unsigned int c = 0; c < node.getNumChildren(); ++c) {
@@ -414,7 +450,8 @@ void copy_results(DTYPE* buffer, Cluster* cluster, int pyramidHeight) {
       num = child->numSubDomains();
 
       for (unsigned int block =0; block < num; ++block) {
-        copy_result_block(buffer, child->getSubDomain(block), pyramidHeight);
+        copy_result_block(buffer, child->getSubDomain(block), kBorder,
+                          kBufferSize);
       }
     }
   }
@@ -434,234 +471,396 @@ bool isSegmentCorner(NeighborTag neighbor) {
 
 void getCornerDimensions(NeighborTag neighbor, int* segmentLength,
                           int* segmentOffset, SubDomain3D* dataBlock,
-                          const int kBorder[3]) {
+                          const int kBorder[3], const bool kBlockToBuffer) {
   if (xCorner0 == neighbor) {
     segmentLength[0] = kBorder[0];
     segmentLength[1] = kBorder[1];
     segmentLength[2] = kBorder[2];
-    segmentOffset[0] = kBorder[0];
-    segmentOffset[1] = kBorder[1];
-    segmentOffset[2] = kBorder[2];
+    if (kBlockToBuffer) {
+      segmentOffset[0] = kBorder[0];
+      segmentOffset[1] = kBorder[1];
+      segmentOffset[2] = kBorder[2];
+    } else {
+      segmentOffset[0] = 0;
+      segmentOffset[1] = 0;
+      segmentOffset[2] = 0;
+    }
   } else if (xCorner1 == neighbor) {
     segmentLength[0] = kBorder[0];
     segmentLength[1] = kBorder[1];
     segmentLength[2] = kBorder[2];
-    segmentOffset[0] = kBorder[0];
-    segmentOffset[1] = kBorder[1];
-    segmentOffset[2] = dataBlock->getLength(2) - 2 * kBorder[2];
+    if (kBlockToBuffer) {
+      segmentOffset[0] = kBorder[0];
+      segmentOffset[1] = kBorder[1];
+      segmentOffset[2] = dataBlock->getLength(2) - 2 * kBorder[2];
+    } else {
+      segmentOffset[0] = 0;
+      segmentOffset[1] = 0;
+      segmentOffset[2] = dataBlock->getLength(2) - kBorder[2];
+    }
   } else if (xCorner2 == neighbor) {
     segmentLength[0] = kBorder[0];
     segmentLength[1] = kBorder[1];
     segmentLength[2] = kBorder[2];
-    segmentOffset[0] = kBorder[0];
-    segmentOffset[1] = dataBlock->getLength(1) - 2 * kBorder[1];
-    segmentOffset[2] = kBorder[2];
+    if (kBlockToBuffer) {
+      segmentOffset[0] = kBorder[0];
+      segmentOffset[1] = dataBlock->getLength(1) - 2 * kBorder[1];
+      segmentOffset[2] = kBorder[2];
+    } else {
+      segmentOffset[0] = 0;
+      segmentOffset[1] = dataBlock->getLength(1) - kBorder[1];
+      segmentOffset[2] = 0;
+    }
   } else if (xCorner3 == neighbor) {
     segmentLength[0] = kBorder[0];
     segmentLength[1] = kBorder[1];
     segmentLength[2] = kBorder[2];
-    segmentOffset[0] = kBorder[0];
-    segmentOffset[1] = dataBlock->getLength(1) - 2 * kBorder[1];
-    segmentOffset[2] = dataBlock->getLength(2) - 2 * kBorder[2];
+    if (kBlockToBuffer) {
+      segmentOffset[0] = kBorder[0];
+      segmentOffset[1] = dataBlock->getLength(1) - 2 * kBorder[1];
+      segmentOffset[2] = dataBlock->getLength(2) - 2 * kBorder[2];
+    } else {
+      segmentOffset[0] = 0;
+      segmentOffset[1] = dataBlock->getLength(1) - kBorder[1];
+      segmentOffset[2] = dataBlock->getLength(2) - kBorder[2];
+    }
   } else if (xCorner4 == neighbor) {
     segmentLength[0] = kBorder[0];
     segmentLength[1] = kBorder[1];
     segmentLength[2] = kBorder[2];
-    segmentOffset[0] = dataBlock->getLength(0) - 2 * kBorder[0];
-    segmentOffset[1] = kBorder[1];
-    segmentOffset[2] = kBorder[2];
+    if (kBlockToBuffer) {
+      segmentOffset[0] = dataBlock->getLength(0) - 2 * kBorder[0];
+      segmentOffset[1] = kBorder[1];
+      segmentOffset[2] = kBorder[2];
+    } else {
+      segmentOffset[0] = dataBlock->getLength(0) - kBorder[0];
+      segmentOffset[1] = 0;
+      segmentOffset[2] = 0;
+    }
   } else if (xCorner5 == neighbor) {
     segmentLength[0] = kBorder[0];
     segmentLength[1] = kBorder[1];
     segmentLength[2] = kBorder[2];
-    segmentOffset[0] = dataBlock->getLength(0) - 2 * kBorder[0];
-    segmentOffset[1] = kBorder[1];
-    segmentOffset[2] = dataBlock->getLength(2) - 2 * kBorder[2];
+    if (kBlockToBuffer) {
+      segmentOffset[0] = dataBlock->getLength(0) - 2 * kBorder[0];
+      segmentOffset[1] = kBorder[1];
+      segmentOffset[2] = dataBlock->getLength(2) - 2 * kBorder[2];
+    } else {
+      segmentOffset[0] = dataBlock->getLength(0) - kBorder[0];
+      segmentOffset[1] = 0;
+      segmentOffset[2] = dataBlock->getLength(2) - kBorder[2];
+    }
   } else if (xCorner6 == neighbor) {
     segmentLength[0] = kBorder[0];
     segmentLength[1] = kBorder[1];
     segmentLength[2] = kBorder[2];
-    segmentOffset[0] = dataBlock->getLength(0) - 2 * kBorder[0];
-    segmentOffset[1] = dataBlock->getLength(1) - 2 * kBorder[1];
-    segmentOffset[2] = kBorder[2];
+    if (kBlockToBuffer) {
+      segmentOffset[0] = dataBlock->getLength(0) - 2 * kBorder[0];
+      segmentOffset[1] = dataBlock->getLength(1) - 2 * kBorder[1];
+      segmentOffset[2] = kBorder[2];
+    } else {
+      segmentOffset[0] = dataBlock->getLength(0) - kBorder[0];
+      segmentOffset[1] = dataBlock->getLength(1) - kBorder[1];
+      segmentOffset[2] = 0;
+    }
   } else if (xCorner7 == neighbor) {
     segmentLength[0] = kBorder[0];
     segmentLength[1] = kBorder[1];
     segmentLength[2] = kBorder[2];
-    segmentOffset[0] = dataBlock->getLength(0) - 2 * kBorder[0];
-    segmentOffset[1] = dataBlock->getLength(1) - 2 * kBorder[1];
-    segmentOffset[2] = dataBlock->getLength(2) - 2 * kBorder[2];
+    if (kBlockToBuffer) {
+      segmentOffset[0] = dataBlock->getLength(0) - 2 * kBorder[0];
+      segmentOffset[1] = dataBlock->getLength(1) - 2 * kBorder[1];
+      segmentOffset[2] = dataBlock->getLength(2) - 2 * kBorder[2];
+    } else {
+      segmentOffset[0] = dataBlock->getLength(0) - kBorder[0];
+      segmentOffset[1] = dataBlock->getLength(1) - kBorder[1];
+      segmentOffset[2] = dataBlock->getLength(2) - kBorder[2];
+    }
   }
 }
 
 void getFaceDimensions(NeighborTag neighbor, int* segmentLength,
     int* segmentOffset, SubDomain3D* dataBlock,
-    const int kBorder[3]) {
+    const int kBorder[3], const bool kBlockToBuffer) {
   if (xFace0 == neighbor) {
     segmentLength[0] = kBorder[0];
     segmentLength[1] = dataBlock->getLength(1) - 2 * kBorder[1];
     segmentLength[2] = dataBlock->getLength(2) - 2 * kBorder[2];
-    segmentOffset[0] = kBorder[0];
-    segmentOffset[1] = kBorder[1];
-    segmentOffset[2] = kBorder[2];
+    if (kBlockToBuffer) {
+      segmentOffset[0] = kBorder[0];
+      segmentOffset[1] = kBorder[1];
+      segmentOffset[2] = kBorder[2];
+    } else {
+      segmentOffset[0] = 0;
+      segmentOffset[1] = kBorder[1];
+      segmentOffset[2] = kBorder[2];
+    }
   } else if (xFace1 == neighbor) {
     segmentLength[0] = kBorder[0];
     segmentLength[1] = dataBlock->getLength(1) - 2 * kBorder[1];
     segmentLength[2] = dataBlock->getLength(2) - 2 * kBorder[2];
-    segmentOffset[0] = dataBlock->getLength(0) - 2 * kBorder[0];
-    segmentOffset[1] = kBorder[1];
-    segmentOffset[2] = kBorder[2];
+    if (kBlockToBuffer) {
+      segmentOffset[0] = dataBlock->getLength(0) - 2 * kBorder[0];
+      segmentOffset[1] = kBorder[1];
+      segmentOffset[2] = kBorder[2];
+    } else {
+      segmentOffset[0] = dataBlock->getLength(0) - kBorder[0];
+      segmentOffset[1] = kBorder[1];
+      segmentOffset[2] = kBorder[2];
+    }
   } else if (xFace2 == neighbor) {
     segmentLength[0] = dataBlock->getLength(0) - 2 * kBorder[0];
     segmentLength[1] = kBorder[1];
     segmentLength[2] = dataBlock->getLength(2) - 2 * kBorder[2];
-    segmentOffset[0] = kBorder[0];
-    segmentOffset[1] = kBorder[1];
-    segmentOffset[2] = kBorder[2];
+    if (kBlockToBuffer) {
+      segmentOffset[0] = kBorder[0];
+      segmentOffset[1] = kBorder[1];
+      segmentOffset[2] = kBorder[2];
+    } else {
+      segmentOffset[0] = kBorder[0];
+      segmentOffset[1] = 0;
+      segmentOffset[2] = kBorder[2];
+    }
   } else if (xFace3 == neighbor) {
     segmentLength[0] = dataBlock->getLength(0) - 2 * kBorder[0];
     segmentLength[1] = kBorder[1];
     segmentLength[2] = dataBlock->getLength(2) - 2 * kBorder[2];
-    segmentOffset[0] = kBorder[0];
-    segmentOffset[1] = dataBlock->getLength(1) - 2 * kBorder[1];
-    segmentOffset[2] = kBorder[2];
+    if (kBlockToBuffer) {
+      segmentOffset[0] = kBorder[0];
+      segmentOffset[1] = dataBlock->getLength(1) - 2 * kBorder[1];
+      segmentOffset[2] = kBorder[2];
+    } else {
+      segmentOffset[0] = kBorder[0];
+      segmentOffset[1] = dataBlock->getLength(1) - kBorder[1];
+      segmentOffset[2] = kBorder[2];
+    }
   } else if (xFace4 == neighbor) {
     segmentLength[0] = dataBlock->getLength(0) - 2 * kBorder[0];
     segmentLength[1] = dataBlock->getLength(1) - 2 * kBorder[1];
     segmentLength[2] = kBorder[2];
-    segmentOffset[0] = kBorder[0];
-    segmentOffset[1] = kBorder[1];
-    segmentOffset[2] = kBorder[2];
+    if (kBlockToBuffer) {
+      segmentOffset[0] = kBorder[0];
+      segmentOffset[1] = kBorder[1];
+      segmentOffset[2] = kBorder[2];
+    } else {
+      segmentOffset[0] = kBorder[0];
+      segmentOffset[1] = kBorder[1];
+      segmentOffset[2] = 0;
+    }
   } else if (xFace5 == neighbor) {
     segmentLength[0] = dataBlock->getLength(0) - 2 * kBorder[0];
     segmentLength[1] = dataBlock->getLength(1) - 2 * kBorder[1];
     segmentLength[2] = kBorder[2];
-    segmentOffset[0] = kBorder[0];
-    segmentOffset[1] = kBorder[1];
-    segmentOffset[2] = dataBlock->getLength(2) - 2 * kBorder[2];
+    if (kBlockToBuffer) {
+      segmentOffset[0] = kBorder[0];
+      segmentOffset[1] = kBorder[1];
+      segmentOffset[2] = dataBlock->getLength(2) - 2 * kBorder[2];
+    } else {
+      segmentOffset[0] = kBorder[0];
+      segmentOffset[1] = kBorder[1];
+      segmentOffset[2] = dataBlock->getLength(2) - kBorder[2];
+    }
   }
 }
 
 void getPoleDimensions(NeighborTag neighbor, int* segmentLength,
                           int* segmentOffset, SubDomain3D* dataBlock,
-                          const int kBorder[3]) {
+                          const int kBorder[3], const bool kBlockToBuffer) {
   if (xPole0 == neighbor) {
     segmentLength[0] = kBorder[0];
     segmentLength[1] = kBorder[1];
     segmentLength[2] = dataBlock->getLength(2) - 2 * kBorder[2];
-    segmentOffset[0] = kBorder[0];
-    segmentOffset[1] = kBorder[1];
-    segmentOffset[2] = kBorder[2];
+    if (kBlockToBuffer) {
+      segmentOffset[0] = kBorder[0];
+      segmentOffset[1] = kBorder[1];
+      segmentOffset[2] = kBorder[2];
+    } else {
+      segmentOffset[0] = 0;
+      segmentOffset[1] = 0;
+      segmentOffset[2] = kBorder[2];
+    }
   } else if (xPole1 == neighbor) {
     segmentLength[0] = kBorder[0];
     segmentLength[1] = kBorder[1];
     segmentLength[2] = dataBlock->getLength(2) - 2 * kBorder[2];
-    segmentOffset[0] = kBorder[0];
-    segmentOffset[1] = dataBlock->getLength(1) - 2 * kBorder[1];
-    segmentOffset[2] = kBorder[2];
+    if (kBlockToBuffer) {
+      segmentOffset[0] = kBorder[0];
+      segmentOffset[1] = dataBlock->getLength(1) - 2 * kBorder[1];
+      segmentOffset[2] = kBorder[2];
+    } else {
+      segmentOffset[0] = 0;
+      segmentOffset[1] = dataBlock->getLength(1) - kBorder[1];
+      segmentOffset[2] = kBorder[2];
+    }
   } else if (xPole2 == neighbor) {
     segmentLength[0] = kBorder[0];
     segmentLength[1] = kBorder[1];
     segmentLength[2] = dataBlock->getLength(2) - 2 * kBorder[2];
-    segmentOffset[0] = dataBlock->getLength(0) - 2 * kBorder[0];
-    segmentOffset[1] = dataBlock->getLength(1) - 2 * kBorder[1];
-    segmentOffset[2] = kBorder[2];
+    if (kBlockToBuffer) {
+      segmentOffset[0] = dataBlock->getLength(0) - 2 * kBorder[0];
+      segmentOffset[1] = dataBlock->getLength(1) - 2 * kBorder[1];
+      segmentOffset[2] = kBorder[2];
+    } else {
+      segmentOffset[0] = dataBlock->getLength(0) - kBorder[0];
+      segmentOffset[1] = dataBlock->getLength(1) - kBorder[1];
+      segmentOffset[2] = kBorder[2];
+    }
   } else if (xPole3 == neighbor) {
     segmentLength[0] = kBorder[0];
     segmentLength[1] = kBorder[1];
     segmentLength[2] = dataBlock->getLength(2) - 2 * kBorder[2];
-    segmentOffset[0] = dataBlock->getLength(0) - 2 * kBorder[0];
-    segmentOffset[1] = kBorder[1];
-    segmentOffset[2] = kBorder[2];
+    if (kBlockToBuffer) {
+      segmentOffset[0] = dataBlock->getLength(0) - 2 * kBorder[0];
+      segmentOffset[1] = kBorder[1];
+      segmentOffset[2] = kBorder[2];
+    } else {
+      segmentOffset[0] = dataBlock->getLength(0) - kBorder[0];
+      segmentOffset[1] = 0;
+      segmentOffset[2] = kBorder[2];
+    }
   } else if (xPole4 == neighbor) {
     segmentLength[0] = kBorder[0];
     segmentLength[1] = dataBlock->getLength(1) - 2 * kBorder[1];
     segmentLength[2] = kBorder[2];
-    segmentOffset[0] = kBorder[0];
-    segmentOffset[1] = kBorder[1];
-    segmentOffset[2] = kBorder[2];
+    if (kBlockToBuffer) {
+      segmentOffset[0] = kBorder[0];
+      segmentOffset[1] = kBorder[1];
+      segmentOffset[2] = kBorder[2];
+    } else {
+      segmentOffset[0] = 0;
+      segmentOffset[1] = kBorder[1];
+      segmentOffset[2] = 0;
+    }
   } else if (xPole5 == neighbor) {
     segmentLength[0] = kBorder[0];
     segmentLength[1] = dataBlock->getLength(1) - 2 * kBorder[1];
     segmentLength[2] = kBorder[2];
-    segmentOffset[0] = kBorder[0];
-    segmentOffset[1] = kBorder[1];
-    segmentOffset[2] = dataBlock->getLength(2) - 2 * kBorder[2];
+    if (kBlockToBuffer) {
+      segmentOffset[0] = kBorder[0];
+      segmentOffset[1] = kBorder[1];
+      segmentOffset[2] = dataBlock->getLength(2) - 2 * kBorder[2];
+    } else {
+      segmentOffset[0] = 0;
+      segmentOffset[1] = kBorder[1];
+      segmentOffset[2] = dataBlock->getLength(2) - kBorder[2];
+    }
   } else if (xPole6 == neighbor) {
     segmentLength[0] = kBorder[0];
     segmentLength[1] = dataBlock->getLength(1) - 2 * kBorder[1];
     segmentLength[2] = kBorder[2];
-    segmentOffset[0] = dataBlock->getLength(0) - 2 * kBorder[0];
-    segmentOffset[1] = kBorder[1];
-    segmentOffset[2] = dataBlock->getLength(2) - 2 * kBorder[2];
+    if (kBlockToBuffer) {
+      segmentOffset[0] = dataBlock->getLength(0) - 2 * kBorder[0];
+      segmentOffset[1] = kBorder[1];
+      segmentOffset[2] = dataBlock->getLength(2) - 2 * kBorder[2];
+    } else {
+      segmentOffset[0] = dataBlock->getLength(0) - kBorder[0];
+      segmentOffset[1] = kBorder[1];
+      segmentOffset[2] = dataBlock->getLength(2) - kBorder[2];
+    }
   } else if (xPole7 == neighbor) {
     segmentLength[0] = kBorder[0];
     segmentLength[1] = dataBlock->getLength(1) - 2 * kBorder[1];
     segmentLength[2] = kBorder[2];
-    segmentOffset[0] = dataBlock->getLength(0) - 2 * kBorder[0];
-    segmentOffset[1] = kBorder[1];
-    segmentOffset[2] = kBorder[2];
+    if (kBlockToBuffer) {
+      segmentOffset[0] = dataBlock->getLength(0) - 2 * kBorder[0];
+      segmentOffset[1] = kBorder[1];
+      segmentOffset[2] = kBorder[2];
+    } else {
+      segmentOffset[0] = dataBlock->getLength(0) - kBorder[0];
+      segmentOffset[1] = kBorder[1];
+      segmentOffset[2] = 0;
+    }
   } else if (xPole8 == neighbor) {
     segmentLength[0] = dataBlock->getLength(0) - 2 * kBorder[0];
     segmentLength[1] = kBorder[1];
     segmentLength[2] = kBorder[2];
-    segmentOffset[0] = kBorder[0];
-    segmentOffset[1] = kBorder[1];
-    segmentOffset[2] = kBorder[2];
+    if (kBlockToBuffer) {
+      segmentOffset[0] = kBorder[0];
+      segmentOffset[1] = kBorder[1];
+      segmentOffset[2] = kBorder[2];
+    } else {
+      segmentOffset[0] = kBorder[0];
+      segmentOffset[1] = 0;
+      segmentOffset[2] = 0;
+    }
   } else if (xPole9 == neighbor) {
     segmentLength[0] = dataBlock->getLength(0) - 2 * kBorder[0];
     segmentLength[1] = kBorder[1];
     segmentLength[2] = kBorder[2];
-    segmentOffset[0] = kBorder[0];
-    segmentOffset[1] = kBorder[1];
-    segmentOffset[2] = dataBlock->getLength(2) - 2 * kBorder[2];
+    if (kBlockToBuffer) {
+      segmentOffset[0] = kBorder[0];
+      segmentOffset[1] = kBorder[1];
+      segmentOffset[2] = dataBlock->getLength(2) - 2 * kBorder[2];
+    } else {
+      segmentOffset[0] = kBorder[0];
+      segmentOffset[1] = 0;
+      segmentOffset[2] = dataBlock->getLength(2) - kBorder[2];
+    }
   } else if (xPole10 == neighbor) {
     segmentLength[0] = dataBlock->getLength(0) - 2 * kBorder[0];
     segmentLength[1] = kBorder[1];
     segmentLength[2] = kBorder[2];
-    segmentOffset[0] = kBorder[0];
-    segmentOffset[1] = dataBlock->getLength(1) - 2 * kBorder[1];
-    segmentOffset[2] = dataBlock->getLength(2) - 2 * kBorder[2];
+    if (kBlockToBuffer) {
+      segmentOffset[0] = kBorder[0];
+      segmentOffset[1] = dataBlock->getLength(1) - 2 * kBorder[1];
+      segmentOffset[2] = dataBlock->getLength(2) - 2 * kBorder[2];
+    } else {
+      segmentOffset[0] = kBorder[0];
+      segmentOffset[1] = dataBlock->getLength(1) - kBorder[1];
+      segmentOffset[2] = dataBlock->getLength(2) - kBorder[2];
+    }
   } else if (xPole11 == neighbor) {
     segmentLength[0] = dataBlock->getLength(0) - 2 * kBorder[0];
     segmentLength[1] = kBorder[1];
     segmentLength[2] = kBorder[2];
-    segmentOffset[0] = kBorder[0];
-    segmentOffset[1] = dataBlock->getLength(1) - 2 * kBorder[1];
-    segmentOffset[2] = kBorder[2];
+    if (kBlockToBuffer) {
+      segmentOffset[0] = kBorder[0];
+      segmentOffset[1] = dataBlock->getLength(1) - 2 * kBorder[1];
+      segmentOffset[2] = kBorder[2];
+    } else {
+      segmentOffset[0] = kBorder[0];
+      segmentOffset[1] = dataBlock->getLength(1) - kBorder[1];
+      segmentOffset[2] = 0;
+    }
   }
 }
 
 // TODO(den4gr)
 void getSegmentDimensions(NeighborTag neighbor, int* segmentLength,
     int* segmentOffset, SubDomain3D* dataBlock,
-    const int kBorder[3]) {
+    const int kBorder[3], const bool kBlockToBuffer) {
   int blockLength[3] = {  dataBlock->getLength(0),
     dataBlock->getLength(1),
     dataBlock->getLength(2) };
   if (isSegmentFace(neighbor)) {
     getFaceDimensions(neighbor, segmentLength, segmentOffset, dataBlock,
-                      kBorder);
+                      kBorder, kBlockToBuffer);
   } else if (isSegmentPole(neighbor)) {
     getPoleDimensions(neighbor, segmentLength, segmentOffset, dataBlock,
-                      kBorder);
+                      kBorder, kBlockToBuffer);
   } else if (isSegmentCorner(neighbor)) {
     getCornerDimensions(neighbor, segmentLength, segmentOffset, dataBlock,
-                        kBorder);
+                        kBorder, kBlockToBuffer);
   }
 }
 
 //TODO(den4gr)
 /* copies to/from the buffer based on the bool flag */
 void copySegment(NeighborTag neighbor, SubDomain3D* dataBlock,
-    DTYPE* sendBuffer, const int kBorder[3], const bool kCopyToBuffer) {
+    DTYPE* buffer, const int kBorder[3], const bool kBlockToBuffer,
+    int* segmentSize) {
   int segmentLength[3] = { 0 };
   int segmentOffset[3] = { 0 };
   int blockLength[3] = {  dataBlock->getLength(0),
                           dataBlock->getLength(1),
                           dataBlock->getLength(2) };
   getSegmentDimensions(neighbor, segmentLength, segmentOffset, dataBlock,
-      kBorder);
+                        kBorder, kBlockToBuffer);
+  if (NULL != segmentSize) {
+    *segmentSize =  segmentLength[0] *
+                    segmentLength[1] *
+                    segmentLength[2];
+  }
   for (int i = 0; i < segmentLength[0]; ++i) {
     for (int j = 0; j < segmentLength[1]; ++j) {
       for (int k = 0; k < segmentLength[2]; ++k) {
@@ -674,44 +873,177 @@ void copySegment(NeighborTag neighbor, SubDomain3D* dataBlock,
         int blockIndex =  blockI * blockLength[1] * blockLength[2] +
                         blockJ * blockLength[2] +
                         blockK;
-        if (kCopyToBuffer)
-          sendBuffer[bufferIndex] = dataBlock->getBuffer()[blockIndex];
+        if (kBlockToBuffer)
+          buffer[bufferIndex] = dataBlock->getBuffer()[blockIndex];
         else
-          dataBlock->getBuffer()[blockIndex] = sendBuffer[bufferIndex];
+          dataBlock->getBuffer()[blockIndex] = buffer[bufferIndex];
       }
     }
   }
 }
 
-//TODO(den4gr)
-void exchangeSegments(NeighborTag neighbor, SubDomain3D* dataBlock,
-                      DTYPE* sendBuffer, DTYPE* receiveBuffer) {
-  /* non-blocking send buffer to node */
-
-  /* blocking receive buffer from node */
-
-  /* wait for send to finish */
+/* Sends the ghost zone segment to the neighbor who needs it.
+    This assumes that all blocks are sending the same neighbor,
+    at the same time, with the same size. This allows us to just
+    send the data, without any size or type information about the
+    segment
+*/
+bool sendSegment(const NeighborTag kNeighbor, SubDomain3D* dataBlock,
+                  DTYPE* sendBuffer, const int kSize, MPI_Request* request) {
+  int sendRank = dataBlock->getNeighborLoc(kNeighbor);
+  int blockLinearIndex = dataBlock->getNeighborIndex(kNeighbor);
+  if (-1 < sendRank) {
+    if (64 == sendRank) {
+      printNeighbors(dataBlock);
+    }
+    MPI_Isend(static_cast<void*>(&blockLinearIndex), 1, MPI_INT, sendRank,
+              xNeighborIndex, MPI_COMM_WORLD, &request[0]);
+    MPI_Isend(static_cast<void*>(sendBuffer), kSize, MPI_INT, sendRank,
+              xNeighborData, MPI_COMM_WORLD, &request[1]);
+    return true;
+  }
+  return false;
 }
 
-
-/*
-   TODO(den4gr)
- */
-void updateAllStaleData(Node* node, const int kPyramidHeight) {
-
+bool receiveSegment(const NeighborTag kNeighbor, SubDomain3D* dataBlock,
+                    DTYPE* receiveBuffer, const int kSegmentSize,
+                    int* linearIndex) {
+  int receiveRank = dataBlock->getNeighborLoc(kNeighbor);
+  const int kReceiveIndex = 1;
+  const int kNoNeighbor = -1;
+  MPI_Status status;
+  if (kNoNeighbor < receiveRank) {
+    MPI_Recv(static_cast<void*>(linearIndex), 1, MPI_INT, receiveRank,
+              xNeighborIndex, MPI_COMM_WORLD, &status);
+    MPI_Recv(static_cast<void*>(receiveBuffer), kSegmentSize, MPI_INT,
+              receiveRank, xNeighborData, MPI_COMM_WORLD, &status);
+    return true;
+  }
+  return false;
 }
 
-/*
-   TODO(den4gr)
+/* TODO(den4gr)
+    need to create a function that will send a particular neighbor segment
+    for all blocks, and return the buffers and the MPI_Requests
+*/
+void sendNewGhostZones(const NeighborTag kNeighbor, Node* node,
+                      const int kBorder[3], MPI_Request* requests,
+                      DTYPE*** buffers, int* segmentSize,
+                      int* numberMessagesSent) {
+  const int kSendIndex = 0;
+  for (int blockIndex = 0;
+        blockIndex < node->numTotalSubDomains();
+        ++blockIndex) {
+    SubDomain3D* dataBlock = node->globalGetSubDomain(blockIndex);
+    DTYPE* sendBuffer = buffers[blockIndex][kSendIndex];
+    /* copy halo segment to buffer */
+    bool copyBlockToBuffer = true;
+    copySegment(kNeighbor, dataBlock, sendBuffer, kBorder,
+                copyBlockToBuffer, segmentSize);
+    bool didSend = sendSegment(kNeighbor, dataBlock, sendBuffer, *segmentSize,
+                                &requests[*numberMessagesSent]);
+    if (didSend)
+      *numberMessagesSent += 2;
+  }
+}
+
+/* This attrocious function is used in the exchange of ghost zones.
+  It is used when you want to send a particular ghost zone segment
+  to the neighboring cell. If you are sending Block A's face 0, to
+  block B, then it will be stored in Block B's face 1 segment.
+*/
+NeighborTag getOppositeNeighbor3D(const NeighborTag kNeighbor) {
+  if (xFace0 == kNeighbor)
+    return xFace1;
+  else if (xFace1 == kNeighbor)
+    return xFace0;
+  else if (xFace2 == kNeighbor)
+    return xFace3;
+  else if (xFace3 == kNeighbor)
+    return xFace2;
+  else if (xFace4 == kNeighbor)
+    return xFace5;
+  else if (xFace5 == kNeighbor)
+    return xFace4;
+  else if (xPole0 == kNeighbor)
+    return xPole2;
+  else if (xPole1 == kNeighbor)
+    return xPole3;
+  else if (xPole2 == kNeighbor)
+    return xPole0;
+  else if (xPole3 == kNeighbor)
+    return xPole1;
+  else if (xPole4 == kNeighbor)
+    return xPole6;
+  else if (xPole5 == kNeighbor)
+    return xPole7;
+  else if (xPole6 == kNeighbor)
+    return xPole4;
+  else if (xPole7 == kNeighbor)
+    return xPole5;
+  else if (xPole8 == kNeighbor)
+    return xPole10;
+  else if (xPole9 == kNeighbor)
+    return xPole11;
+  else if (xPole10 == kNeighbor)
+    return xPole8;
+  else if (xPole11 == kNeighbor)
+    return xPole9;
+  else if (xCorner0 == kNeighbor)
+    return xCorner7;
+  else if (xCorner1 == kNeighbor)
+    return xCorner6;
+  else if (xCorner2 == kNeighbor)
+    return xCorner5;
+  else if (xCorner3 == kNeighbor)
+    return xCorner4;
+  else if (xCorner4 == kNeighbor)
+    return xCorner3;
+  else if (xCorner5 == kNeighbor)
+    return xCorner2;
+  else if (xCorner6 == kNeighbor)
+    return xCorner1;
+  else if (xCorner7 == kNeighbor)
+    return xCorner0;
+  else
+    return xNeighborEnd;
+}
+
+/* TODO(den4gr)
+   need to create a function that receives a particular neighbor segment,
+   and then waits on all of the mpi_requests that were passed in from
+   the Isends.
  */
-void updateStaleBlockData(SubDomain3D* dataBlock, const int kBorder[3]) {
+void receiveNewGhostZones(const NeighborTag kNeighbor,
+                          Node* node,
+                          const int kBorder[3],
+                          DTYPE*** buffers,
+                          const int kSegmentSize) {
+  bool copyBlockToBuffer = false;
+  const int kReceiveIndex = 1;
+  for (int blockIndex = 0;
+        blockIndex < node->numTotalSubDomains();
+        ++blockIndex) {
+    SubDomain3D* dataBlock = node->globalGetSubDomain(blockIndex);
+    DTYPE* receiveBuffer = buffers[blockIndex][kReceiveIndex];
+    int indexOfIntendedBlock = -1;
+    /* received block may not have been for the previous block, due to
+        the fact that 2 nodes may have many blocks that must communicate */
+    receiveSegment(kNeighbor, dataBlock, receiveBuffer, kSegmentSize,
+                    &indexOfIntendedBlock);
+    if (-1 == indexOfIntendedBlock) continue;
+
+    SubDomain3D* receivedBlock = node->getSubDomainLinear(indexOfIntendedBlock);
+    copySegment(kNeighbor, receivedBlock, receiveBuffer, kBorder,
+                copyBlockToBuffer, NULL);
+  }
+}
+
+int getMaxSegmentSize(SubDomain3D* dataBlock, const int kBorder[3]) {
   const int kDepth  = dataBlock->getLength(0) - 2 * kBorder[0];
   const int kWidth  = dataBlock->getLength(1) - 2 * kBorder[1];
   const int kHeight = dataBlock->getLength(2) - 2 * kBorder[2];
-  const int kNumAdjacentBlocks = 26;
   int maxSegmentSize = 0, maxPoleSize = 0;
-  DTYPE* sendBuffer = NULL;
-  DTYPE* receiveBuffer = NULL;
   /* check size of six faces */
   maxSegmentSize = max(kBorder[0] * kWidth * kHeight,
       max(kBorder[2] * kDepth * kHeight,
@@ -722,29 +1054,67 @@ void updateStaleBlockData(SubDomain3D* dataBlock, const int kBorder[3]) {
         kBorder[0] * kBorder[2] * kHeight));
   maxSegmentSize = max(maxSegmentSize, maxPoleSize);
   /* check size of 8 corners */
-  maxSegmentSize = max(maxSegmentSize, kBorder[0] * kBorder[1] * kBorder[2]);
-  /* create send and receive buffer that are large enough for
-     largest halo segment */
-  sendBuffer = new DTYPE[maxSegmentSize];
-  receiveBuffer = new DTYPE[maxSegmentSize];
+  return max(maxSegmentSize, kBorder[0] * kBorder[1] * kBorder[2]);
+}
+
+
+void delete3DBuffer(const int kDim1, const int kDim2,
+                    const int kDim3, DTYPE*** buffer) {
+  for(int i = 0; i < kDim1; ++i) {
+    for(int j = 0; j < kDim2; ++j) {
+      delete buffer[i][j];
+    }
+    delete buffer[i];
+  }
+  delete [] buffer;
+  buffer = NULL;
+}
+
+DTYPE*** new3DBuffer(const int kDim1, const int kDim2, const int kDim3) {
+  DTYPE*** buffer = new DTYPE**[kDim1];
+  for(int i = 0; i < kDim1; ++i) {
+    buffer[i] = new DTYPE*[kDim2];
+    for(int j = 0; j < kDim2; ++j) {
+      buffer[i][j] = new DTYPE[kDim3]();
+    }
+  }
+  return buffer;
+}
+
+/*
+   TODO(den4gr)
+ */
+void updateAllStaleData(Node* node, const int kBorder[3]) {
+  const int kNumBlocks = node->numTotalSubDomains();
+  const int kNumAdjacentBlocks = 26;
+  const int kNumMessagesPerSegment = 2;
+  const int kSendAndReceive = 2;
+  const int kMaxSegmentSize = getMaxSegmentSize(node->getSubDomain(0), kBorder);
+
+  /* one non-blocking send per block */
+  MPI_Request* requests = new MPI_Request[kNumBlocks*kNumMessagesPerSegment];
+  /* send and receive buffers for each block */
+  DTYPE*** buffers = new3DBuffer(kNumBlocks, kSendAndReceive, kMaxSegmentSize);
 
   /* LOOP: over all halo segments */
-  for (NeighborTag neighbor = xNeighborBegin;
-      neighbor < xNeighborEnd;
-      ++neighbor) {
-    /* copy halo segment to buffer */
-    bool copyBlockToBuffer = true;
-    copySegment(neighbor, dataBlock, sendBuffer, kBorder, copyBlockToBuffer);
-    exchangeSegments(neighbor, dataBlock, sendBuffer, receiveBuffer);
-    /* copy receive buffer into subdomain */
-    copyBlockToBuffer = false;
-    copySegment(neighbor, dataBlock, sendBuffer, kBorder, copyBlockToBuffer);
+  for ( NeighborTag neighbor = xNeighborBegin;
+        neighbor < xNeighborEnd;
+        ++neighbor) {
+    int segmentSize = 0;
+    int numberMessagesSent = 0;
+
+    sendNewGhostZones(neighbor, node, kBorder, requests, buffers, &segmentSize,
+                      &numberMessagesSent);
+    NeighborTag oppositeNeighbor = getOppositeNeighbor3D(neighbor);
+    receiveNewGhostZones(oppositeNeighbor, node, kBorder, buffers, segmentSize);
+    MPI_Waitall(numberMessagesSent, requests, MPI_STATUSES_IGNORE);
   }
-  delete [] sendBuffer;
-  sendBuffer = NULL;
-  delete [] receiveBuffer;
-  receiveBuffer = NULL;
+  delete [] requests;
+  requests = NULL;
+  delete3DBuffer(kNumBlocks, kSendAndReceive, kMaxSegmentSize, buffers);
+  buffers = NULL;
 }
+
 
 void processCPUWork(Node* machine, const int kPyramidHeight, const int kBornMin,
     const int kBornMax, const int kDieMin, const int kDieMax) {
@@ -770,16 +1140,25 @@ void processGPUWork(Node* machine, const int kPyramidHeight, const int kBornMin,
 }
 
 void processWork(Node* machine, const int kIterations, const int kPyramidHeight,
-    const int kBornMin, const int kBornMax, const int kDieMin,
-    const int kDieMax) {
+                  const int kStencilSize[3], const int kBornMin,
+                  const int kBornMax, const int kDieMin, const int kDieMax) {
   int currentPyramidHeight = kPyramidHeight;
   const int kFirstIteration = 0;
   for (int iter = kFirstIteration; iter < kIterations; iter += kPyramidHeight) {
     if (iter + kPyramidHeight > kIterations) {
       currentPyramidHeight = kIterations - iter;
     }
-    /* The data is initially sent with the ghost zones */
-    if (kFirstIteration < iter) { updateAllStaleData(machine, kPyramidHeight); }
+    int staleBorder[3] = {  kStencilSize[0] * currentPyramidHeight,
+                            kStencilSize[1] * currentPyramidHeight,
+                            kStencilSize[2] * currentPyramidHeight };
+    /* The data is initially sent with the ghost zones, but since
+        we actually process each subdomain interleaved with the communication,
+      in receiveData, we have to update the stale cells starting with the
+      first iteration. Note, this is why the number of iterations passed
+      into this function should be totalIterations - pyramidHeight, due to
+      the previously mentioned reason. */
+    if ((machine->getRank() == 0 && iter > 0) || (machine->getRank() > 0))
+      updateAllStaleData(machine, staleBorder);
     processCPUWork(machine, currentPyramidHeight, kBornMin, kBornMax,
         kDieMin, kDieMax);
     processGPUWork(machine, currentPyramidHeight, kBornMin, kBornMax,
@@ -823,9 +1202,17 @@ void runDistributedCell(int rank, int numTasks, DTYPE *data, int x_max,
   // the cuda headers in every file, so we convert
   // it to an int array for the time-being.
   dim3 stencil_size(1, 1, 1);
+  std::stringstream ss;
+  ss << rank;
+  string filename = "cell.log.";
+  filename += ss.str();
+  std::ofstream log(filename.c_str(), std::ios_base::out);
   int new_stencil_size[3] = {stencil_size.z, stencil_size.y, stencil_size.x};
   int deviceCount = 0;
   const int kPyramidHeight = 1;
+  const int kBorder[3] = { new_stencil_size[0] * kPyramidHeight,
+                            new_stencil_size[1] * kPyramidHeight,
+                            new_stencil_size[2] * kPyramidHeight };
   Node myWork;
   Cluster* cluster = NULL;
   struct timeval rec_start, rec_end, comp_start, comp_end, process_start,
@@ -861,22 +1248,27 @@ void runDistributedCell(int rank, int numTasks, DTYPE *data, int x_max,
     balance_sec = secondsElapsed(balance_start, balance_end);
     fprintf(stderr, "***********\nBALANCE TIME: %f seconds.\n", balance_sec);
     gettimeofday(&process_start, NULL);
+    log << "sending work to cluster.\n";
     sendWorkToCluster(cluster);
     // TODO(den4gr) Is this a deep copy??
     // root's work is in the first node
     myWork = cluster->getNode(0);
     /* PROCESS ROOT NODE WORK */
     gettimeofday(&comp_start, NULL);
-    processWork(&myWork, iterations, kPyramidHeight, bornMin, bornMax,
-        dieMin, dieMax);
+    log << "processing root work.\n";
+    processWork(&myWork, iterations, kPyramidHeight, new_stencil_size,
+                bornMin, bornMax, dieMin, dieMax);
     gettimeofday(&comp_end, NULL);
     time_root_compute= secondsElapsed(comp_start, comp_end);
     fprintf(stdout, "*********\nroot processing time: %f sec\n",
         time_root_compute);
 
+    log << "getting results from cluster.\n";
     gettimeofday(&rec_start, NULL);
     getResultsFromCluster(cluster);
     gettimeofday(&rec_end, NULL);
+
+    copy_results(data, cluster, kBorder, numElements);
 
     gettimeofday(&process_end, NULL);
     time_root_receive = secondsElapsed(rec_start, rec_end);
@@ -891,16 +1283,18 @@ void runDistributedCell(int rank, int numTasks, DTYPE *data, int x_max,
     const bool kInterleaveProcessing = true;
     int remainingIterations = 0;
     // send number of children to root
+    log << "[" << rank <<"] sending number of children to root.\n";
     sendNumberOfChildren(0, deviceCount);
     benchmarkMyself(&myWork, NULL, iterations, bornMin, bornMax,
         dieMin, dieMax);
     receiveData(0, &myWork, kInterleaveProcessing, kPyramidHeight,
                 bornMin, bornMax, dieMin, dieMax);
     remainingIterations = iterations - kPyramidHeight;
-    processWork(&myWork, remainingIterations, kPyramidHeight, bornMin, bornMax,
-                dieMin, dieMax);
+    processWork(&myWork, remainingIterations, kPyramidHeight, new_stencil_size,
+                bornMin, bornMax, dieMin, dieMax);
     // send my work back to the root
     myWork.setRank(0);
     sendData(&myWork);
   }
+  log.close();
 }

@@ -4,20 +4,23 @@
 #include "Node.h"
 #include <vector>
 class Cluster{
-	private:
-		vector<Node> nodes;
-		vector<int> blockLocations;
-	public:
-		Cluster();
-		~Cluster();
-		Cluster(int);
-                void setNumBlocks(size_t);
-                size_t getNumBlocks();
-                size_t getBlockLoc(size_t);
-                void setBlockLoc(size_t, int);
-		Node& getNode(int);
-		int getNumNodes();
+  public:
+    Cluster();
+    ~Cluster();
+    Cluster(int);
+    void setNumBlocks(size_t);
+    size_t getNumBlocks();
+    size_t getBlockLoc(size_t);
+    void setBlockLoc(size_t, int);
+    void storeBlockLocs();
+    Node& getNode(int);
+    unsigned int getNumNodes() const;
+  private:
+    void updateBlockNeighbors();
+    vector<Node> nodes;
+    vector<int> blockLocations;
 };
 
 void printCluster(Cluster &c);
-#endif 
+void printBlockLocations(Cluster &c);
+#endif

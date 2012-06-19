@@ -15,10 +15,11 @@ File:   pathfinder-main.cpp     Contains a main routine to drive the pathfinder 
 #else
 #include<time.h>
 #endif
+#include <fstream>
 #define DTYPE int
-
 #include "distributedCell.h"
 #include "mpi.h"
+
 
 /* define timer macros */
 #define pin_stats_reset()   startCycle()
@@ -117,7 +118,7 @@ int dieMax = 3, dieMin = 10;
 
 int main(int argc, char** argv)
 {
-  int rc, numTasks, rank;  
+  int rc, numTasks, rank;
   rc = MPI_Init(&argc, &argv);
   if (rc != MPI_SUCCESS){
     fprintf(stderr, "Error initializing MPI.\n");
@@ -129,13 +130,11 @@ int main(int argc, char** argv)
   MPI_Comm_size(MPI_COMM_WORLD, &numTasks);
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
-  if(0==rank)
-  {
+  if (0 == rank) {
     init(argc, argv); //initialize data
   }
 #ifdef STATISTICS
-  for (int i=40; i<=J; i += 20)
-  {
+  for (int i = 40; i <= J; i += 20) {
     // Set iteration count so that kernel is called at least 30 times.
     // The maximum pyramid height is 3, so iterations = 90.
     runDistributedCell(rank, numTasks, data, i, i, i, 90, bornMin, bornMax, dieMin, dieMax);
@@ -146,7 +145,7 @@ int main(int argc, char** argv)
 
 #ifdef BENCH_PRINT
   if(rank==0)
-  {	
+  {
     printResults(data, J, K, L);
   }
 #endif
@@ -155,6 +154,9 @@ int main(int argc, char** argv)
   delete [] space2D;
   delete [] space3D;
 
+  std::ofstream log("cell.log", std::ios_base::app);
+  log << "finished running runDistributedCell\n";
+  log.close();
   return 0;
 }
 

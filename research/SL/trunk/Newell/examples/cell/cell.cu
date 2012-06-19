@@ -10,6 +10,7 @@
 	#include<time.h>
 #endif
 #define DTYPE int
+#define PYRAMID_HEIGHT 1 
 
 // The size of the tile is calculated at compile time by the SL processor.
 // But the data array is statically sized.
@@ -19,9 +20,6 @@
 #define TILE_WIDTH  10
 #define TILE_HEIGHT 10
 #define TILE_DEPTH  10
-
-//texture<int, cudaTextureType1D> input_tex; 
-//surface<void, cudaSurfaceType1D> surfRef; 
 
 /**
  * Block of memory shared by threads working on a single tile.
@@ -62,8 +60,10 @@ __device__ DTYPE CellValue(dim3 input_size, int x, int y, int z, DTYPE *ro_data
  */
 
 // We need to declare it C style naming.
-// This avoids name mangling and allows us to get attributes about the kernel call from Cuda.
-// Its possible to do this with a C++ interface, but that will only run on certain devices.
+// This avoids name mangling and allows us to get attributes about the
+//  kernel call from Cuda.
+// Its possible to do this with a C++ interface, but that will only
+//  run on certain devices.
 // This technique is older and therefore more reliable across Cuda devices.
 extern "C" {
 void runCellKernel(dim3 input_size, dim3 stencil_size,
@@ -76,8 +76,7 @@ __global__
 void runCellKernel(dim3 input_size, dim3 stencil_size,
                           DTYPE *input, DTYPE *output, int pyramid_height,
                           DTYPE *ro_data
-                          , int bornMin, int bornMax, int dieMin, int dieMax)
-{
+                          , int bornMin, int bornMax, int dieMin, int dieMax) {
     dim3 border;
     int bx, by, bz, tx, ty, tz, x, y, z, ex, ey, ez, uidx, iter, inside;
     DTYPE value;
@@ -90,11 +89,15 @@ void runCellKernel(dim3 input_size, dim3 stencil_size,
     // These changed by Greg Faust to fix the fact that
     //     grids in CUDA cannot have 3 dimensions.
     // This parallels the same fix Jiayuan Meng used in his code for this issue.
+    // UPDATE:(Donnie) There was an error in original version using the
+    //  blockdim.x to get the y and z block ID's, this was changed to use
+    //  gridDim.x, because blockDim gives the number of threads in a given
+    //  direction, while gridDim gives the number of blocks.
     // by = blockIdx.y * (blockDim.y - 2*border.y) - border.y;
     // bz = blockIdx.z * (blockDim.z - 2*border.z) - border.z;
     int BS = blockDim.x;
-    by = (blockIdx.y/BS) * (BS - 2*border.y) - border.y;
-    bz = (blockIdx.y%BS) * (BS - 2*border.z) - border.z;
+    by = (blockIdx.y / gridDim.x) * (BS - 2 * border.y) - border.y;
+    bz = (blockIdx.y % gridDim.x) * (BS - 2 * border.z) - border.z; 
 
     // (x, y, z) is the location in the input of this thread.
     tx = threadIdx.x;
@@ -114,25 +117,20 @@ void runCellKernel(dim3 input_size, dim3 stencil_size,
     if (ex >= input_size.x) ex = input_size.x-1;
     if (ey >= input_size.y) ey = input_size.y-1;
     if (ez >= input_size.z) ez = input_size.z-1;
-
-    // Get current cell value or edge value.
-    // uidx = ez + input_size.y * (ey * input_size.x + ex);
-    uidx = ex + input_size.x * (ey + ez * input_size.y);
-    //value = surf1Dread(surfRef,sizeof(DTYPE)*uidx);   // USING SURFACES********** 
-    value = input[uidx];
     inside = ((x == ex) && (y == ey) && (z == ez));
-
+    // Get current cell value or edge value.
+    //uidx = ez + input_size.y * (ey * input_size.x + ex);
+    uidx = ex + input_size.x * (ey + ez * input_size.y);
+    value = input[uidx];
+    
     // Store value in shared memory for stencil calculations, and go.
     shmem[tz][ty][tx] = value;
-    //shmem[tz][ty][tx] = surf1Dread(surfRef,sizeof(DTYPE)*);
     iter = 0;
     border.x = border.y = border.z = 0;
-    while (true)
-    {
+    while (true) {
         __syncthreads();
         iter++;
-        if (inside)
-        {
+        if (inside) {
             border.x += stencil_size.x;
             border.y += stencil_size.y;
             border.z += stencil_size.z;
@@ -140,17 +138,13 @@ void runCellKernel(dim3 input_size, dim3 stencil_size,
                       (ty >= border.y) && (ty < blockDim.y-border.y) &&
                       (tz >= border.z) && (tz < blockDim.z-border.z));
         }
-        if (inside)
-        {
+        if (inside) {
             value = CellValue(input_size, x, y, z, ro_data
                               , bornMin, bornMax, dieMin, dieMax);
         }
-        if (iter >= pyramid_height)
-        {
-            if (inside){
-                //surf1Dwrite(value, surfRef);
+        if (iter >= pyramid_height) {
+            if (inside) {
                 output[uidx] = value;
-            
             }
             break;
         }
@@ -169,15 +163,14 @@ static DTYPE *global_ro_data = NULL;
 /**
  * this depends on all blocks being the same size
  */
-static DTYPE *device_input=NULL, *device_output=NULL;
+static DTYPE *device_input = NULL, *device_output = NULL;
 
-static int pyramid_height=-1; 
+static int pyramid_height = -1; 
 /**
  * Function exported to do the entire stencil computation.
  */
 void runCell(DTYPE *host_data, int x_max, int y_max, int z_max, int iterations
-    , int bornMin, int bornMax, int dieMin, int dieMax, int device)
-{
+    , int bornMin, int bornMax, int dieMin, int dieMax, int device) {
   // User-specific parameters
   dim3 input_size   (x_max, y_max, z_max);
   dim3 stencil_size (1,1,1);
@@ -186,13 +179,11 @@ void runCell(DTYPE *host_data, int x_max, int y_max, int z_max, int iterations
   struct  timeval start, end;
 
   cudaGetDevice(&curr_device);
-  if(curr_device != device)
-  {
+  if (curr_device != device) {
     //changing devices, so we need to deallocate previous input/output buffers
     runCellCleanup();
     cudaError_t err = cudaSetDevice(device);
-    if(cudaSuccess != err)
-    {
+    if (cudaSuccess != err) {
       fprintf(stderr, "runCell(): couldn't select GPU index:%d.\nERROR: %s\n",device,cudaGetErrorString(err));
       return;
     }
@@ -200,68 +191,24 @@ void runCell(DTYPE *host_data, int x_max, int y_max, int z_max, int iterations
   
 // Allocate CUDA arrays in device memory 
   int num_bytes = input_size.x * input_size.y * input_size.z * sizeof(DTYPE);
-  if(NULL==device_input && NULL==device_output)
-  {
+  if (NULL == device_input && NULL == device_output) {
     fprintf(stderr, "allocating gpu memory.\n");
-    cudaMalloc((void **) &device_output, num_bytes);
-    cudaMalloc((void **) &device_input,  num_bytes);
+    cudaMalloc((void**) &device_output, num_bytes);
+    cudaMalloc((void**) &device_input,  num_bytes);
   }
   cudaMemcpy(device_input, host_data, num_bytes, cudaMemcpyHostToDevice);
 
   // Setup the structure that holds parameters for the application.
   // And from that, get the block size.
   char* KernelName = "runCellKernel";
-  dim3  tile_size = initSAProps(3, input_size, stencil_size, iterations, sizeof(DTYPE), KernelName);
+  dim3  tile_size = initSAProps(3, input_size, stencil_size, iterations,
+                                sizeof(DTYPE), KernelName);
   dim3  border, 
         tile_data_size, 
         grid_dims;
 
-  // Now ready for the training period.
-  // Need to get some timings of small kernel runs.
-  // TODO It would be faster if these could be 0 and 1 heights instead of 1 and 2.
-  if(-1 == pyramid_height)
-  {  
-    pyramid_height = 2;
-    filldim3( &border,         
-              pyramid_height * stencil_size.x,          
-              pyramid_height * stencil_size.y,  
-              pyramid_height * stencil_size.z);
-    filldim3( &tile_data_size, 
-              tile_size.x - 2*border.x,                 
-              tile_size.y - 2*border.y,         
-              tile_size.z - 2*border.z);
-    filldim3( &grid_dims,      
-              div_ceil(input_size.x, tile_data_size.x), 
-              div_ceil(input_size.y, tile_data_size.y)*div_ceil(input_size.z, tile_data_size.z));
-    unsigned int twoIterTime;
-    timeInMicroSeconds(twoIterTime, 
-            (runCellKernel<<< grid_dims, tile_size >>>(   input_size, 
-                                          stencil_size,   device_input, 
-                                          device_output,  pyramid_height, 
-                                          global_ro_data, bornMin,    bornMax, 
-                                          dieMin,         dieMax )));
-    pyramid_height = 1;
-    filldim3( &border,          
-              pyramid_height * stencil_size.x,  
-              pyramid_height * stencil_size.y, 
-              pyramid_height * stencil_size.z);
-    filldim3( &tile_data_size,  
-              tile_size.x - 2*border.x,         
-              tile_size.y - 2*border.y, 
-              tile_size.z - 2*border.z);
-    filldim3( &grid_dims,       
-              div_ceil(input_size.x, tile_data_size.x), 
-              div_ceil(input_size.y, tile_data_size.y)*div_ceil(input_size.z, tile_data_size.z));
-    unsigned int oneIterTime;
-    timeInMicroSeconds(oneIterTime, 
-                      (runCellKernel<<< grid_dims, tile_size >>>( input_size,     
-                                          stencil_size,   device_input,   
-                                          device_output,  pyramid_height, 
-                                          global_ro_data, bornMin,    bornMax, 
-                                          dieMin,         dieMax)));
-
-    // Now we can calculate the pyramid height.
-    pyramid_height = calcPyramidHeight(grid_dims, oneIterTime, twoIterTime);
+  if (-1 == pyramid_height) {  
+    pyramid_height = PYRAMID_HEIGHT;
   }
   // And use the result to calculate various sizes.
   filldim3( &border, 
@@ -274,16 +221,27 @@ void runCell(DTYPE *host_data, int x_max, int y_max, int z_max, int iterations
             tile_size.z - 2*border.z);
   filldim3( &grid_dims, 
             div_ceil(input_size.x, tile_data_size.x), 
-            div_ceil(input_size.y, tile_data_size.y)*div_ceil(input_size.z, tile_data_size.z));
+      //      div_ceil(input_size.y, tile_data_size.y),
+      //      div_ceil(input_size.z, tile_data_size.z));
+            div_ceil(input_size.y, tile_data_size.y) *
+            div_ceil(input_size.z, tile_data_size.z));//*/
 
   gettimeofday(&start, NULL);
+    printf("ph:%d input_size(x:%d y:%d z:%d) border(x:%d y:%d z:%d) tile_data_size(x:%d y:%d z:%d)\n",
+            pyramid_height,
+            input_size.x, input_size.y, input_size.z,
+            border.x, border.y, border.z,
+            tile_data_size.x, tile_data_size.y, tile_data_size.z);
   // Run computation
   int tmp_pyramid_height = pyramid_height;
-  for (int iter = 0; iter < iterations; iter += pyramid_height)
-  {
+  for (int iter = 0; iter < iterations; iter += pyramid_height) {
     if (iter + pyramid_height > iterations)
       tmp_pyramid_height = iterations - iter;
 
+    printf("[%d]grid(x:%d y:%d z:%d), tile(x:%d y:%d z:%d)\n",
+            iter,
+            grid_dims.x, grid_dims.y, grid_dims.z,
+            tile_size.x, tile_size.y, tile_size.z);
     runCellKernel<<< grid_dims, tile_size >>>(
         input_size,         stencil_size,   device_input, device_output,
         tmp_pyramid_height, global_ro_data, bornMin,      bornMax,      dieMin, 
@@ -300,6 +258,20 @@ void runCell(DTYPE *host_data, int x_max, int y_max, int z_max, int iterations
 
   // Device to host
   cudaMemcpy(host_data, device_input, num_bytes, cudaMemcpyDeviceToHost);
+  /* DEBUG TODO */
+  /*for (int i = 0; i < z_max; ++i) {
+    printf("runCell i = %d ******************", i);
+    for (int j = 0; j < y_max; ++j) {
+      printf("runCell[%d]:", j);
+      for (int k = 0; k < x_max; ++k) {
+        printf(" %d ", host_data[i*y_max*x_max + j*x_max +k]);
+      }
+      printf("\n");
+    }
+    printf("runCell *****************************");
+  } //*/
+
+
   if (global_ro_data != NULL)
   {
     cudaFree(global_ro_data);

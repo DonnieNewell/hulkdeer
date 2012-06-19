@@ -1,14 +1,16 @@
-// -*- Mode: C++ ; c-file-style:"stroustrup"; indent-tabs-mode:nil; -*-
+/*
+  Copyright 2012 Donald Newell
+*/
 
 #include "ompCell.h"
-#include <stdio.h>
-#include <cstring>
-#include <stdlib.h>
 #ifndef WIN32
 #include <sys/time.h>
 #else
 #include<time.h>
 #endif
+#include <stdio.h>
+#include <stdlib.h>
+#include <cstring>
 #define DTYPE int
 
 // The size of the tile is calculated at compile time by the SL processor.
@@ -19,25 +21,26 @@
 #define TILE_WIDTH  10
 #define TILE_HEIGHT 10
 #define TILE_DEPTH  10
+#define PYRAMID_HEIGHT 1
 
-typedef struct dim{  int x;  int y;  int z;}dim3;
+typedef struct dim {
+  int x;
+  int y;
+  int z;
+} dim3;
 
 // Macro to read global read only data from within CellValue code.
 #define read(offset)(ro_data[offset])
 
-DTYPE OMPCellValue(dim3 input_size, int x, int y, int z, DTYPE *input
-    , int bornMin, int bornMax, int dieMin, int dieMax)
-{
+DTYPE OMPCellValue(dim3 input_size, int x, int y, int z, DTYPE *input,
+                    int bornMin, int bornMax, int dieMin, int dieMax) {
   int uidx = x + input_size.x * (y + z * input_size.y);
   int orig = input[uidx];
   int sum = 0;
   int i, j, k;
-  for (i = -1; i <= 1; i++)
-  {  
-    for (j = -1; j <= 1; j++)
-    { 
-      for (k = -1; k <= 1; k++)
-      {  
+  for (i = -1; i <= 1; i++) {
+    for (j = -1; j <= 1; j++) {
+      for (k = -1; k <= 1; k++) {
         uidx = x+k + input_size.x * (y+j + (z+i) * input_size.y);
         sum += input[uidx];
       }
@@ -45,12 +48,12 @@ DTYPE OMPCellValue(dim3 input_size, int x, int y, int z, DTYPE *input
   }
   sum -= orig;
   int retval;
-  if(orig>0 && (sum <= dieMax || sum >= dieMin)) 
+  if (orig > 0 && (sum <= dieMax || sum >= dieMin))
     retval = 0;
-  else if (orig==0 && (sum >= bornMin && sum <= bornMax)) 
+  else if (orig == 0 && (sum >= bornMin && sum <= bornMax))
     retval = 1;
-  else 
-    retval = orig;    
+  else
+    retval = orig;
   return retval;
 }
 
@@ -60,9 +63,10 @@ DTYPE OMPCellValue(dim3 input_size, int x, int y, int z, DTYPE *input
  */
 
 // We need to declare it C style naming.
-// This avoids name mangling and allows us to get attributes about the kernel call from Cuda.
-// Its possible to do this with a C++ interface, but that will only run on certain devices.
-// This technique is older and therefore more reliable across Cuda devices.
+// This avoids name mangling and allows us to get attributes about the kernel
+// call from Cuda. Its possible to do this with a C++ interface, but that will
+// only run on certain devices. This technique is older and therefore more
+// reliable across Cuda devices.
 extern "C" {
   void runOMPCellKernel(dim3 input_size, dim3 stencil_size,
       DTYPE *input, DTYPE *output, int pyramid_height,
@@ -71,36 +75,30 @@ extern "C" {
 }
 
 
-void runOMPCellKernel(dim3 input_size, dim3 stencil_size,
-    DTYPE *input, DTYPE *output, int pyramid_height,
-    DTYPE *ro_data
-    , int bornMin, int bornMax, int dieMin, int dieMax)
-{
+void runOMPCellKernel(dim3 input_size, dim3 stencil_size, DTYPE *input,
+                      DTYPE *output, int pyramid_height, DTYPE *ro_data,
+                      int bornMin, int bornMax, int dieMin, int dieMax) {
   dim3 border;
   DTYPE value;
-
+  int bx, tx, x, ex, uidx, iter, inside;
   border.x = border.y = border.z = 0;
-
-  for(int iter = 0; iter < pyramid_height; ++iter) 
-  {
+  for (int iter = 0; iter < pyramid_height; ++iter) {
     border.x += stencil_size.x;
     border.y += stencil_size.y;
     border.z += stencil_size.z;
     int uidx = -1;
+  printf("OMPCell: iter:%d, border.x:%d, border.y:%d, border.z:%d\n",
+          iter, border.x, border.y, border.z);
     // (x, y, z) is the location in the input of this thread.
   #pragma omp parallel for private(uidx) shared(output)
-    for(int z = border.z; z<input_size.z-border.z; ++z)
-    {
-      for(int y = border.y; y<input_size.y-border.y; ++y)
-      {
-        for(int x = border.x; x<input_size.x-border.x; ++x)
-        {
+    for (int z = border.z; z < input_size.z-border.z; ++z) {
+      for (int y = border.y; y < input_size.y-border.y; ++y) {
+        for (int x = border.x; x < input_size.x-border.x; ++x) {
           // Get current cell value or edge value.
           // uidx = ez + input_size.y * (ey * input_size.x + ex);
           uidx = x + input_size.x * (y + z * input_size.y);
-
-          output[uidx] = OMPCellValue(input_size, x, y, z, input
-              , bornMin, bornMax, dieMin, dieMax);
+          output[uidx] = OMPCellValue(input_size, x, y, z, input,
+                                      bornMin, bornMax, dieMin, dieMax);
         }
       }
     }
@@ -116,74 +114,70 @@ static DTYPE *global_ro_data = NULL;
 /**
  * this depends on all blocks being the same size
  */
-static DTYPE *device_input=NULL, *device_output=NULL;
+static DTYPE *device_input = NULL, *device_output = NULL;
 /**
  * Function exported to do the entire stencil computation.
  */
-void runOMPCell(DTYPE *host_data, int x_max, int y_max, int z_max, int iterations
-    , int bornMin, int bornMax, int dieMin, int dieMax, int device)
-{
+void runOMPCell(DTYPE *host_data, int x_max, int y_max, int z_max,
+                int iterations, int bornMin, int bornMax,
+                int dieMin, int dieMax) {
   // User-specific parameters
   dim3 input_size;
-  input_size.x=x_max;
-  input_size.y=y_max;
-  input_size.z=z_max;
+  input_size.x = x_max;
+  input_size.y = y_max;
+  input_size.z = z_max;
   dim3 stencil_size;
-  stencil_size.x=1;
-  stencil_size.y=1;
-  stencil_size.z=1;
+  stencil_size.x = 1;
+  stencil_size.y = 1;
+  stencil_size.z = 1;
 
   int size = input_size.x * input_size.y * input_size.z;
-  if(NULL==device_input && NULL==device_output)
-  {
+  if (NULL == device_input && NULL == device_output) {
     device_output = new DTYPE[size];
     device_input = new DTYPE[size];
   }
-  
-  memcpy((void*)device_input, (void*)host_data, size*sizeof(DTYPE));
+
+  memcpy(static_cast<void*>(device_input), static_cast<void*>(host_data),
+          size * sizeof(DTYPE));
 
   // Now we can calculate the pyramid height.
-  int pyramid_height = 1;
+  int pyramid_height = PYRAMID_HEIGHT;
 
   // Run computation
-  for (int iter = 0; iter < iterations; iter += pyramid_height)
-  {
+  for (int iter = 0; iter < iterations; iter += pyramid_height) {
     if (iter + pyramid_height > iterations)
       pyramid_height = iterations - iter;
-    runOMPCellKernel(
-        input_size, stencil_size, device_input, device_output,
-        pyramid_height, global_ro_data
-        , bornMin, bornMax, dieMin, dieMax);
+    runOMPCellKernel(input_size, stencil_size, device_input, device_output,
+                      pyramid_height, global_ro_data, bornMin, bornMax,
+                      dieMin, dieMax);
     DTYPE *temp = device_input;
     device_input = device_output;
     device_output = temp;
   }
 
-  memcpy((void*)host_data, (void*)device_input, size*sizeof(DTYPE));
+  memcpy(static_cast<void*>(host_data), static_cast<void*>(device_input),
+          size*sizeof(DTYPE));
 
-  if (global_ro_data != NULL)
-  {
+  if (global_ro_data != NULL) {
     delete [] global_ro_data;
     global_ro_data = NULL;
   }
 }
 
-void runOMPCellCleanup()
-{
-  if (device_input != NULL && device_output != NULL)
-  {
+void runOMPCellCleanup() {
+  if (device_input != NULL && device_output != NULL) {
     delete [] device_input;
-    device_input=NULL;
+    device_input = NULL;
     delete [] device_output;
-    device_output=NULL;
+    device_output = NULL;
   }
 }
 
 /**
  * Store unnamed data on device.
  */
-void runOMPCellSetData(DTYPE *host_data, int num_elements)
-{
-  global_ro_data=new DTYPE[num_elements];
-  memcpy((void*)global_ro_data, (void*)host_data, num_elements*sizeof(DTYPE));
+void runOMPCellSetData(DTYPE *host_data, int num_elements) {
+  global_ro_data = new DTYPE[num_elements];
+  memcpy(static_cast<void*>(global_ro_data), static_cast<void*>(host_data),
+          num_elements*sizeof(DTYPE));
 }
