@@ -12,7 +12,7 @@ DTYPE* initInput(const int kI, const int kJ, const int kK) {
     for (int y = 0; y < kJ; ++y) {
       for (int x = 0; x < kK; ++x) {
         int uidx = z * kJ * kK + y * kK + x;
-        data[uidx] = uidx % 2;
+        data[uidx] = uidx;
       }
     }
   }
@@ -44,7 +44,7 @@ bool compare(DTYPE* data1, DTYPE* data2, int length) {
 
 int main(int argc, char** argv) {
   DTYPE* ompData = NULL, *cudaData = NULL;
-  const int kDataSize = 16;
+  const int kDataSize = 8;
   int iterations = 1;
   int device = 0;
   int dieMin = 10;

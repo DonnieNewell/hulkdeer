@@ -48,10 +48,13 @@ __device__ DTYPE CellValue(dim3 input_size, int x, int y, int z, DTYPE *ro_data
 	    	sum += get(i, j, k);
     sum -= orig;
     int retval;
-    if(orig>0 && (sum <= dieMax || sum >= dieMin)) retval = 0;
-    else if (orig==0 && (sum >= bornMin && sum <= bornMax)) retval = 1;
-    else retval = orig;    
-    return (retval);
+    if (orig > 0 && (sum <= dieMax || sum >= dieMin)) 
+      retval = 0;
+    else if (orig == 0 && (sum >= bornMin && sum <= bornMax))
+      retval = 1;
+    else
+      retval = orig;    
+    return retval;
 }
 
 /**
@@ -108,15 +111,19 @@ void runCellKernel(dim3 input_size, dim3 stencil_size,
     z = bz + tz;
 
     // (ex, ey, ez) = (x, y, z) pushed into the boundaries of the input.
+    // UPDATE:(Donnie) Changed this block to ensure that we only calculate
+    //    stencil values for the cells that will have all valid cells in the
+    //    stencil calculation.
     ex = x;
     ey = y;
     ez = z;
-    if (ex < 0) ex = 0;
-    if (ey < 0) ey = 0;
-    if (ez < 0) ez = 0;
-    if (ex >= input_size.x) ex = input_size.x-1;
-    if (ey >= input_size.y) ey = input_size.y-1;
-    if (ez >= input_size.z) ez = input_size.z-1;
+    const int kValidIndex = 1;
+    if (ex < kValidIndex) ex = kValidIndex;
+    if (ey < kValidIndex) ey = kValidIndex;
+    if (ez < kValidIndex) ez = kValidIndex;
+    if (ex >= input_size.x - kValidIndex) ex = input_size.x - kValidIndex;
+    if (ey >= input_size.y - kValidIndex) ey = input_size.y - kValidIndex;
+    if (ez >= input_size.z - kValidIndex) ez = input_size.z - kValidIndex;
     inside = ((x == ex) && (y == ey) && (z == ez));
     // Get current cell value or edge value.
     //uidx = ez + input_size.y * (ey * input_size.x + ex);
@@ -184,7 +191,8 @@ void runCell(DTYPE *host_data, int x_max, int y_max, int z_max, int iterations
     runCellCleanup();
     cudaError_t err = cudaSetDevice(device);
     if (cudaSuccess != err) {
-      fprintf(stderr, "runCell(): couldn't select GPU index:%d.\nERROR: %s\n",device,cudaGetErrorString(err));
+      fprintf(stderr, "runCell(): couldn't select GPU index:%d.\nERROR: %s\n",
+              device, cudaGetErrorString(err));
       return;
     }
   }
@@ -196,6 +204,8 @@ void runCell(DTYPE *host_data, int x_max, int y_max, int z_max, int iterations
     cudaMalloc((void**) &device_output, num_bytes);
     cudaMalloc((void**) &device_input,  num_bytes);
   }
+  const int newValue = 0;
+  cudaMemset(static_cast<void*>(device_output), newValue, num_bytes);
   cudaMemcpy(device_input, host_data, num_bytes, cudaMemcpyHostToDevice);
 
   // Setup the structure that holds parameters for the application.
@@ -207,9 +217,11 @@ void runCell(DTYPE *host_data, int x_max, int y_max, int z_max, int iterations
         tile_data_size, 
         grid_dims;
 
+  // do this because it is static and we only initialize once
   if (-1 == pyramid_height) {  
     pyramid_height = PYRAMID_HEIGHT;
   }
+
   // And use the result to calculate various sizes.
   filldim3( &border, 
             pyramid_height * stencil_size.x, 
