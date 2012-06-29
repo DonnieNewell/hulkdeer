@@ -1,11 +1,11 @@
 /* -*- Mode: C ; indent-tabs-mode: nil ; c-file-style: "stroustrup" -*-
-
+ * Copyright 2012 University of Virginia
    CS 6620 - Compilers
    Stencil App Language Project
 Authors: Greg Faust, Sal Valente, derived from code by Jiayuan Meng
 
 
-File:   pathfinder-main.cpp     Contains a main routine to drive the pathfinder example.
+File:   cell-main.cpp     Contains a main routine to drive the pathfinder example.
  */
 
 #include <stdlib.h>
@@ -16,7 +16,6 @@ File:   pathfinder-main.cpp     Contains a main routine to drive the pathfinder 
 #include<time.h>
 #endif
 #include <fstream>
-#define DTYPE int
 #include "distributedCell.h"
 #include "mpi.h"
 
@@ -37,8 +36,7 @@ int timesteps;
 // #define BENCH_PRINT
 
   void
-initData(int length[3] )
-{
+initData(int length[3]) {
 #ifdef DEBUG
   fprintf(stderr, "initializing data only.\n");
 #endif
@@ -46,7 +44,7 @@ initData(int length[3] )
   K = length[1];
   L = length[2];
 #ifdef DEBUG
-  fprintf(stderr, "allocating data[%d][%d][%d].\n",L,K,J);
+  fprintf(stderr, "allocating data[%d][%d][%d].\n", L, K, J);
 #endif
   data = new int[J*K*L];
 #ifdef DEBUG
@@ -60,92 +58,86 @@ initData(int length[3] )
 #ifdef DEBUG
   fprintf(stderr, "initializing space2D only.\n");
 #endif
-  for(int n=0; n<J*K; n++)
-    space2D[n]=data+L*n;
+  for (int n = 0; n < (J * K); n++)
+    space2D[n] = data + (L * n);
 #ifdef DEBUG
   fprintf(stderr, "initializing space3D only.\n");
 #endif
-  for(int n=0; n<J; n++)
-    space3D[n]=space2D+K*n;
+  for (int n = 0; n < J; n++)
+    space3D[n] = space2D + (K * n);
 }
 
   void
-init(int argc, char** argv)
-{
+init(int argc, char** argv) {
 #ifdef DEBUG
   fprintf(stderr, "initializing data for root node.\n");
 #endif
-  if(argc==6){
+  if (argc == 6) {
     J = atoi(argv[1]);
     K = atoi(argv[2]);
     L = atoi(argv[3]);
     timesteps = atoi(argv[4]);
-    pyramid_height=atoi(argv[5]);
-  }else{
+    pyramid_height = atoi(argv[5]);
+  } else {
     printf("Usage: cell dim3 dim2 dim1 timesteps pyramid_height\n");
     exit(0);
   }
-  data = new int[J*K*L];
-  space2D = new int*[J*K];
+  data = new int[J * K * L];
+  space2D = new int*[J * K];
   space3D = new int**[J];
-  for(int n=0; n<J*K; n++)
-    space2D[n]=data+L*n;
-  for(int n=0; n<J; n++)
-    space3D[n]=space2D+K*n;
+  for (int n = 0; n < (J * K); n++)
+    space2D[n] = data + (L * n);
+  for (int n = 0; n < J; n++)
+    space3D[n] = space2D + (K * n);
 
-  int seed = M_SEED;
-  srand(seed);
-
-  for (int i = 0; i < J*K*L; i++)
-    data[i] = rand()%2;
-
+  unsigned int seed = M_SEED;
+  for (int i = 0; i < (J * K * L); i++)
+    data[i] = rand_r(&seed) % 2;
 }
 
 
 
-void printResults(int* data, int J, int K, int L)
-{
-  int total = J*K*L;
-  for(int n = 0; n < total; n++){
+void printResults(int* data, int J, int K, int L) {
+  int total = J * K * L;
+  for (int n = 0; n < total; n++) {
     printf("%d ", data[n]);
   }
   printf("\n");
 }
 
-
 int bornMin = 5, bornMax = 8;
 int dieMax = 3, dieMin = 10;
 
-int main(int argc, char** argv)
-{
+int main(int argc, char** argv) {
   int rc, numTasks, rank;
   rc = MPI_Init(&argc, &argv);
-  if (rc != MPI_SUCCESS){
+  if (rc != MPI_SUCCESS) {
     fprintf(stderr, "Error initializing MPI.\n");
     MPI_Abort(MPI_COMM_WORLD, rc);
   }
 
-    timesteps = atoi(argv[4]);
-    pyramid_height= atoi(argv[5]);
+  timesteps = atoi(argv[4]);
+  pyramid_height= atoi(argv[5]);
   MPI_Comm_size(MPI_COMM_WORLD, &numTasks);
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
   if (0 == rank) {
-    init(argc, argv); //initialize data
+    init(argc, argv);  // initialize data
   }
 #ifdef STATISTICS
   for (int i = 40; i <= J; i += 20) {
     // Set iteration count so that kernel is called at least 30 times.
     // The maximum pyramid height is 3, so iterations = 90.
-    runDistributedCell(rank, numTasks, data, i, i, i, 90, bornMin, bornMax, dieMin, dieMax);
+    runDistributedCell(rank, numTasks, data, i, i, i, 90, bornMin, bornMax,
+            dieMin, dieMax);
   }
 #else
-  runDistributedCell(rank, numTasks, data, J, K, L, timesteps, bornMin, bornMax, dieMin, dieMax);
+  runDistributedCell(rank, numTasks, data, J, K, L, timesteps, bornMin, bornMax,
+          dieMin, dieMax);
 #endif
 
 #ifdef BENCH_PRINT
-  if(rank==0)
-  {
+  if (rank == 0) {
     printResults(data, J, K, L);
   }
 #endif

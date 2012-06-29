@@ -1,1 +1,18 @@
-mpirun -np 2 -machinefile ../../machinefile.tesla /localtmp/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/cell 80 80 80 120 1
+#!/bin/bash
+#run
+
+WEAK_LIMIT=2
+STRONG_LIMIT=2
+for ((p=1; p <= WEAK_LIMIT ; p++))
+do
+  echo -e "***** BEGIN WEAK ITERATION $p *****\n" 
+  mpirun -np $p -machinefile ../../machinefile -x LD_LIBRARY_PATH /af21/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/cell 128 128 128 120 1
+  echo -e "***** END WEAK ITERATION   $p *****\n" 
+done
+
+#for q in 64 128 192 256
+#do
+#  echo -e "***** BEGIN STRONG ITERATION $q *****\n" 
+#  mpirun -np $STRONG_LIMIT -machinefile ../../machinefile -x LD_LIBRARY_PATH /af21/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/cell $q $q $q 120 1
+#  echo -e "***** END STRONG ITERATION   $q *****\n" 
+#done

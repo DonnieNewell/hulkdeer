@@ -9,7 +9,6 @@
 #else
 	#include<time.h>
 #endif
-#define DTYPE int
 #define PYRAMID_HEIGHT 1 
 
 // The size of the tile is calculated at compile time by the SL processor.
@@ -121,9 +120,9 @@ void runCellKernel(dim3 input_size, dim3 stencil_size,
     if (ex < kValidIndex) ex = kValidIndex;
     if (ey < kValidIndex) ey = kValidIndex;
     if (ez < kValidIndex) ez = kValidIndex;
-    if (ex >= input_size.x - kValidIndex) ex = input_size.x - kValidIndex;
-    if (ey >= input_size.y - kValidIndex) ey = input_size.y - kValidIndex;
-    if (ez >= input_size.z - kValidIndex) ez = input_size.z - kValidIndex;
+    if (ex >= input_size.x - kValidIndex) ex = input_size.x - 2 * kValidIndex;
+    if (ey >= input_size.y - kValidIndex) ey = input_size.y - 2 * kValidIndex;
+    if (ez >= input_size.z - kValidIndex) ez = input_size.z - 2 * kValidIndex;
     inside = ((x == ex) && (y == ey) && (z == ez));
     // Get current cell value or edge value.
     //uidx = ez + input_size.y * (ey * input_size.x + ex);
@@ -239,21 +238,12 @@ void runCell(DTYPE *host_data, int x_max, int y_max, int z_max, int iterations
             div_ceil(input_size.z, tile_data_size.z));//*/
 
   gettimeofday(&start, NULL);
-    printf("ph:%d input_size(x:%d y:%d z:%d) border(x:%d y:%d z:%d) tile_data_size(x:%d y:%d z:%d)\n",
-            pyramid_height,
-            input_size.x, input_size.y, input_size.z,
-            border.x, border.y, border.z,
-            tile_data_size.x, tile_data_size.y, tile_data_size.z);
   // Run computation
   int tmp_pyramid_height = pyramid_height;
   for (int iter = 0; iter < iterations; iter += pyramid_height) {
     if (iter + pyramid_height > iterations)
       tmp_pyramid_height = iterations - iter;
 
-    printf("[%d]grid(x:%d y:%d z:%d), tile(x:%d y:%d z:%d)\n",
-            iter,
-            grid_dims.x, grid_dims.y, grid_dims.z,
-            tile_size.x, tile_size.y, tile_size.z);
     runCellKernel<<< grid_dims, tile_size >>>(
         input_size,         stencil_size,   device_input, device_output,
         tmp_pyramid_height, global_ro_data, bornMin,      bornMax,      dieMin, 
@@ -265,23 +255,8 @@ void runCell(DTYPE *host_data, int x_max, int y_max, int z_max, int iterations
   }
   gettimeofday(&end, NULL);
 
-  double total_sec = ((end.tv_sec   - start.tv_sec) +             
-                      (end.tv_usec  - start.tv_usec) / 1000000.0);                       
-
   // Device to host
   cudaMemcpy(host_data, device_input, num_bytes, cudaMemcpyDeviceToHost);
-  /* DEBUG TODO */
-  /*for (int i = 0; i < z_max; ++i) {
-    printf("runCell i = %d ******************", i);
-    for (int j = 0; j < y_max; ++j) {
-      printf("runCell[%d]:", j);
-      for (int k = 0; k < x_max; ++k) {
-        printf(" %d ", host_data[i*y_max*x_max + j*x_max +k]);
-      }
-      printf("\n");
-    }
-    printf("runCell *****************************");
-  } //*/
 
 
   if (global_ro_data != NULL)

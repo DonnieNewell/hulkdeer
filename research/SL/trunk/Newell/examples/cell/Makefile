@@ -1,34 +1,52 @@
-DBG	= -g -DDEBUG
-SDK 	= /localtmp/den4gr/NVIDIA_GPU_Computing_SDK
+#DBG	= -pg -DDEBUG
+SDK 	= /af21/den4gr/NVIDIA_GPU_Computing_SDK
 #EMU	= -deviceemu
 CUDA	= /usr/local/cuda
 F	= --compiler-options -fno-strict-aliasing
 INCLUDES= -I$(SDK)/C/common/inc -I$(CUDA)/include
-MPIFLAGS= -rpath=/af21/den4gr/openmpi-install/lib
-CFLAGS	= $(INCLUDES) $(DBG)
-NVFLAGS	= $(CFLAGS) $(EMU) $(F) -arch=sm_20 
+#MPIFLAGS= -rpath=/af21/den4gr/openmpi-install/lib
+LDFLAGS = -fopenmp
+CFLAGS	= $(DBG) -Wall -fopenmp -DDTYPE=int
+NVFLAGS	= $(DBG)  $(EMU) $(F) -arch sm_20 -DDTYPE=int
 LIBS	= -lcudart -L$(SDK)/C/common/lib -L$(CUDA)/lib64
 
-all:		cell
-cell:		cell-main.o cell.o Decomposition.o Node.o SubDomain3D.o
-		mpic++ -o $@ $^ $(LDFLAGS) $(MPIFLAGS) $(LIBS)
+all:		cell lint.txt
+cell:		cell-main.o comm.o distributedCell.o cell.o ompCell.o Decomposition.o Node.o Cluster.o Balancer.o SubDomain.o
+		mpic++ -o $@ $^ $(LDFLAGS) $(LIBS)
+lint.txt:        ~/cpplint.py cell-main.cpp distributedCell.cpp ompCell.cpp
+		~/cpplint.py cell-main.cpp distributedCell.cpp ompCell.cpp > lint.txt 
 
 cell-main.o:	cell-main.cpp
-		mpic++ $(CFLAGS) -c $<
+		mpic++ $(INCLUDES) $(CFLAGS) -c $<
+
+distributedCell.o:	distributedCell.cpp
+		mpic++ $(INCLUDES) $(CFLAGS) -c $<
+
+ompCell.o:	ompCell.cpp 
+		g++ $(INCLUDES) $(CFLAGS) -c $<
 
 cell.o:		cell.cu ../Model.cu ../Model.h
-		nvcc $(NVFLAGS) -c $<
+		nvcc $(INCLUDES) $(NVFLAGS) -c $<
 
-Decomposition.o:	Decomposition.cpp Decomposition.h Node.h
-		mpic++ $(CFLAGS) -c $< 
+comm.o:	        ../comm.cpp ../comm.h
+		mpic++ $(INCLUDES) $(CFLAGS) -c $< 
 
-Node.o:		Node.cpp Node.h SubDomain3D.h
-		mpic++ $(CFLAGS) -c $< 
+Decomposition.o:	../Decomposition.cpp ../Decomposition.h ../Node.h
+		mpic++ $(INCLUDES) $(CFLAGS) -c $< 
 
-SubDomain3D.o:	SubDomain3D.cpp SubDomain3D.h 
-		mpic++ $(CFLAGS) -c $< 
+Balancer.o:	../Balancer.cpp ../Balancer.h ../Cluster.h ../Decomposition.h
+		mpic++ $(INCLUDES) $(CFLAGS) -c $< 
+
+Cluster.o:	../Cluster.cpp ../Cluster.h ../Node.h
+		mpic++ $(INCLUDES) $(CFLAGS) -c $< 
+
+Node.o:		../Node.cpp ../Node.h ../SubDomain.h
+		mpic++ $(INCLUDES) $(CFLAGS) -c $< 
+
+SubDomain.o:	../SubDomain.cpp ../SubDomain.h 
+		mpic++ $(INCLUDES) $(CFLAGS) -c $< 
 clean:
-		rm -f cell *.o *.linkinfo *~
+		rm -f cell *.o *.linkinfo *~ lint.txt
 
 distclean:	clean
 		rm -f cell.cu cell.h

@@ -11,7 +11,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <cstring>
-#define DTYPE int
 
 // The size of the tile is calculated at compile time by the SL processor.
 // But the data array is statically sized.
@@ -79,16 +78,12 @@ void runOMPCellKernel(dim3 input_size, dim3 stencil_size, DTYPE *input,
                       DTYPE *output, int pyramid_height, DTYPE *ro_data,
                       int bornMin, int bornMax, int dieMin, int dieMax) {
   dim3 border;
-  DTYPE value;
-  int bx, tx, x, ex, uidx, iter, inside;
   border.x = border.y = border.z = 0;
   for (int iter = 0; iter < pyramid_height; ++iter) {
     border.x += stencil_size.x;
     border.y += stencil_size.y;
     border.z += stencil_size.z;
     int uidx = -1;
-  printf("OMPCell: iter:%d, border.x:%d, border.y:%d, border.z:%d\n",
-          iter, border.x, border.y, border.z);
     // (x, y, z) is the location in the input of this thread.
   #pragma omp parallel for private(uidx) shared(output)
     for (int z = border.z; z < input_size.z-border.z; ++z) {
@@ -133,8 +128,8 @@ void runOMPCell(DTYPE *host_data, int x_max, int y_max, int z_max,
 
   int size = input_size.x * input_size.y * input_size.z;
   if (NULL == device_input && NULL == device_output) {
-    device_output = new DTYPE[size];
-    device_input = new DTYPE[size];
+    device_output = new DTYPE[size]();
+    device_input = new DTYPE[size]();
   }
 
   memcpy(static_cast<void*>(device_input), static_cast<void*>(host_data),
