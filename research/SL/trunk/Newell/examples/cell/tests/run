@@ -2,5 +2,5 @@
 #run
 
 echo -e "***** BEGIN TEST *****\n" 
-mpirun -tag-output -np 2 -machinefile ../../../machinefile -x LD_LIBRARY_PATH /af21/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/tests/correctness
+mpirun -tag-output -np 2 -machinefile ../../../machinefile -x LD_LIBRARY_PATH /af21/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/tests/ompMpiCorrectness
 echo -e "***** END TEST *****\n" 

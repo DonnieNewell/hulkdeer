@@ -1,7 +1,6 @@
 /* copyright 2012 Donnie Newell */
 /* test numerical correctness of distributed MPI cell version */
 
-#define DTYPE int
 #include <stdio.h>
 #include "mpi.h"
 #include "../ompCell.h"
@@ -17,9 +16,9 @@ DTYPE* initInput(int i, int j, int k) {
 
 void printData(const DTYPE* data, const int I, const int J, const int K) {
   for (int i = 0; i < I; ++i) {
-    printf("i == %d *****************************************\n",i);
+    printf("i == %d *****************************************\n", i);
     for (int j = 0; j < J; ++j) {
-      printf("row[%d]:\t",j);
+      printf("row[%d]:\t", j);
       for (int k = 0; k < K; ++k) {
         printf("%d ", data[(i * K * J) + (j * K) + k]);
       }
