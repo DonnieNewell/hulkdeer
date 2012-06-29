@@ -1,4 +1,4 @@
-#DBG	= -pg -DDEBUG
+DBG	= -g 
 SDK 	= /af21/den4gr/NVIDIA_GPU_Computing_SDK
 #EMU	= -deviceemu
 CUDA	= /usr/local/cuda
@@ -6,17 +6,25 @@ F	= --compiler-options -fno-strict-aliasing
 INCLUDES= -I$(SDK)/C/common/inc -I$(CUDA)/include
 #MPIFLAGS= -rpath=/af21/den4gr/openmpi-install/lib
 LDFLAGS = -fopenmp
-CFLAGS	= $(DBG) -Wall -fopenmp
-NVFLAGS	= $(DBG)  $(EMU) $(F)
+CFLAGS	= $(DBG) -Wall -fopenmp -DDTYPE=int
+NVFLAGS	= $(DBG)  $(EMU) $(F) -arch sm_20 -DDTYPE=int
 LIBS	= -lcudart -L$(SDK)/C/common/lib -L$(CUDA)/lib64
 
-all:		correctness lint.txt
-correctness:	correctness.o distributedCell.o cell.o ompCell.o Decomposition.o Node.o Cluster.o Balancer.o SubDomain3D.o
-		mpic++ -o $@ $^ -pg $(LDFLAGS) $(LIBS)
-lint.txt:        ~/cpplint.py correctness.cpp 
-		~/cpplint.py correctness.cpp > lint.txt 
+all:		cudaOmpCorrectness ompMpiCorrectness lint.txt
 
-correctness.o:	correctness.cpp ../ompCell.h ../distributedCell.h
+cudaOmpCorrectness:	cudaOmpCorrectness.o cell.o ompCell.o
+		g++ -o $@ $^ -pg $(LDFLAGS) $(LIBS)
+
+ompMpiCorrectness:	ompMpiCorrectness.o comm.o distributedCell.o cell.o ompCell.o Decomposition.o Node.o Cluster.o Balancer.o SubDomain.o
+		mpic++ -o $@ $^ -pg $(LDFLAGS) $(LIBS)
+
+lint.txt:        ~/cpplint.py ompMpiCorrectness.cpp 
+		~/cpplint.py ompMpiCorrectness.cpp > lint.txt 
+
+cudaOmpCorrectness.o:	cudaOmpCorrectness.cpp ../ompCell.h ../cell.h
+		g++ $(INCLUDES) $(CFLAGS) -c $<
+
+ompMpiCorrectness.o:	ompMpiCorrectness.cpp ../ompCell.h ../distributedCell.h
 		mpic++ $(INCLUDES) $(CFLAGS) -c $<
 
 distributedCell.o:	../distributedCell.cpp ../distributedCell.h
@@ -28,22 +36,25 @@ ompCell.o:	../ompCell.cpp ../ompCell.h
 cell.o:		../cell.cu ../../Model.cu ../../Model.h
 		nvcc $(INCLUDES) $(NVFLAGS) -c $<
 
-Decomposition.o:	../Decomposition.cpp ../Decomposition.h ../Node.h
+comm.o:	        ../../comm.cpp ../../comm.h
 		mpic++ $(INCLUDES) $(CFLAGS) -c $< 
 
-Balancer.o:	../Balancer.cpp ../Balancer.h ../Cluster.h ../Decomposition.h
+Decomposition.o:	../../Decomposition.cpp ../../Decomposition.h ../../Node.h
 		mpic++ $(INCLUDES) $(CFLAGS) -c $< 
 
-Cluster.o:	../Cluster.cpp ../Cluster.h ../Node.h
+Balancer.o:	../../Balancer.cpp ../../Balancer.h ../../Cluster.h ../../Decomposition.h
 		mpic++ $(INCLUDES) $(CFLAGS) -c $< 
 
-Node.o:		../Node.cpp ../Node.h ../SubDomain3D.h
+Cluster.o:	../../Cluster.cpp ../../Cluster.h ../../Node.h
 		mpic++ $(INCLUDES) $(CFLAGS) -c $< 
 
-SubDomain3D.o:	../SubDomain3D.cpp ../SubDomain3D.h 
+Node.o:		../../Node.cpp ../../Node.h ../../SubDomain.h
+		mpic++ $(INCLUDES) $(CFLAGS) -c $< 
+
+SubDomain.o:	../../SubDomain.cpp ../../SubDomain.h 
 		mpic++ $(INCLUDES) $(CFLAGS) -c $< 
 clean:
-		rm -f correctness *.o *.linkinfo *~ lint.txt
+		rm -f ompMpiCorrectness cudaOmpCorrectness *.o *.linkinfo *~ lint.txt
 
 distclean:	clean
 		rm -f cell.cu cell.h
