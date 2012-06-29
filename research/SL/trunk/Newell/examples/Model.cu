@@ -146,6 +146,7 @@ SACudaLats_t * makeSACudaLats()
 void disposeSACudaLats(SACudaLats_t * SACLs)
 {
     free(SACLs);
+    SACLs=NULL;
 }
 
 // Print out SACL values to aid in debugging.
@@ -161,7 +162,7 @@ void printSACLs(SACudaLats_t * SACLs, int pyramidH)
 }
 
 
-static SAProps_t * SAPs;
+static SAProps_t * SAPs=NULL;
 
 // Make a SAProps structure, and give default values to some fields.
 dim3 initSAProps(int dims, dim3 input_size, dim3 stencil_size, int iterations, int dataESize, char * kernelName)
@@ -213,26 +214,26 @@ dim3 initSAProps(int dims, dim3 input_size, dim3 stencil_size, int iterations, i
 
 void disposeSAProps(SAProps_t * SAPs)
 {
-	if(NULL != SAPs->CFAs)
-	{
-		free(SAPs->CFAs);
-		SAPs->CFAs=NULL;
-	}
-	if(NULL != SAPs->SACLs)
-	{
-		free(SAPs->SACLs);
-		SAPs->SACLs=NULL;
-	}
-	if(NULL != SAPs->CDPs)
-	{
-		free(SAPs->CDPs);
-		SAPs->CDPs=NULL;
-	}
-	if(NULL != SAPs)
-	{
-    	free(SAPs);
-		SAPs = NULL;
-	}
+  if(NULL != SAPs)
+  {
+    if(NULL != SAPs->CFAs)
+    {
+      free(SAPs->CFAs);
+      SAPs->CFAs=NULL;
+    }
+    if(NULL != SAPs->SACLs)
+    {
+      free(SAPs->SACLs);
+      SAPs->SACLs=NULL;
+    }
+    if(NULL != SAPs->CDPs)
+    {
+      free(SAPs->CDPs);
+      SAPs->CDPs=NULL;
+    }
+    free(SAPs);
+    SAPs = NULL;
+  }
 }
 
 // TODO It would be better if this were not a macro.

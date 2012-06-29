@@ -1,3 +1,5 @@
+#ifndef MODEL_H
+#define MODEL_H
 /* -*- Mode: C ; indent-tabs-mode: nil ; c-file-style: "stroustrup" -*-
 
     CS 6620 - Compilers
@@ -13,7 +15,7 @@
 #include <stdint.h>
 
 // This flag controls whether the templates and mains are gathering statistics or running normally.
-#define STATISTICS
+//#define STATISTICS
 
 #define MIN(a, b) ((a < b) ? a : b)
 #define MAX(a, b) ((a > b) ? a : b)
@@ -99,4 +101,6 @@ BOOL calcMinLatency(SAProps_t * SAPs, CudaDeviceProps_t * CDPs);
 // End the cplusplus "C" extern declaration.
 #ifdef __cplusplus
 }
+#endif
+
 #endif
