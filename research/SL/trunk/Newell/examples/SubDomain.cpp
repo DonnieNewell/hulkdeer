@@ -82,7 +82,7 @@ void SubDomain::setId(int i, int j, int k, int gridDepth, int gridHeight,
 }
 
 void SubDomain::setNeighbors( std::vector<int> &blockTable) {
-  for (NeighborTag tag = xNeighborBegin; tag < xNeighborEnd; ++tag) {
+  for (NeighborTag3D tag = x3DNeighborBegin; tag < x3DNeighborEnd; ++tag) {
     int linIndex = this->getNeighborIndex(tag);
     if (0 <= linIndex) {
       neighbors[tag] = blockTable.at(linIndex);
@@ -97,7 +97,7 @@ void printNeighbors(const SubDomain *s) {
   int lin = s->getLinIndex();
   printf("neighbors of block[%d][%d][%d]\n linear index: %d\n",
           id[0], id[1], id[2], lin);
-  for (NeighborTag tag = xFace0; tag <= xCorner7; ++tag) {
+  for (NeighborTag3D tag = x3DFace0; tag <= x3DCorner7; ++tag) {
     int rank = s->getNeighborLoc(tag);
     printf("  n[%s]:%d\n", neighborString(tag), rank);
   }
@@ -122,7 +122,11 @@ int SubDomain::threeDToLin(int i, int j, int k,
   return i * dim2 * dim1  + j * dim2 + k;
 }
 
-int SubDomain::getNeighborFace(const NeighborTag tag) {
+int SubDomain::twoDToLin(int i, int j, int dim0, int dim1) const {
+  return i * dim1  + j;
+}
+
+int SubDomain::getNeighborFace(const NeighborTag3D tag) {
   const int i     = id[0];
   const int j     = id[1];
   const int k     = id[2];
@@ -131,28 +135,28 @@ int SubDomain::getNeighborFace(const NeighborTag tag) {
   const int dimK  = gridDim[2];
   int neighbor = -1;
 
-  if (xFace0 == tag && 0 < i) {
+  if (x3DFace0 == tag && 0 < i) {
     neighbor = threeDToLin(i-1, j, k, dimI, dimJ, dimK);
 
-  } else if (xFace1 == tag && (dimI-1) > i) {
+  } else if (x3DFace1 == tag && (dimI-1) > i) {
     neighbor = threeDToLin(i+1, j, k, dimI, dimJ, dimK);
 
-  } else if (xFace2 == tag && 0 < j) {
+  } else if (x3DFace2 == tag && 0 < j) {
     neighbor = threeDToLin(i, j-1, k, dimI, dimJ, dimK);
 
-  } else if (xFace3 == tag && (dimJ-1) > j) {
+  } else if (x3DFace3 == tag && (dimJ-1) > j) {
     neighbor = threeDToLin(i, j+1, k, dimI, dimJ, dimK);
 
-  } else if (xFace4 == tag && 0 < k) {
+  } else if (x3DFace4 == tag && 0 < k) {
     neighbor = threeDToLin(i, j, k-1, dimI, dimJ, dimK);
 
-  } else if (xFace5 == tag && (dimK-1) > k) {
+  } else if (x3DFace5 == tag && (dimK-1) > k) {
     neighbor = threeDToLin(i, j, k+1, dimI, dimJ, dimK);
   }
   return neighbor;
 }
 
-int SubDomain::getNeighborPole(const NeighborTag tag) {
+int SubDomain::getNeighborPole(const NeighborTag3D tag) {
   int neighbor = -1;
   const int i     = id[0];
   const int j     = id[1];
@@ -161,46 +165,65 @@ int SubDomain::getNeighborPole(const NeighborTag tag) {
   const int dimJ  = gridDim[1];
   const int dimK  = gridDim[2];
 
-  if (xPole0 == tag && 0 < i && 0 < j) {
+  if (x3DPole0 == tag && 0 < i && 0 < j) {
     neighbor = threeDToLin(i-1, j-1, k, dimI, dimJ, dimK);
 
-  } else if (xPole1 == tag && 0 < i && (dimJ-1) > j) {
+  } else if (x3DPole1 == tag && 0 < i && (dimJ-1) > j) {
     neighbor = threeDToLin(i-1, j+1, k, dimI, dimJ, dimK);
 
-  } else if (xPole2 == tag && (dimI-1) > i && (dimJ-1) > j) {
+  } else if (x3DPole2 == tag && (dimI-1) > i && (dimJ-1) > j) {
     neighbor = threeDToLin(i+1, j+1, k, dimI, dimJ, dimK);
 
-  } else if (xPole3 == tag && (dimI-1) > i && 0 < j) {
+  } else if (x3DPole3 == tag && (dimI-1) > i && 0 < j) {
     neighbor = threeDToLin(i+1, j-1, k, dimI, dimJ, dimK);
 
-  } else if (xPole4 == tag && 0 < i && 0 < k) {
+  } else if (x3DPole4 == tag && 0 < i && 0 < k) {
     neighbor = threeDToLin(i-1, j, k-1, dimI, dimJ, dimK);
 
-  } else if (xPole5 == tag && 0 < i && (dimK-1) > k) {
+  } else if (x3DPole5 == tag && 0 < i && (dimK-1) > k) {
     neighbor = threeDToLin(i-1, j, k+1, dimI, dimJ, dimK);
 
-  } else if (xPole6 == tag && (dimI-1) > i && (dimK-1) > k) {
+  } else if (x3DPole6 == tag && (dimI-1) > i && (dimK-1) > k) {
     neighbor = threeDToLin(i+1, j, k+1, dimI, dimJ, dimK);
 
-  } else if (xPole7 == tag && (dimI-1) > i && 0 < k) {
+  } else if (x3DPole7 == tag && (dimI-1) > i && 0 < k) {
     neighbor = threeDToLin(i+1, j, k-1, dimI, dimJ, dimK);
 
-  } else if (xPole8 == tag && 0 < j && 0 < k) {
+  } else if (x3DPole8 == tag && 0 < j && 0 < k) {
     neighbor = threeDToLin(i, j-1, k-1, dimI, dimJ, dimK);
 
-  } else if (xPole9 == tag && 0 < j && (dimK-1) > k) {
+  } else if (x3DPole9 == tag && 0 < j && (dimK-1) > k) {
     neighbor = threeDToLin(i, j-1, k+1, dimI, dimJ, dimK);
 
-  } else if (xPole10 == tag && (dimJ-1) > j && (dimK-1) > k) {
+  } else if (x3DPole10 == tag && (dimJ-1) > j && (dimK-1) > k) {
     neighbor = threeDToLin(i, j+1, k+1, dimI, dimJ, dimK);
 
-  } else if (xPole11 == tag && (dimJ-1) > j && 0 < k) {
+  } else if (x3DPole11 == tag && (dimJ-1) > j && 0 < k) {
     neighbor = threeDToLin(i, j+1, k-1, dimI, dimJ, dimK);
   }
   return neighbor;
 }
 
-int SubDomain::getNeighborCorner(const NeighborTag tag){
+int SubDomain::getNeighborPole(const NeighborTag2D tag) {
+  int neighbor = -1;
+  const int i     = id[0];
+  const int j     = id[1];
+  const int dimI  = gridDim[0];
+  const int dimJ  = gridDim[1];
+  
+  if (x2DPole0 == tag && 0 < i) {
+    neighbor = twoDToLin(i-1, j, dimI, dimJ);
+  } else if (x2DPole1 == tag && (dimJ-1) > j) {
+    neighbor = twoDToLin(i, j+1, dimI, dimJ);
+  } else if (x2DPole2 == tag && (dimI-1) > i) {
+    neighbor = twoDToLin(i+1, j, dimI, dimJ);
+  } else if (x2DPole3 == tag && 0 < j) {
+    neighbor = twoDToLin(i, j-1, dimI, dimJ);
+  }
+  return neighbor;
+}
+
+int SubDomain::getNeighborCorner(const NeighborTag3D tag){
   const int i     = id[0];
   const int j     = id[1];
   const int k     = id[2];
@@ -209,44 +232,75 @@ int SubDomain::getNeighborCorner(const NeighborTag tag){
   const int dimK  = gridDim[2];
   int neighbor = -1;
 
-  if (xCorner0 == tag && 0 < i && 0 < j && 0 < k) {
+  if (x3DCorner0 == tag && 0 < i && 0 < j && 0 < k) {
     neighbor = threeDToLin(i-1, j-1, k-1, dimI, dimJ, dimK);
 
-  } else if (xCorner1 == tag && 0 < i && 0 < j && (dimK-1) > k) {
+  } else if (x3DCorner1 == tag && 0 < i && 0 < j && (dimK-1) > k) {
     neighbor = threeDToLin(i-1, j-1, k+1, dimI, dimJ, dimK);
 
-  } else if (xCorner2 == tag && 0 < i && (dimJ-1) > j && 0 < k) {
+  } else if (x3DCorner2 == tag && 0 < i && (dimJ-1) > j && 0 < k) {
     neighbor = threeDToLin(i-1, j+1, k-1, dimI, dimJ, dimK);
 
-  } else if (xCorner3 == tag && 0 < i && (dimJ-1) > j && (dimK-1) > k) {
+  } else if (x3DCorner3 == tag && 0 < i && (dimJ-1) > j && (dimK-1) > k) {
     neighbor = threeDToLin(i-1, j+1, k+1, dimI, dimJ, dimK);
 
-  } else if (xCorner4 == tag && (dimI-1) > i && 0 < j && 0 < k) {
+  } else if (x3DCorner4 == tag && (dimI-1) > i && 0 < j && 0 < k) {
     neighbor = threeDToLin(i+1, j-1, k-1, dimI, dimJ, dimK);
 
-  } else if (xCorner5 == tag && (dimI-1) > i && 0 < j && (dimK-1) > k) {
+  } else if (x3DCorner5 == tag && (dimI-1) > i && 0 < j && (dimK-1) > k) {
     neighbor = threeDToLin(i+1, j-1, k+1, dimI, dimJ, dimK);
 
-  } else if (xCorner6 == tag && (dimI-1) > i && (dimJ-1) > j && 0 < k) {
+  } else if (x3DCorner6 == tag && (dimI-1) > i && (dimJ-1) > j && 0 < k) {
     neighbor = threeDToLin(i+1, j+1, k-1, dimI, dimJ, dimK);
 
-  } else if (xCorner7 == tag && (dimI-1) > i && (dimJ-1) > j && (dimK-1) > k) {
+  } else if (x3DCorner7 == tag && (dimI-1) > i && (dimJ-1) > j && (dimK-1) > k) {
     neighbor = threeDToLin(i+1, j+1, k+1, dimI, dimJ, dimK);
   }
   return neighbor;
 }
 
+int SubDomain::getNeighborCorner(const NeighborTag2D tag){
+  const int i     = id[0];
+  const int j     = id[1];
+  const int dimI  = gridDim[0];
+  const int dimJ  = gridDim[1];
+  int neighbor = -1;
+
+  if (x2DCorner0 == tag && 0 < i && 0 < j) {
+    neighbor = twoDToLin(i-1, j-1, dimI, dimJ);
+  } else if (x2DCorner1 == tag && 0 < i && (dimJ-1) > j) {
+    neighbor = twoDToLin(i-1, j+1, dimI, dimJ);
+  } else if (x2DCorner2 == tag && (dimI-1) > i && (dimJ-1) > j) {
+    neighbor = twoDToLin(i+1, j+1, dimI, dimJ);
+  } else if (x2DCorner3 == tag && (dimI-1) > i && 0 < j) {
+    neighbor = twoDToLin(i+1, j-1, dimI, dimJ);
+  }
+  return neighbor;
+}
+
 /* returns the linear index for neighbor specified by NeighborTag */
-int SubDomain::getNeighborIndex(const NeighborTag tag){
+int SubDomain::getNeighborIndex(const NeighborTag3D tag){
    /* only a valid neighbor will be positive */
   int neighbor = -1;
-  if (xPole0 > tag)
+  if (x3DPole0 > tag)
     neighbor = getNeighborFace(tag);
-  else if (xFace5 < tag && xCorner0 > tag)
+  else if (x3DFace5 < tag && x3DCorner0 > tag)
     neighbor = getNeighborPole(tag);
-  else if (xPole11 < tag)
+  else if (x3DPole11 < tag)
     neighbor = getNeighborCorner(tag);
 
+  return neighbor;
+}
+
+/* returns the linear index for neighbor specified by NeighborTag */
+int SubDomain::getNeighborIndex(const NeighborTag2D tag){
+   /* only a valid neighbor will be positive */
+  int neighbor = -1;
+  if (x2DPole3 >= tag && x2DPole0 <= tag)
+    neighbor = getNeighborPole(tag);
+  else if (x2DCorner0 <= tag && x2DCorner3 >= tag)
+    neighbor = getNeighborCorner(tag);
+  
   return neighbor;
 }
 
@@ -261,7 +315,7 @@ const int* SubDomain::getGridDim() const { return gridDim; }
 const int* SubDomain::getId() const { return id; }
 
 /* returns rank of node where neighbor block is located */
-int SubDomain::getNeighborLoc( const NeighborTag index)const {
+int SubDomain::getNeighborLoc( const int index)const {
     return neighbors[index];
 }
 
@@ -303,100 +357,142 @@ SubDomain& SubDomain::operator=(const SubDomain &sd) {
   return *this;
 }
 
-NeighborTag &operator++(NeighborTag &n) {
-  assert(n != xNeighborEnd);
-  n = static_cast<NeighborTag>(n + 1);
+NeighborTag3D &operator++(NeighborTag3D &n) {
+  assert(n != x3DNeighborEnd);
+  n = static_cast<NeighborTag3D>(n + 1);
   return n;
 }
 
-NeighborTag operator++(NeighborTag &n, int) {
-  assert(n != xNeighborEnd);
+NeighborTag3D operator++(NeighborTag3D &n, int) {
+  assert(n != x3DNeighborEnd);
   ++n;
-  return static_cast<NeighborTag>(n - 1);
+  return static_cast<NeighborTag3D>(n - 1);
 }
 
-const char* neighborString(NeighborTag neighbor) {
+NeighborTag2D &operator++(NeighborTag2D &n) {
+  assert(n != x2DNeighborEnd);
+  n = static_cast<NeighborTag2D>(n + 1);
+  return n;
+}
+
+NeighborTag2D operator++(NeighborTag2D &n, int) {
+  assert(n != x2DNeighborEnd);
+  ++n;
+  return static_cast<NeighborTag2D>(n - 1);
+}
+
+const char* neighborString(NeighborTag3D neighbor) {
   switch (neighbor) {
-  case xFace0:
-    return "xFace0";
+  case x3DFace0:
+    return "x3DFace0";
     break;
-  case xFace1:
-    return "xFace1";
+  case x3DFace1:
+    return "x3DFace1";
     break;
-  case xFace2:
-    return "xFace2";
+  case x3DFace2:
+    return "x3DFace2";
     break;
-  case xFace3:
-    return "xFace3";
+  case x3DFace3:
+    return "x3DFace3";
     break;
-  case xFace4:
-    return "xFace4";
+  case x3DFace4:
+    return "x3DFace4";
     break;
-  case xFace5:
-    return "xFace5";
+  case x3DFace5:
+    return "x3DFace5";
     break;
-  case xPole0:
-    return "xPole0";
+  case x3DPole0:
+    return "x3DPole0";
     break;
-  case xPole1:
-    return "xPole1";
+  case x3DPole1:
+    return "x3DPole1";
     break;
-  case xPole2:
-    return "xPole2";
+  case x3DPole2:
+    return "x3DPole2";
     break;
-  case xPole3:
-    return "xPole3";
+  case x3DPole3:
+    return "x3DPole3";
     break;
-  case xPole4:
-    return "xPole4";
+  case x3DPole4:
+    return "x3DPole4";
     break;
-  case xPole5:
-    return "xPole5";
+  case x3DPole5:
+    return "x3DPole5";
     break;
-  case xPole6:
-    return "xPole6";
+  case x3DPole6:
+    return "x3DPole6";
     break;
-  case xPole7:
-    return "xPole7";
+  case x3DPole7:
+    return "x3DPole7";
     break;
-  case xPole8:
-    return "xPole8";
+  case x3DPole8:
+    return "x3DPole8";
     break;
-  case xPole9:
-    return "xPole9";
+  case x3DPole9:
+    return "x3DPole9";
     break;
-  case xPole10:
-    return "xPole10";
+  case x3DPole10:
+    return "x3DPole10";
     break;
-  case xPole11:
-    return "xPole11";
+  case x3DPole11:
+    return "x3DPole11";
     break;
-  case xCorner0:
-    return "xCorner0";
+  case x3DCorner0:
+    return "x3DCorner0";
     break;
-  case xCorner1:
-    return "xCorner1";
+  case x3DCorner1:
+    return "x3DCorner1";
     break;
-  case xCorner2:
-    return "xCorner2";
+  case x3DCorner2:
+    return "x3DCorner2";
     break;
-  case xCorner3:
-    return "xCorner3";
+  case x3DCorner3:
+    return "x3DCorner3";
     break;
-  case xCorner4:
-    return "xCorner4";
+  case x3DCorner4:
+    return "x3DCorner4";
     break;
-  case xCorner5:
-    return "xCorner5";
+  case x3DCorner5:
+    return "x3DCorner5";
     break;
-  case xCorner6:
-    return "xCorner6";
+  case x3DCorner6:
+    return "x3DCorner6";
     break;
-  case xCorner7:
-    return "xCorner7";
+  case x3DCorner7:
+    return "x3DCorner7";
     break;
   default:
     break;
   }
-  return "invalid NeighborFlag";
+  return "invalid 3DNeighborFlag";
+}
+const char* neighborString(NeighborTag2D neighbor) {
+  switch (neighbor) {
+  case x2DPole0:
+    return "x2DPole0";
+    break;
+  case x2DPole1:
+    return "x2DPole1";
+    break;
+  case x2DPole2:
+    return "x2DPole2";
+    break;
+  case x2DPole3:
+    return "x2DPole3";
+    break;
+  case x2DCorner0:
+    return "x2DCorner0";
+    break;
+  case x2DCorner1:
+    return "x2DCorner1";
+    break;
+  case x2DCorner2:
+    return "x2DCorner2";
+    break;
+  case x2DCorner3:
+    return "x2DCorner3";
+  default:
+    break;
+  }
+  return "invalid 2DNeighborFlag";
 }

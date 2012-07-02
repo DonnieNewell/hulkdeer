@@ -4,42 +4,61 @@
 #include <vector>
 
 /*
-NEIGHBORS
+NEIGHBORS 3D
 (i, j, k) is current block
 */
-enum NeighborTag {
-  xNeighborBegin = 0,
-  xFace0   =  xNeighborBegin,  // i-1, j  , k
-  xFace1   =  1,  // i+1, j  , k
-  xFace2   =  2,  // i  , j-1, k
-  xFace3   =  3,  // i  , j+1, k
-  xFace4   =  4,  // i  , j  , k-1
-  xFace5   =  5,  // i  , j  , k+1
-  xPole0   =  6,  // i-1, j-1, k
-  xPole1   =  7,  // i-1, j+1, k
-  xPole2   =  8,  // i+1, j+1, k
-  xPole3   =  9,  // i+1, j-1, k
-  xPole4   = 10,  // i-1, j  , k-1
-  xPole5   = 11,  // i-1, j  , k+1
-  xPole6   = 12,  // i+1, j  , k+1
-  xPole7   = 13,  // i+1, j  , k-1
-  xPole8   = 14,  // i  , j-1, k-1
-  xPole9   = 15,  // i  , j-1, k+1
-  xPole10  = 16,  // i  , j+1, k+1
-  xPole11  = 17,  // i  , j+1, k-1
-  xCorner0 = 18,  // i-1, j-1, k-1
-  xCorner1 = 19,  // i-1, j-1, k+1
-  xCorner2 = 20,  // i-1, j+1, k-1
-  xCorner3 = 21,  // i-1, j+1, k+1
-  xCorner4 = 22,  // i+1, j-1, k-1
-  xCorner5 = 23,  // i+1, j-1, k+1
-  xCorner6 = 24,  // i+1, j+1, k-1
-  xCorner7 = 25,  // i+1, j+1, k+1
-  xNeighborEnd = 26
+enum NeighborTag3D {
+  x3DNeighborBegin = 0,
+  x3DFace0   =  x3DNeighborBegin,  // i-1, j  , k
+  x3DFace1   =  1,  // i+1, j  , k
+  x3DFace2   =  2,  // i  , j-1, k
+  x3DFace3   =  3,  // i  , j+1, k
+  x3DFace4   =  4,  // i  , j  , k-1
+  x3DFace5   =  5,  // i  , j  , k+1
+  x3DPole0   =  6,  // i-1, j-1, k
+  x3DPole1   =  7,  // i-1, j+1, k
+  x3DPole2   =  8,  // i+1, j+1, k
+  x3DPole3   =  9,  // i+1, j-1, k
+  x3DPole4   = 10,  // i-1, j  , k-1
+  x3DPole5   = 11,  // i-1, j  , k+1
+  x3DPole6   = 12,  // i+1, j  , k+1
+  x3DPole7   = 13,  // i+1, j  , k-1
+  x3DPole8   = 14,  // i  , j-1, k-1
+  x3DPole9   = 15,  // i  , j-1, k+1
+  x3DPole10  = 16,  // i  , j+1, k+1
+  x3DPole11  = 17,  // i  , j+1, k-1
+  x3DCorner0 = 18,  // i-1, j-1, k-1
+  x3DCorner1 = 19,  // i-1, j-1, k+1
+  x3DCorner2 = 20,  // i-1, j+1, k-1
+  x3DCorner3 = 21,  // i-1, j+1, k+1
+  x3DCorner4 = 22,  // i+1, j-1, k-1
+  x3DCorner5 = 23,  // i+1, j-1, k+1
+  x3DCorner6 = 24,  // i+1, j+1, k-1
+  x3DCorner7 = 25,  // i+1, j+1, k+1
+  x3DNeighborEnd = 26
 };
 
-NeighborTag &operator++(NeighborTag &n);
-NeighborTag operator++(NeighborTag &n, int);
+/*
+NEIGHBORS 2D
+(i, j) is current block
+*/
+enum NeighborTag2D {
+  x2DNeighborBegin = 0,
+  x2DPole0   =  x2DNeighborBegin,  // i-1, j
+  x2DPole1   = 1,  // i, j+1
+  x2DPole2   = 2,  // i+1, j,
+  x2DPole3   = 3,  // i, j-1
+  x2DCorner0 = 4,  // i-1, j-1
+  x2DCorner1 = 5,  // i-1, j+1
+  x2DCorner2 = 6,  // i+1, j+1
+  x2DCorner3 = 7,  // i+1, j-1
+  x2DNeighborEnd = 8
+};
+
+NeighborTag3D &operator++(NeighborTag3D &n);
+NeighborTag3D operator++(NeighborTag3D &n, int);
+NeighborTag2D &operator++(NeighborTag2D &n);
+NeighborTag2D operator++(NeighborTag2D &n, int);
 
 class SubDomain {
   public:
@@ -62,13 +81,17 @@ class SubDomain {
     const int getLinIndex()const;
     int getLength(int)const;
     int getOffset(int)const;
-    int getNeighborLoc(const NeighborTag)const;
-    int getNeighborIndex(const NeighborTag);
+    int getNeighborLoc(const int)const;
+    int getNeighborIndex(const NeighborTag3D);
+    int getNeighborIndex(const NeighborTag2D);
   private:
-    int getNeighborFace(const NeighborTag);
-    int getNeighborPole(const NeighborTag);
-    int getNeighborCorner(const NeighborTag);
+    int getNeighborFace(const NeighborTag3D);
+    int getNeighborPole(const NeighborTag3D);
+    int getNeighborPole(const NeighborTag2D);
+    int getNeighborCorner(const NeighborTag3D);
+    int getNeighborCorner(const NeighborTag2D);
     int threeDToLin(int,int,int,int,int,int) const;
+    int twoDToLin(int,int,int,int) const;
     int gridDim[3];
     int id[3];
     int offset[3];
@@ -76,6 +99,7 @@ class SubDomain {
     int neighbors[26];//ranks of all neighbors to exchange ghost zones with
     DTYPE* buffer;
 };
-const char* neighborString(NeighborTag);
+const char* neighborString(NeighborTag3D);
+const char* neighborString(NeighborTag2D);
 void printNeighbors(const SubDomain *s);
 #endif

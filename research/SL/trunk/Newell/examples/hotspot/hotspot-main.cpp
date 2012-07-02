@@ -82,7 +82,6 @@ int main(int argc, char** argv) {
     struct timeval starttime, endtime;
     long usec;
 
-
     gettimeofday(&starttime, NULL);
     runDistributedHotspot(rank, numTasks, MatrixTemp, grid_cols, grid_rows,
             iterations, step_div_Cap, Rx, Ry, Rz);
@@ -93,6 +92,7 @@ int main(int argc, char** argv) {
     printf("Total time=%ld\n", usec);
     writeOutput(MatrixTemp, grid_rows, grid_cols, ofile);
 
+    MPI_Finalize();
     free(MatrixTemp);
     free(MatrixPower);
     return 0;
@@ -134,9 +134,9 @@ void writeOutput(float *vect, int grid_rows, int grid_cols, char *filename) {
         count = 1;
         for (j = 1; j < grid_cols; j++) {
             next = (int) vect[i * grid_cols + j];
-            if (next == val)
+            if (next == val) {
                 count++;
-            else {
+            } else {
                 if (count == 1)
                     fprintf(fp, "%d ", val);
                 else

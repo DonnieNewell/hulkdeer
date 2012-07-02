@@ -23,27 +23,47 @@ void receiveNumberOfChildren(int, Cluster*);
 void sendData(Node*);
 void benchmarkNode(Node*, SubDomain*);
 SubDomain* receiveDataFromNode(int, int*);
-bool isSegmentFace(NeighborTag);
-bool isSegmentPole(NeighborTag);
-bool isSegmentCorner(NeighborTag);
-void getCornerDimensions(NeighborTag, int*, int*, SubDomain*, const int[],
+bool isSegmentFace(NeighborTag3D);
+bool isSegmentPole(NeighborTag3D);
+bool isSegmentCorner(NeighborTag3D);
+bool isSegmentPole(NeighborTag2D);
+bool isSegmentCorner(NeighborTag2D);
+int getNumberDimensions(const SubDomain*);
+void getCornerDimensions(NeighborTag3D, int*, int*, SubDomain*, const int[],
                           const bool);
-void getFaceDimensions(NeighborTag, int*, int*, SubDomain*, const int[],
+void getCornerDimensions(NeighborTag2D, int*, int*, SubDomain*, const int[],
+                          const bool);
+void getFaceDimensions(NeighborTag3D, int*, int*, SubDomain*, const int[],
                         const bool);
-void getPoleDimensions(NeighborTag, int*, int*, SubDomain*, const int[],
+void getPoleDimensions(NeighborTag3D, int*, int*, SubDomain*, const int[],
                         const bool);
-void getSegmentDimensions(NeighborTag, int*, int*, SubDomain*,
+void getPoleDimensions(NeighborTag2D, int*, int*, SubDomain*, const int[],
+                        const bool);
+void getSegmentDimensions(NeighborTag3D, int*, int*, SubDomain*,
                           const int [], const bool );
-void copySegment(NeighborTag, SubDomain*, DTYPE*, const int [], const bool,
+void getSegmentDimensions(NeighborTag2D, int*, int*, SubDomain*,
+                          const int [], const bool );
+void copySegment(NeighborTag3D, SubDomain*, DTYPE*, const int [], const bool,
                   int*);
-bool sendSegment(const NeighborTag, SubDomain*, DTYPE*, const int, MPI_Request*);
-bool receiveSegment(const NeighborTag, SubDomain*, DTYPE*, const int, int*);
-void sendNewGhostZones(const NeighborTag, Node*, const int [], MPI_Request*,
+void copySegment(NeighborTag2D, SubDomain*, DTYPE*, const int [], const bool,
+                  int*);
+bool sendSegment(const NeighborTag3D, SubDomain*, DTYPE*, const int, MPI_Request*);
+bool sendSegment(const NeighborTag2D, SubDomain*, DTYPE*, const int, MPI_Request*);
+bool receiveSegment(const NeighborTag3D, SubDomain*, DTYPE*, const int, int*);
+bool receiveSegment(const NeighborTag2D, SubDomain*, DTYPE*, const int, int*);
+void sendNewGhostZones(const NeighborTag3D, Node*, const int [], MPI_Request*,
                         DTYPE***, int*, int* );
-NeighborTag getOppositeNeighbor3D(const NeighborTag);
-void receiveNewGhostZones(const NeighborTag, Node*, const int[], DTYPE***,
+NeighborTag3D getOppositeNeighbor3D(const NeighborTag3D);
+NeighborTag2D getOppositeNeighbor2D(const NeighborTag2D);
+void exchangeGhostZones2D(Node*, const int[], DTYPE***, MPI_Request*);
+void exchangeGhostZones3D(Node*, const int[], DTYPE***, MPI_Request*);
+void receiveNewGhostZones(const NeighborTag3D, Node*, const int[], DTYPE***,
                           const int);
-int getMaxSegmentSize(SubDomain*, const int[]);
+void receiveNewGhostZones(const NeighborTag2D, Node*, const int[], DTYPE***,
+                          const int);
+int getMaxSegmentSize(const SubDomain*, const int[], const int);
+int getMaxSegmentSize2D(const SubDomain*, const int[]);
+int getMaxSegmentSize3D(const SubDomain*, const int[]);
 void delete3DBuffer(const int, const int, const int, DTYPE***);
 DTYPE*** new3DBuffer(const int, const int, const int);
 void updateAllStaleData(Node*, const int[]);

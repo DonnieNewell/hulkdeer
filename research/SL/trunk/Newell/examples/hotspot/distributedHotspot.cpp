@@ -25,7 +25,8 @@ const int kCPUIndex = -1;
 
 void benchmarkMyself(Node* n, SubDomain* pS, int timesteps,
         float step_div_Cap, float Rx, float Ry, float Rz) {
-    // receive results for each device
+  fprintf(stderr, "benchmarkMyself(n:%p, pS:%p, timesteps:%d.\n", n, pS, timesteps);
+  // receive results for each device
     unsigned int total = n->getNumChildren() + 1;
     MPI_Request req[2];
     double *weight = new double[total];
@@ -362,18 +363,21 @@ void runDistributedHotspot(int rank, int numTasks, DTYPE *data, int x_max, int y
         cluster->getNode(0).setNumChildren(deviceCount);
         receiveNumberOfChildren(numTasks, cluster);
         /* perform domain decomposition */
-        int numElements[3] = {y_max, x_max, 1};
+        int numElements[2] = {y_max, x_max};
         decomp.decompose(data, 2, numElements, new_stencil_size, PYRAMID_HEIGHT);
 #ifdef DEBUG
         printDecomposition(decomp);
 #endif
+        log << "finished decomposition.\n";
         benchmarkCluster(cluster, decomp.getSubDomain(0), iterations,
                 step_div_Cap, Rx, Ry, Rz);
+        log << "benchmarked Cluster.\n";
         /* now perform the load balancing, assigning task blocks to each node */
         gettimeofday(&balance_start, NULL);
         // passing a 0 means use cpu and gpu on all nodes
         lb.perfBalance(*cluster, decomp, 0);
         // lb.balance(*cluster, decomp, 0);
+        log << "performed load balancing.\n";
         gettimeofday(&balance_end, NULL);
         printCluster(*cluster); // DEBUG
         balance_sec = secondsElapsed(balance_start, balance_end);
