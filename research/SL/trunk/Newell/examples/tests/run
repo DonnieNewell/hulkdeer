@@ -1,0 +1,11 @@
+#!/bin/bash
+#run
+NUMBER_PROCESSES=2
+mpirun -np $NUMBER_PROCESSES -machinefile ../../machinefile -x LD_LIBRARY_PATH /af21/den4gr/hulkdeer/research/SL/trunk/Newell/examples/tests/commTest
+
+#for q in 64 128 256 512 1024
+#do
+#  echo -e "***** BEGIN STRONG ITERATION $q *****\n" 
+#  mpirun -np $STRONG_LIMIT -machinefile ../../machinefile -x LD_LIBRARY_PATH /af21/den4gr/hulkdeer/research/SL/trunk/Newell/examples/hotspot/hotspot $q 1 1
+#  echo -e "***** END STRONG ITERATION   $q *****\n" 
+#done
