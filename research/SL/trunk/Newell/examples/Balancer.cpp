@@ -10,6 +10,12 @@ Balancer::~Balancer () { }
 void Balancer::perfBalance (Cluster &cluster, Decomposition& decomp, int config) {
   WorkQueue wq;
   WorkRequest wr;
+  double total_weight(0.0);
+  double min_edge_weight(0.0);
+  double procTime(0.0);
+  double commTime(0.0);
+  double timeEst  = procTime + commTime * commTime;
+  bool changed(false);
   Node &root = cluster.getNode(0);
 
   size_t num_blocks = decomp.getNumSubDomains();
@@ -19,29 +25,26 @@ void Balancer::perfBalance (Cluster &cluster, Decomposition& decomp, int config)
 
   //perform initial task distribution
   // this->balance(cluster, decomp, config);
-  for (size_t i=0; i<num_blocks; ++i) {
+  for (size_t i = 0; i < num_blocks; ++i) {
     root.addSubDomain(decomp.popSubDomain());
   }
-
+  
   //get total iterations per second for cluster
-  double total_weight = 0.0;
-  double min_edge_weight = 0.0;
   for (unsigned int node=0; node < cluster.getNumNodes(); ++node) {
     total_weight    += cluster.getNode(node).getTotalWeight()   ;
     min_edge_weight += cluster.getNode(node).getMinEdgeWeight() ;
   }
 
-  //quick estimation of runtime
-  double procTime = num_blocks / total_weight     ;
-  double commTime = num_blocks / min_edge_weight  ;
-  double timeEst  = procTime + commTime * commTime;
+  // quick estimation of runtime
+  procTime = num_blocks / total_weight     ;
+  commTime = num_blocks / min_edge_weight  ;
+  timeEst  = procTime + commTime * commTime;
 
   fprintf(stderr,
           "perfBalance: \n\ttime est: %f sec\n\ttotal weight:%e \
           \n\tmin edge weight:%e.\n",
           timeEst, total_weight, min_edge_weight);
 
-  bool changed;
 
   /*
      TODO
@@ -54,13 +57,13 @@ void Balancer::perfBalance (Cluster &cluster, Decomposition& decomp, int config)
     changed = false;
     counter++      ;
     //balance the work between nodes and root
-    for (unsigned int child=1; child<cluster.getNumNodes(); ++child) {
+    for (unsigned int child = 1; child < cluster.getNumNodes(); ++child) {
       Node& c    = cluster.getNode(child);
-      int   diff = c.getTotalWorkNeeded(timeEst)-c.numTotalSubDomains();
-      if (0>diff) {//child has extra work
+      int   diff = c.getTotalWorkNeeded(timeEst) - c.numTotalSubDomains();
+      if (0 > diff) {//child has extra work
 
         int extra = abs(diff);
-        for (int block=0;
+        for (int block = 0;
             (block < extra) && (0 < c.numSubDomains());
             ++block) {
           //move block from child to parent
@@ -72,19 +75,19 @@ void Balancer::perfBalance (Cluster &cluster, Decomposition& decomp, int config)
             changed = true;
           }
         }
-      } else if (0<diff) {  //child needs more work
-        wr.setTimeDiff(timeEst-c.getTimeEst(0));
+      } else if (0 < diff) {  //child needs more work
+        wr.setTimeDiff(timeEst - c.getTimeEst(0));
         wr.setIndex(child);
         wq.push(wr);
       }
     }
 
-    for (unsigned int child=0; child < root.getNumChildren(); ++child) {
+    for (unsigned int child = 0; child < root.getNumChildren(); ++child) {
       Node& c = root.getChild(child);
-      int diff = c.getTotalWorkNeeded(timeEst)-c.numTotalSubDomains();
-      if (0>diff) {//child has extra work
+      int diff = c.getTotalWorkNeeded(timeEst) - c.numTotalSubDomains();
+      if (0 > diff) {//child has extra work
         int extra = abs(diff);
-        for (int block=0; (block<extra)&&(0<c.numSubDomains()); ++block) {
+        for (int block = 0; (block < extra) && (0 < c.numSubDomains()); ++block) {
           //move block from child to parent
           SubDomain* s = c.popSubDomain();
           if (NULL == s) {
@@ -94,10 +97,10 @@ void Balancer::perfBalance (Cluster &cluster, Decomposition& decomp, int config)
             changed = true;
           }
         }
-      } else if (0<diff) {//child needs more work
+      } else if (0 < diff) {  //child needs more work
 
         wr.setTimeDiff(timeEst - c.getTimeEst(0));
-        wr.setIndex(-1*child);//hack so I know to give to one of root's children
+        wr.setIndex(-1 * child);  //hack so I know to give to one of root's children
         wq.push(wr);
       }
     }
@@ -107,17 +110,17 @@ void Balancer::perfBalance (Cluster &cluster, Decomposition& decomp, int config)
        that need it
      */
 
-    while (0 < root.numSubDomains() && //there are blocks left to give
-          !wq.empty()) {//there are requests left to fill
+    while (0 < root.numSubDomains() &&  // there are blocks left to give
+          !wq.empty()) {  // there are requests left to fill
 
-      //get largest request
+      // get largest request
       WorkRequest tmp = wq.top();
       wq.pop();
 
       double newTimeDiff = 0.0;
       int id = tmp.getIndex();
-      if (id<=0) {//local child
-        id = -1*id;
+      if (id <= 0) {  // local child
+        id = -1 * id;
         SubDomain* s = root.popSubDomain();
         if (NULL == s) {
           fprintf(stderr, "perfBalance: ERROR NULL subdomain pointer.\n");
@@ -126,9 +129,9 @@ void Balancer::perfBalance (Cluster &cluster, Decomposition& decomp, int config)
           newTimeDiff = timeEst - root.getChild(id).getTimeEst(0);
           changed=true;
         }
-      } else { //request was from another node in cluster
+      } else { // request was from another node in cluster
         SubDomain* s = root.popSubDomain();
-        if(NULL == s){
+        if (NULL == s) {
           fprintf(stderr, "perfBalance: ERROR NULL subdomain pointer.\n");
         } else {
           cluster.getNode(id).addSubDomain(s);
@@ -144,21 +147,25 @@ void Balancer::perfBalance (Cluster &cluster, Decomposition& decomp, int config)
       }
     }
 
-
     //balance the work within each node
-    for (unsigned int node=0; node < cluster.getNumNodes(); ++node) {
-      changed |= balanceNode(cluster.getNode(node),timeEst);
+    for (unsigned int node = 0; node < cluster.getNumNodes(); ++node) {
+      changed |= balanceNode(cluster.getNode(node), timeEst);
     }
   } while (changed);
 
   /* the work is balanced, so we can fill the block directory */
   cluster.storeBlockLocs();
-  printNeighbors(cluster.getNode(0).getSubDomain(0)); /* DEBUG */
+  
 }
 
 void Balancer::balance (Cluster &cluster, Decomposition& decomp, int config) {
   //num cpu nodes
   unsigned int total_nodes = cluster.getNumNodes();
+  size_t num_blocks = decomp.getNumSubDomains();
+
+  //initialize block directory
+  cluster.setNumBlocks(num_blocks);
+
   if (config > -1) {
     unsigned int num_children = 0;
     for (unsigned int node = 0; node < cluster.getNumNodes(); ++node) {
@@ -195,6 +202,8 @@ void Balancer::balance (Cluster &cluster, Decomposition& decomp, int config) {
       }
     }
   }
+  /* the work is balanced, so we can fill the block directory */
+  cluster.storeBlockLocs();
 }
 
 

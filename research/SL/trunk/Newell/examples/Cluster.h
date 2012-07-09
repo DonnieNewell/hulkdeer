@@ -15,6 +15,7 @@ class Cluster{
     void storeBlockLocs();
     Node& getNode(int);
     unsigned int getNumNodes() const;
+    SubDomain* getBlockLinear(const int);
   private:
     void updateBlockNeighbors();
     vector<Node> nodes;

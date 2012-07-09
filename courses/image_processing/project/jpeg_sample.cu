@@ -191,6 +191,35 @@ unsigned char clamp_32f_to_8u(float val){
 	return (unsigned char) floor(val+0.5f);
 }
 
+/* code adapted from http://rosettacode.org/wiki/Bitmap/Bresenham's_line_algorithm#C */
+void line(unsigned char* img, int x0, int y0, int x1, int y1, int width, int height) {
+ 
+  int dx = abs(x1-x0), sx = x0<x1 ? 1 : -1;
+  int dy = abs(y1-y0), sy = y0<y1 ? 1 : -1; 
+  int err = (dx>dy ? dx : -dy)/2, e2;
+  x0 = min(x0,height-1); 
+  y0 = min(y0,width-1); 
+  x1 = min(x1,height-1); 
+  y1 = min(y1,width-1); 
+  for(;;){
+    img[3*(x0*width+y0)]=255;
+    img[3*(x0*width+y0)+1]=0;
+    img[3*(x0*width+y0)+2]=0;
+    if (x0==x1 && y0==y1) break;
+    e2 = err;
+    if (e2 >-dx) {
+ 	err -= dy; 
+	x0 += sx; 
+	if(x0 >= height) break;
+    }
+    if (e2 < dy) { 
+	err += dx; 
+	y0 += sy; 
+	if(y0 >= width) break;
+    }
+  }
+}
+
 /** returns non-zero on failure
 */
 int convert_8uC3_to_32fC4(const unsigned char* p_src, size_t n_src_width, size_t n_src_height, float *p_dst){
@@ -504,13 +533,12 @@ void write_interest(unsigned char* dst, int* interest, int width, int height){
 
 }
 
-void write_hessian(unsigned char* dst, double* det_hess, double* det_hess_cpu, int width, int height, int scale){
+void write_hessian(unsigned char* dst, double* det_hess, int width, int height, int scale){
 	double epsilon = .01;	
 	for(int i = 0; i<height; i++){
 		for(int j = 0; j<width; j++){
 			int index = i*width+j;
 			int offset = scale*width*height;
-			double difference = det_hess[offset+index]-det_hess_cpu[offset+index];
 			if(det_hess[offset+index]*det_hess[offset+index]>1.0){
 				//apply det_hess in dst
 				dst[index*3] = 255;
@@ -523,23 +551,80 @@ void write_hessian(unsigned char* dst, double* det_hess, double* det_hess_cpu, i
 
 }
 
-void mark_points(unsigned char* dst, int* src, int width, int height){
-	for(int i = 0; i<height; i++){
-		for(int j = 0; j<width; j++){
-			int index = i*width+j;
-			if(0!=src[index]){
-				//mark interest point in dst
-				for(int p = i-1; p < i +1; p++){
-					for(int q = j-1; q < j +1; q++){
-						int tmp = p*width+q;
-						dst[tmp*3+1] = 0;
-						dst[tmp*3+2] = 0;
-						dst[tmp*3] = 255;
-					}
+void mark_orientations(unsigned char* img, int* interest, int* orient,int num_points, int width, int height){
+	for(int pt=0; pt < num_points; pt++){
+		int i = interest[pt*3];
+		int j = interest[pt*3+1];
+		int index = i*width+j;
+		int orient_i = orient[pt*2];
+		int orient_j = orient[pt*2+1];
+		if(i <10 || i > height-10 ||j<10 || j>width-10)
+			continue;
+
+		//mark interest point in dst
+		double line_length = 10.0;
+		double scale = 2.0/sqrt(orient_i*orient_i+orient_j*orient_j);
+
+		//check for nan and infinity
+		if( isinf(scale) )
+			continue;
+		else if( isnan(scale) )
+			continue;
+		
+
+		int scaled_i= ceil(fabs(orient_i*scale));
+		int scaled_j = ceil(fabs(orient_j*scale));
+		
+		if(orient_i < 0)
+			scaled_i = floor(orient_i*scale);
+		else
+			scaled_i = ceil(orient_i*scale);
+
+		if(orient_j < 0)
+			scaled_j = floor(orient_j*scale);
+		else
+			scaled_j = ceil(orient_j*scale);
+
+	//	fprintf(stderr,"line(img,i:%d,j:%d,i+scaled_i:%d,j+scaled_j:%d,orient_i:%d,orient_j:%d,width,height);\n",i,j,scaled_i,scaled_j,orient_i, orient_j);
+		line(img,i,j,i+scaled_i, j+scaled_j,width,height);		
+	}
+}//end mark_orientations
+
+
+void mark_points(unsigned char* dst, int* src,int num_points, int width, int height){
+	for(int pt=0; pt < num_points; pt++){
+		int i = src[pt*3];
+		int j = src[pt*3+1];
+		int scale = src[pt*3+2];
+		int scale_offset = scale*width*height;
+		int index = i*width+j;
+		//mark interest point in dst
+		for(int p = max(0,i-scale-1); p < min(i +scale+1,height); p++){
+			for(int q = max(0,j-scale-1); q < min(j +scale+1,width); q++){
+				int tmp = p*width+q;
+
+				if(0==scale){	
+					dst[tmp*3+1] = 0;
+					dst[tmp*3+2] = 0;
+					dst[tmp*3] = 255;
+				}
+				if(1==scale){		
+					dst[tmp*3+1] = 0;
+					dst[tmp*3+2] = 255;
+					dst[tmp*3] = 0;
+				}
+				if(2==scale){	
+					dst[tmp*3+1] = 100;
+					dst[tmp*3+2] = 0;
+					dst[tmp*3] = 100;
+				}
+				else{
+					dst[tmp*3+1] = 0;
+					dst[tmp*3+2] = 255;
+					dst[tmp*3] = 255;
 				}
 			}
 		}
-
 	}
 }//end mark_points
 
@@ -575,7 +660,7 @@ int haar(int* img, int i, int j, int i_width, int i_height, float scale, int dir
 
 	int half_width = haar_width/2;
 	int black = 0, white=0;
-	
+
 	if(1==direction){ //y direction
 		black = img[i*width+j+half_width]-img[(i-half_width)*width+j+half_width]-
 			img[i*width+j-half_width]+img[(i-half_width)*width+j-half_width];
@@ -588,12 +673,12 @@ int haar(int* img, int i, int j, int i_width, int i_height, float scale, int dir
 			img[(i+half_width)*width+j]+img[(i-half_width)*width+j];
 	}
 	return -1*black+white;
-	
+
 }
 
 /* returns the value of 2d gaussian centered at the origin */
 float gauss(int x, int y, float sigma){
-		float sigma_squared = sigma*sigma;
+	float sigma_squared = sigma*sigma;
 	return ( 1 / sqrt(2*PI*sigma_squared)) * exp(-(x*x+y*y)/(2*sigma_squared));
 }
 
@@ -603,10 +688,10 @@ int getIndex(int rel_i, int rel_j, int itrst_i, int itrst_j, float angle_rotate,
 	int new_y = 0.5f+rel_i*sin(angle_rotate)+rel_j*cos(angle_rotate);
 	int actual_x = new_x + itrst_i;
 	int actual_y = new_y + itrst_j;
-	
+
 	if(actual_x < 0 || actual_x >=img_height || actual_y < 0 || actual_y >=img_width)
 		return -1;
-	
+
 	return actual_x*img_width+actual_y;
 }
 
@@ -614,7 +699,7 @@ float angle_between(int x0, int y0, int x1, int y1){
 	float angle = 0.0f;
 	float mag0 = sqrtf(x0*x0+y0*y0);
 	float mag1 = sqrtf(x1*x1+y1*y1);
-//	fprintf(stderr,"angle_between:mag0:%f, mag1:%f.\n",mag0,mag1);
+	//	fprintf(stderr,"angle_between:mag0:%f, mag1:%f.\n",mag0,mag1);
 	angle = acosf((x0*y0+x1*y1)/(mag0*mag1));
 	return angle;
 }
@@ -905,6 +990,8 @@ int main(int argc, char** argv)
 	char *templatename = argv[2];
 	char outfilename[80];
 	sprintf(outfilename,"out_%s",infilename);
+	char outfilename2[80];
+	sprintf(outfilename2,"out_%s",templatename);
 
 	unsigned char *raw_image=NULL;
 	unsigned char *temp=NULL;
@@ -1067,14 +1154,17 @@ int main(int argc, char** argv)
 
 	/* Mark up image */
 	//if(DEBUG) printf("marking interest points on image\n");
-	//mark_points(raw_image, interest_points, raw_width, raw_height);
-	//int scale = 1;
+	mark_orientations(raw_image, compact_interest_pts1, orient1, num_interest_points1, raw_width, raw_height);
+	mark_orientations(temp, compact_interest_pts2, orient2, num_interest_points2, temp_width, temp_height);
+	int scale = 3;
 	//write_interest(raw_image, interest_points, raw_width, raw_height);
-	//write_hessian(raw_image, det_hess, hDetHess1, raw_width, raw_height, scale);
+	//write_hessian(raw_image, det_hess1, raw_width, raw_height, scale);
 
 	/* then copy it to another file */
 	if(DEBUG) printf("write to file: %s\n",outfilename);
 	if( write_jpeg_file(raw_image, outfilename, raw_width, raw_height ) < 0 ) return -1;
+	if(DEBUG) printf("write to file: %s\n",outfilename2);
+	if( write_jpeg_file(temp, outfilename2, temp_width, temp_height ) < 0 ) return -1;
 	
 	/* clean up memory */
 	if(DEBUG)printf("cleaning up...\n");

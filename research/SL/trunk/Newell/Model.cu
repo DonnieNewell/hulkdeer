@@ -142,6 +142,7 @@ SACudaLats_t * makeSACudaLats()
 void disposeSACudaLats(SACudaLats_t * SACLs)
 {
     free(SACLs);
+    SACLs=NULL;
 }
 
 // Print out SACL values to aid in debugging.
@@ -210,6 +211,7 @@ dim3 initSAProps(int dims, dim3 input_size, dim3 stencil_size, int iterations, i
 void disposeSAProps(SAProps_t * SAPs)
 {
     free(SAPs);
+    SAPs=NULL;
 }
 
 // TODO It would be better if this were not a macro.

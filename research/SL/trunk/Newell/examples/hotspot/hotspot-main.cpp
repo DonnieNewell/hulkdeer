@@ -66,7 +66,9 @@ int main(int argc, char** argv) {
         MatrixTemp = (float *) malloc(num_elements * sizeof (float));
         readInput(MatrixTemp, grid_rows, grid_cols, tfile);
     }
+    // printf("about to set the Data.\n");
     runDistributedHotspotSetData(MatrixPower, num_elements);
+    printf("Set the Data.\n");
 
     float grid_width = chip_width / grid_cols;
     float grid_height = chip_height / grid_rows;
@@ -90,7 +92,8 @@ int main(int argc, char** argv) {
     usec = ((endtime.tv_sec - starttime.tv_sec) * 1000000 +
             (endtime.tv_usec - starttime.tv_usec));
     printf("Total time=%ld\n", usec);
-    writeOutput(MatrixTemp, grid_rows, grid_cols, ofile);
+    if (0 == rank)
+      writeOutput(MatrixTemp, grid_rows, grid_cols, ofile);
 
     MPI_Finalize();
     free(MatrixTemp);

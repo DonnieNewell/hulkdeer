@@ -160,21 +160,15 @@ SubDomain* Node::globalGetSubDomain(int index) const {
 }
 
 SubDomain* Node::getSubDomainLinear(int index) const {
-  for (unsigned int blockIndex = 0; blockIndex < numSubDomains(); ++blockIndex) {
-    SubDomain* block = getSubDomain(blockIndex);
+  for (unsigned int blockIndex = 0; blockIndex < numTotalSubDomains(); ++blockIndex) {
+    SubDomain* block = globalGetSubDomain(blockIndex);
     if (block->getLinIndex() == index) {
       return block;
     }
   }
-  for (unsigned int gpuIndex = 0; gpuIndex < getNumChildren(); ++gpuIndex) {
-    const Node& gpu = this->getChild(gpuIndex);
-    for (unsigned int blockIndex = 0; blockIndex < gpu.numSubDomains(); ++blockIndex) {
-      SubDomain* block = gpu.getSubDomain(blockIndex);
-      if (block->getLinIndex() == index) {
-        return block;
-      }
-    }
-  }
+#ifdef DEBUG
+  fprintf(stderr, "\n[%d]couldn't find block with linear index:%d", this->getRank(), index);
+#endif
   return NULL;
 }
 
@@ -194,4 +188,11 @@ const unsigned int Node::numTotalSubDomains() const {
     total += children.at(child).numSubDomains();
   }
   return total;
+}
+
+void printNode(Node& node) {
+  printf("node[%d]:\n", node.getRank());
+  for (unsigned int i = 0; i < node.numTotalSubDomains(); ++i) {
+    printf("  block[%d]\n", node.globalGetSubDomain(i)->getLinIndex());
+  }
 }

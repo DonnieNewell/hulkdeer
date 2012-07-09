@@ -1,5 +1,5 @@
-#DBG	= -pg -DDEBUG
-#DBG	= -g3 -gdwarf-2
+#DBG	= -DDEBUG
+DBG	= -g
 SDK 	= /af21/den4gr/NVIDIA_GPU_Computing_SDK
 #EMU	= -deviceemu
 CUDA	= /usr/local/cuda
@@ -7,8 +7,9 @@ F	= --compiler-options -fno-strict-aliasing
 INCLUDES= -I$(SDK)/C/common/inc -I$(CUDA)/include
 #MPIFLAGS= -rpath=/af21/den4gr/openmpi-install/lib
 LDFLAGS = -fopenmp
-CFLAGS	= $(DBG) -Wall -fopenmp -DDTYPE=float
-NVFLAGS	=  $(EMU) $(F) -arch sm_20 -DDTYPE=float
+DEFINES = -DDTYPE=float -DSL_MPI_TYPE=MPI_FLOAT
+CFLAGS	= $(DBG) -Wall -fopenmp $(DEFINES)
+NVFLAGS	=  $(EMU) $(F) -arch sm_20 $(DEFINES)
 LIBS	= -lcudart -L$(SDK)/C/common/lib -L$(CUDA)/lib64
 
 all:		hotspot

@@ -2,7 +2,7 @@
 /* test numerical correctness of distributed MPI cell version */
 
 #include <stdio.h>
-#include "mpi.h"
+#include <mpi.h>
 #include "../ompCell.h"
 #include "../distributedCell.h"
 

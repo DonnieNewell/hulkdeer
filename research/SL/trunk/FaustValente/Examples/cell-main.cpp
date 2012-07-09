@@ -3,7 +3,7 @@
     CS 6620 - Compilers
     Stencil App Language Project
     Authors: Greg Faust, Sal Valente, derived from code by Jiayuan Meng
-    
+
 
     File:   pathfinder-main.cpp     Contains a main routine to drive the pathfinder example.
 */
@@ -55,7 +55,7 @@ init(int argc, char** argv)
 	srand(seed);
 
 	for (int i = 0; i < J*K*L; i++)
-            data[i] = rand()%2;
+            data[i] = i;//rand()%2;
 
 }
 

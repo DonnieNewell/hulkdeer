@@ -150,6 +150,7 @@ void sendNumberOfChildren(const int dest_rank, const int numChildren) {
             xChildren, MPI_COMM_WORLD, &req);
   MPI_Waitall(1, &req, MPI_STATUSES_IGNORE);
 }
+
 void processSubDomain(int device, SubDomain *task, int timesteps,
                       int bornMin, int bornMax, int dieMin, int dieMax) {
   // DTYPE?
@@ -170,6 +171,7 @@ void processSubDomain(int device, SubDomain *task, int timesteps,
     gettimeofday(&end, NULL);
   }
 }
+
 double benchmarkPCIBus(SubDomain* pS, int gpuIndex) {
   struct timeval start, end;
   double total = 0.0;
@@ -385,7 +387,8 @@ void runDistributedCell(int rank, int numTasks, DTYPE *data, int x_max,
     lb.perfBalance(*cluster, decomp, 0);
     // lb.balance(*cluster, decomp, 0);
     gettimeofday(&balance_end, NULL);
-    printCluster(*cluster);  // DEBUG
+    //printCluster(*cluster);  // DEBUG
+    //printBlockLocations(*cluster);  // DEBUG
     balance_sec = secondsElapsed(balance_start, balance_end);
     fprintf(stderr, "***********\nBALANCE TIME: %f seconds.\n", balance_sec);
     gettimeofday(&process_start, NULL);

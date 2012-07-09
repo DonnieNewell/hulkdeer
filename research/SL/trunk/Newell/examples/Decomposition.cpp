@@ -210,7 +210,8 @@ void Decomposition::decompose(DTYPE* buffer, const int numDimensions,
   if (1 == numDimensions)
     decompose1D(buffer, numElements[0], stencil_size, pyramidHeight);
   else if (2 == numDimensions)
-    decompose2D(buffer, numElements[0], numElements[1], stencil_size, pyramidHeight);
+    decompose2D(buffer, numElements[0], numElements[1], stencil_size,
+            pyramidHeight);
   else if (3 == numDimensions)
     decompose3D(buffer, numElements[0], numElements[1], numElements[2],
                 stencil_size, pyramidHeight);
@@ -218,9 +219,8 @@ void Decomposition::decompose(DTYPE* buffer, const int numDimensions,
 
 void printDecomposition(Decomposition& d) {
   for (size_t s = 0; s < d.getNumSubDomains(); ++s) {
-    fprintf(stderr, "s[%zu] off[%d][%d][%d] len[%d][%d][%d].\n",
-            s, d.getSubDomain(s)->getOffset(0), d.getSubDomain(s)->getOffset(1),
-            d.getSubDomain(s)->getOffset(2), d.getSubDomain(s)->getLength(0),
-            d.getSubDomain(s)->getLength(1), d.getSubDomain(s)->getLength(2));
+    fprintf(stderr, "s[%zu] id[%d][%d][%d] lin_index[%d].\n",
+            s, d.getSubDomain(s)->getId()[0], d.getSubDomain(s)->getId()[1],
+            d.getSubDomain(s)->getId()[2], d.getSubDomain(s)->getLinIndex());
   }
 }

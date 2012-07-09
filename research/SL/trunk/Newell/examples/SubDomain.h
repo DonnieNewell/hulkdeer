@@ -69,6 +69,7 @@ class SubDomain {
     SubDomain& operator=(const SubDomain &);
     ~SubDomain();
     //needs to be set by compiler. DTYPE maybe?
+    int getDimensionality() const;
     void setId(int,int,int, int, int, int);
     void setLength(int, int);
     void setOffset(int, int);
@@ -102,4 +103,5 @@ class SubDomain {
 const char* neighborString(NeighborTag3D);
 const char* neighborString(NeighborTag2D);
 void printNeighbors(const SubDomain *s);
+void printSubDomain(const SubDomain *s);
 #endif

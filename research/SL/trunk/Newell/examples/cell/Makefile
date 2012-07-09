@@ -6,11 +6,12 @@ F	= --compiler-options -fno-strict-aliasing
 INCLUDES= -I$(SDK)/C/common/inc -I$(CUDA)/include
 #MPIFLAGS= -rpath=/af21/den4gr/openmpi-install/lib
 LDFLAGS = -fopenmp
-CFLAGS	= $(DBG) -Wall -fopenmp -DDTYPE=int
-NVFLAGS	= $(DBG)  $(EMU) $(F) -arch sm_20 -DDTYPE=int
+DEFINES = -DDTYPE=int -DSL_MPI_TYPE=MPI_INT
+CFLAGS	= $(DBG) -Wall -fopenmp $(DEFINES)
+NVFLAGS	= $(DBG)  $(EMU) $(F) -arch sm_20 $(DEFINES)
 LIBS	= -lcudart -L$(SDK)/C/common/lib -L$(CUDA)/lib64
 
-all:		cell lint.txt
+all:		cell 
 cell:		cell-main.o comm.o distributedCell.o cell.o ompCell.o Decomposition.o Node.o Cluster.o Balancer.o SubDomain.o
 		mpic++ -o $@ $^ $(LDFLAGS) $(LIBS)
 lint.txt:        ~/cpplint.py cell-main.cpp distributedCell.cpp ompCell.cpp

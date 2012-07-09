@@ -83,4 +83,5 @@ class Node{
   const double getMinEdgeWeight() const;
 };
 
+void printNode(Node& node);
 #endif

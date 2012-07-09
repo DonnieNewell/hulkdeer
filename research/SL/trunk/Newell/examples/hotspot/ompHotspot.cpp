@@ -32,7 +32,7 @@ typedef struct dim {
  * Store data between calls to SetData() and run().
  * This is basically a hack.
  */
-static DTYPE *global_ro_data = NULL;
+static DTYPE *omp_global_ro_data = NULL;
 
 /**
  * this depends on all blocks being the same size
@@ -40,8 +40,8 @@ static DTYPE *global_ro_data = NULL;
 static DTYPE *device_input = NULL, *device_output = NULL;
 
 // Macro to read read only data from within CellValue code.
-#define read(offset)(ro_data[offset])
-#define get(x_off, y_off)(global_ro_data[x + x_off + (y + y_off) * input_size.x])
+#define read(offset)(omp_global_ro_data[offset])
+#define get(x_off, y_off)(ro_data[x + x_off + (y + y_off) * input_size.x])
 
 DTYPE CellValue(dim3 input_size, int x, int y, DTYPE *ro_data,
                 float step_div_Cap, float Rx, float Ry, float Rz) {
@@ -76,6 +76,7 @@ extern "C" {
 void runOMPHotspotKernel(dim3 input_size, dim3 stencil_size, DTYPE *input,
                       DTYPE *output, int pyramid_height, DTYPE *ro_data,
                       float step_div_Cap, float Rx, float Ry, float Rz) {
+  //fprintf(stderr, "omp_global_ro_data:%p\n", omp_global_ro_data);
   dim3 border;
   border.x = border.y = border.z = 0;
   for (int iter = 0; iter < pyramid_height; ++iter) {
@@ -89,9 +90,8 @@ void runOMPHotspotKernel(dim3 input_size, dim3 stencil_size, DTYPE *input,
           // Get current cell value or edge value.
           // uidx = ez + input_size.y * (ey * input_size.x + ex);
           uidx = x + input_size.x * y;
-          output[uidx] = CellValue(input_size, x, y, input,
-                                      step_div_Cap, Rx, Ry, Rz);
-    
+          output[uidx] = CellValue(input_size, x, y, input, step_div_Cap, Rx,
+                                    Ry, Rz);
       }
     }
   }
@@ -103,6 +103,7 @@ void runOMPHotspotKernel(dim3 input_size, dim3 stencil_size, DTYPE *input,
 void runOMPHotspot(DTYPE *host_data, int x_max, int y_max,
                 int iterations, float step_div_Cap, float Rx, float Ry,
                 float Rz) {
+  //fprintf(stderr, "runOMPHotspot(host_data:%p, x_m:%d, y_m:%d, iterations:%d);", host_data, x_max, y_max, iterations);
   // User-specific parameters
   dim3 input_size;
   input_size.x = x_max;
@@ -128,7 +129,7 @@ void runOMPHotspot(DTYPE *host_data, int x_max, int y_max,
     if (iter + pyramid_height > iterations)
       pyramid_height = iterations - iter;
     runOMPHotspotKernel(input_size, stencil_size, device_input, device_output,
-                      pyramid_height, global_ro_data, step_div_Cap, Rx, Ry, Rz);
+                      pyramid_height, omp_global_ro_data, step_div_Cap, Rx, Ry, Rz);
     DTYPE *temp = device_input;
     device_input = device_output;
     device_output = temp;
@@ -137,10 +138,7 @@ void runOMPHotspot(DTYPE *host_data, int x_max, int y_max,
   memcpy(static_cast<void*>(host_data), static_cast<void*>(device_input),
           size*sizeof(DTYPE));
 
-  if (global_ro_data != NULL) {
-    delete [] global_ro_data;
-    global_ro_data = NULL;
-  }
+  
 }
 
 void runOMPHotspotCleanup() {
@@ -150,13 +148,17 @@ void runOMPHotspotCleanup() {
     delete [] device_output;
     device_output = NULL;
   }
+  if (omp_global_ro_data != NULL) {
+    delete [] omp_global_ro_data;
+    omp_global_ro_data = NULL;
+  }
 }
 
 /**
  * Store unnamed data on device.
  */
 void runOMPHotspotSetData(DTYPE *host_data, int num_elements) {
-  global_ro_data = new DTYPE[num_elements];
-  memcpy(static_cast<void*>(global_ro_data), static_cast<void*>(host_data),
+  omp_global_ro_data = new DTYPE[num_elements];
+  memcpy(static_cast<void*>(omp_global_ro_data), static_cast<void*>(host_data),
           num_elements*sizeof(DTYPE));
 }

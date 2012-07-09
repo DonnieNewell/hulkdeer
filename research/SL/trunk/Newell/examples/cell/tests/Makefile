@@ -6,9 +6,10 @@ F	= --compiler-options -fno-strict-aliasing
 INCLUDES= -I$(SDK)/C/common/inc -I$(CUDA)/include
 #MPIFLAGS= -rpath=/af21/den4gr/openmpi-install/lib
 LDFLAGS = -fopenmp
-CFLAGS	= $(DBG) -Wall -fopenmp -DDTYPE=int
-NVFLAGS	= $(DBG)  $(EMU) $(F) -arch sm_20 -DDTYPE=int
-LIBS	= -lcudart -L$(SDK)/C/common/lib -L$(CUDA)/lib64
+DEFINES = -DSL_MPI_TYPE=MPI_INT -DDTYPE=int
+CFLAGS	= $(DBG) -Wall -fopenmp $(DEFINES)
+NVFLAGS	= $(DBG)  $(EMU) $(F) -arch sm_20 $(DEFINES)
+LIBS	= -lcudart -L$(SDK)/C/common/lib -L$(CUDA)/lib64 
 
 all:		cudaOmpCorrectness ompMpiCorrectness lint.txt
 

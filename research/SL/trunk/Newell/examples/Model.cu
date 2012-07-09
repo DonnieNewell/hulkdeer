@@ -212,22 +212,17 @@ dim3 initSAProps(int dims, dim3 input_size, dim3 stencil_size, int iterations, i
     return SAPs->blockDims;
 }
 
-void disposeSAProps(SAProps_t * SAPs)
-{
-  if(NULL != SAPs)
-  {
-    if(NULL != SAPs->CFAs)
-    {
+void disposeSAProps(SAProps_t * SAPs) {
+  if (NULL != SAPs) {
+    if (NULL != SAPs->CFAs) {
       free(SAPs->CFAs);
       SAPs->CFAs=NULL;
     }
-    if(NULL != SAPs->SACLs)
-    {
+    if (NULL != SAPs->SACLs) {
       free(SAPs->SACLs);
       SAPs->SACLs=NULL;
     }
-    if(NULL != SAPs->CDPs)
-    {
+    if (NULL != SAPs->CDPs) {
       free(SAPs->CDPs);
       SAPs->CDPs=NULL;
     }
@@ -290,47 +285,47 @@ __global__ void dummyKernel ()
 //////////////////////////////////////////////////////////////////////////////////
 
 // Some helper functions for the main routine.
-static inline int div_ceil(int num, int denom)
-{
+static inline int div_ceil(int num, int denom) {
     return (int)((num + denom - 1) / denom);
 }
 
 // These are called by the model.
 // Most could probably be inlined.
-double workingSet(int edge, int dimension)
-{
+double workingSet(int edge, int dimension) {
     return (double)(iexp(edge,dimension));
 }
 
-double memLat(double numElements, int coalesceWidth, double memQueueLat, double uncontendedLat)
-{
+double memLat(double numElements, int coalesceWidth, double memQueueLat,
+        double uncontendedLat) {
     double concurrentRequests = ((double)numElements)/coalesceWidth;
     return (concurrentRequests*memQueueLat) + uncontendedLat;
 }
 
-double pyramidMemLat(int edge, int numBlocks, int halo, int dimension, int pyramidHeight, int coalesceWidth, double memQueueLat, double uncontendedLat)
-{
+double pyramidMemLat(int edge, int numBlocks, int halo, int dimension,
+        int pyramidHeight, int coalesceWidth, double memQueueLat,
+        double uncontendedLat) {
     double set = workingSet(edge-halo, dimension)*numBlocks;
     return pyramidHeight*memLat(set, coalesceWidth, memQueueLat, uncontendedLat);
 }
 
-double blockCompLat(double numElements, double IPC, double instPerElementPerWarp)
-{
+double blockCompLat(double numElements, double IPC,
+        double instPerElementPerWarp) {
     return ((double)instPerElementPerWarp)/IPC*numElements;
 }
 
-double pyramidBlockCompLat(int edge, int halo, int dimension, int pyramidHeight, double IPC, double instPerElementPerWarp)
-{
+double pyramidBlockCompLat(int edge, int halo, int dimension, int pyramidHeight,
+        double IPC, double instPerElementPerWarp) {
     double set = workingSet(edge-halo, dimension);
     return pyramidHeight*blockCompLat(set, IPC, instPerElementPerWarp);
 }
 
 // This is the main workhorse routine for the model.
-// It takes in properties of the Stencil Application, the Cuda device the app will run on, and the block and trapezoid sizes.
+// It takes in properties of the Stencil Application, the Cuda device the app
+// will run on, and the block and trapezoid sizes.
 // From these it calculates all the predicted latencies.
-// This should be called (repeatedly) by some routine that does the optimization of the block side and trapezoid height.
-double calcSACudaLats(SAProps_t * SAProps, int blockSize, int pyramidHeight)
-{
+// This should be called (repeatedly) by some routine that does the optimization
+// of the block side and trapezoid height.
+double calcSACudaLats(SAProps_t * SAProps, int blockSize, int pyramidHeight) {
     CudaDeviceProps_t * CDPs = SAPs->CDPs;
     SACudaLats_t * SACLs = SAPs->SACLs;
 
@@ -340,10 +335,11 @@ double calcSACudaLats(SAProps_t * SAProps, int blockSize, int pyramidHeight)
     double halo = SAProps->haloDims.x;
     int dims = SAProps->numDims;
     // double numBlocks = iexp(div_ceil(dataEdge, (blockSize - (pyramidHeight*halo))), dims);    
-    double numBlocks = iexp(dataEdge/(blockSize-(pyramidHeight*halo)),dims);
+    double numBlocks = iexp(dataEdge / (blockSize - (pyramidHeight * halo)),
+                            dims);
 
     // This seems to be two magic constants 0.5 and bankConflict.
-    double IPC = 0.5/SAProps->bankConflict;
+    double IPC = 0.5 / SAProps->bankConflict;
 
     // Jiayuan's comments.
     // This is for the GTX 280.
@@ -371,7 +367,8 @@ double calcSACudaLats(SAProps_t * SAProps, int blockSize, int pyramidHeight)
     // Staight from MatLab.
     double requestSize = 4;
     double bandwidth_BperCycle = 141.7 / 1.3;
-    double memQueueLat = requestSize*coalesceWidth/bandwidth_BperCycle*factor;
+    double memQueueLat =
+                    requestSize * coalesceWidth / bandwidth_BperCycle * factor;
 
     double numMPs = CDPs->multiProcessorCount;
     double numConcurrentBlocks = numBlocksPerMP*numMPs;
@@ -381,13 +378,22 @@ double calcSACudaLats(SAProps_t * SAProps, int blockSize, int pyramidHeight)
     // GGF double loadLat = ((double)numBlocks)/numConcurrentBlocks*SAProps->setupGlobalLoadsPerCell * 
     //            memLat(workingSet(blockSize, dims) * numConcurrentBlocks, coalesceWidth, memQueueLat, uncontendedLat);
     // Below is the original Jiayuan calculation.
-    double loadLat = SAProps->setupGlobalLoadsPerCell * memLat(workingSet(blockSize, dims)*numConcurrentBlocks, coalesceWidth, memQueueLat, uncontendedLat);
+    double loadLat = SAProps->setupGlobalLoadsPerCell *
+                        memLat(workingSet(blockSize, dims) *
+                        numConcurrentBlocks,
+                        coalesceWidth,
+                        memQueueLat,
+                        uncontendedLat);
     
     // GGF Why is the calculation of the store latency so different from the load latency??
     // GGF double storeLat = memLat(workingSet(blockSize - (pyramidHeight * halo), dims) * numConcurrentBlocks, coalesceWidth, memQueueLat, uncontendedLat);
     // Below is the original Jiayuan calculation.
-    double storeLat = ((double)numBlocks)/numConcurrentBlocks * 
-        memLat(workingSet(blockSize - (pyramidHeight * halo), dims) * numConcurrentBlocks, coalesceWidth, memQueueLat, uncontendedLat);
+    double storeLat = ((double)numBlocks) / numConcurrentBlocks *
+            memLat(workingSet(blockSize - (pyramidHeight * halo), dims) *
+                numConcurrentBlocks,
+            coalesceWidth,
+            memQueueLat,
+            uncontendedLat);
 
     double embeddedMemLat = ((double)SAProps->loopGlobalLoadsPerCell)*numBlocks / numConcurrentBlocks *
         pyramidMemLat(blockSize, numConcurrentBlocks, halo, dims, pyramidHeight, coalesceWidth, memQueueLat, uncontendedLat);

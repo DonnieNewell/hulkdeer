@@ -49,20 +49,21 @@ void Cluster::updateBlockNeighbors () {
       currentBlock->setNeighbors(this->blockLocations);
 //      printNeighbors(currentBlock);  // DEBUG
     }
-    printf("node[%d] has %d total dataBlocks.\n", rank, n.numTotalSubDomains());
+    // printf("node[%d] has %d total dataBlocks.\n", rank, n.numTotalSubDomains());
   }
 }
 
 /* stores the locations of all current work in the cluster */
 void Cluster::storeBlockLocs() {
   /* loop through every physical node */
-  for (unsigned int rank=0; rank < this->getNumNodes(); ++rank) {
+  for (unsigned int rank = 0; rank < this->getNumNodes(); ++rank) {
     const Node& n = this->getNode(rank);
 
     /* loop through work on each node */
     for (unsigned int block = 0; block < n.numSubDomains(); ++block) {
       SubDomain *currentBlock = n.getSubDomain(block);
       int linIndex = currentBlock->getLinIndex();
+      //fprintf(stderr, "***linIndex:%d.\n", linIndex);
       this->setBlockLoc(linIndex, rank);
     }
 
@@ -74,6 +75,7 @@ void Cluster::storeBlockLocs() {
       for(unsigned int block = 0; block < child.numSubDomains(); ++block) {
         SubDomain *currentBlock = child.getSubDomain(block);
         int linIndex = currentBlock->getLinIndex();
+        //fprintf(stderr, "***linIndex:%d.", linIndex);
         this->setBlockLoc(linIndex, rank);
       }
     }
@@ -87,6 +89,21 @@ void Cluster::setBlockLoc(size_t index, int loc) {
   this->blockLocations.at(index) = loc;
 }
 
+SubDomain* Cluster::getBlockLinear(const int kLinearIndex) {
+  SubDomain* result = NULL;
+  for (unsigned int node_index = 0; node_index < this->getNumNodes(); node_index++) {
+    Node &node = this->getNode(node_index);
+    result = node.getSubDomainLinear(kLinearIndex);
+    if (NULL != result) return result;
+    for (unsigned int child = 0; child < node.getNumChildren(); ++child) {
+      Node& child_node = node.getChild(child);
+      result = child_node.getSubDomainLinear(kLinearIndex);
+      if (NULL != result) return result;
+    }
+  }
+  return result;
+}
+
 /* prints the structure of the cluster */
 void printNode(int parentRank,Node& n) {
   for (unsigned int sd=0; sd < n.numSubDomains(); ++sd) {
@@ -98,14 +115,19 @@ void printNode(int parentRank,Node& n) {
 void printCluster(Cluster& c) {
   for (unsigned int node=0; node < c.getNumNodes(); node++) {
     Node &n = c.getNode(node);
+    printf("***********************************************\n");
     printf("node:%d weight:%f edgeWeight:%e has %d tasks.\n", node,
           n.getWeight(), n.getEdgeWeight(), n.numSubDomains());
+    //printNode(n);
     for (unsigned int child=0; child < n.getNumChildren(); ++child) {
       Node& ch = n.getChild(child);
+      printf("***********************************************\n");
       printf("\tchild:%d weight:%f edgeWeight:%e has %d tasks.\n",
             child, ch.getWeight(), ch.getEdgeWeight(), ch.numSubDomains());
+      //printNode(ch);
     }
   }
+  printf("***********************************************\n");
 }
 
 void printBlockLocations(Cluster& c) {

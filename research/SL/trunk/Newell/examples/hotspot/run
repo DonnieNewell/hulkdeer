@@ -6,7 +6,7 @@ STRONG_LIMIT=2
 for ((p=1; p <= WEAK_LIMIT ; p++))
 do
   echo -e "***** BEGIN WEAK ITERATION $p *****\n" 
-  mpirun -np $p -machinefile ../../machinefile -x LD_LIBRARY_PATH /af21/den4gr/hulkdeer/research/SL/trunk/Newell/examples/hotspot/hotspot 2000 1 1
+  mpirun -np $p -machinefile ../../machinefile -x LD_LIBRARY_PATH /af21/den4gr/hulkdeer/research/SL/trunk/Newell/examples/hotspot/hotspot 2000 100 1
   echo -e "***** END WEAK ITERATION   $p *****\n" 
 done
 

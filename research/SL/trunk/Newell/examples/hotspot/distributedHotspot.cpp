@@ -6,7 +6,7 @@ Copyright 2012 Donald Newell
 #ifndef WIN32
 #include <sys/time.h>
 #else
-#include < time.h>
+#include <time.h>
 #endif
 #include <limits>
 #include <fstream>
@@ -22,10 +22,11 @@ Copyright 2012 Donald Newell
 #define PYRAMID_HEIGHT 1
 
 const int kCPUIndex = -1;
+static DTYPE* global_data = NULL;
 
 void benchmarkMyself(Node* n, SubDomain* pS, int timesteps,
         float step_div_Cap, float Rx, float Ry, float Rz) {
-  fprintf(stderr, "benchmarkMyself(n:%p, pS:%p, timesteps:%d.\n", n, pS, timesteps);
+  // fprintf(stderr, "benchmarkMyself(n:%p, pS:%p, timesteps:%d.\n", n, pS, timesteps);
   // receive results for each device
     unsigned int total = n->getNumChildren() + 1;
     MPI_Request req[2];
@@ -35,7 +36,9 @@ void benchmarkMyself(Node* n, SubDomain* pS, int timesteps,
     int rank = -2;
 
     if (pS == NULL) {
+      fprintf(stderr, "about to receive data from node.\n");
         s = receiveDataFromNode(0, &rank);
+        fprintf(stderr, "received data from node.\n");
         if (-1 != rank) {
             fprintf(stderr, "data should be sent to device: -1, not:%d\n", rank);
         }
@@ -85,12 +88,19 @@ void benchmarkMyself(Node* n, SubDomain* pS, int timesteps,
         delete s;
         s = NULL;
     }
+    // fprintf(stderr, "leaving benchmarkMyself()\n");
 }
 
 void runDistributedHotspotSetData(DTYPE *data, int num_elements) {
     // TODO (donnie) this needs to have the MPI data type set dynamically
     const int kRootIndex = 0;
-    MPI_Bcast(data, num_elements, MPI_FLOAT, kRootIndex, MPI_COMM_WORLD);
+    global_data = data;
+    // printf("MPI_Bcast()\n");
+    MPI_Bcast(global_data, num_elements, SL_MPI_TYPE, kRootIndex, MPI_COMM_WORLD);
+    runHotspotSetData(global_data, num_elements);
+    // printf("runHotspotSetData()\n");
+    runOMPHotspotSetData(global_data, num_elements);
+    // printf("runOMPHotspotSetData()\n");
 }
 
 void receiveData(int rank, Node* n, bool processNow, int pyramidHeight,
@@ -133,7 +143,7 @@ void receiveData(int rank, Node* n, bool processNow, int pyramidHeight,
     }
     fprintf(stderr, "[%d] comm. time %f, process time %f.\n",
             n->getRank(), receiveDataTime, processBlockTime);
-    runHotspotCleanup();
+    //runHotspotCleanup();
 }
 
 void getNumberOfChildren(int* numChildren) {
@@ -142,7 +152,7 @@ void getNumberOfChildren(int* numChildren) {
     if (cudaSuccess == cudaErrorNoDevice) {
         *numChildren = 0;
     } else if (cudaSuccess != err) {
-        fprintf(stderr, "error detecting cuda-enabled devices\n");
+        fprintf(stderr, "no CUDA-enabled devices.\n");
         *numChildren = 0;
     }
 }
@@ -164,12 +174,16 @@ void processSubDomain(int device, SubDomain *task, int timesteps,
     struct timeval start, end;
     if (-1 == device) {
         // run on CPU
+      //fprintf(stderr, "about to runOMPHotspot();\n");
         runOMPHotspot(buff, height, width, timesteps, step_div_Cap, Rx, Ry, Rz);
+      //fprintf(stderr, "finished runOMPHotspot();\n");
     } else {
         // run on GPU
         gettimeofday(&start, NULL);
-        runHotspot(buff, height, width, timesteps, step_div_Cap,
+        //fprintf(stderr, "about to runHotspot();\n");
+      runHotspot(buff, height, width, timesteps, step_div_Cap,
                 Rx, Ry, Rz, device);
+        //fprintf(stderr, "finished runOMPHotspot();\n");
         gettimeofday(&end, NULL);
     }
 }
@@ -187,8 +201,7 @@ double benchmarkPCIBus(SubDomain* pS, int gpuIndex) {
             return -1.0;
         }
     }
-    size_t size = sizeof (DTYPE) * pS->getLength(0) *
-            pS->getLength(1) * pS->getLength(2);
+    size_t size = sizeof (DTYPE) * pS->getLength(0) * pS->getLength(1);
     cudaMalloc(&devBuffer, size);
     cudaMemcpy(static_cast<void*> (devBuffer), static_cast<void*> (pS->getBuffer()),
             size, cudaMemcpyHostToDevice);
@@ -362,35 +375,36 @@ void runDistributedHotspot(int rank, int numTasks, DTYPE *data, int x_max, int y
         cluster = new Cluster(numTasks);
         cluster->getNode(0).setNumChildren(deviceCount);
         receiveNumberOfChildren(numTasks, cluster);
+        cout << "received number of children.\n";
         /* perform domain decomposition */
         int numElements[2] = {y_max, x_max};
         decomp.decompose(data, 2, numElements, new_stencil_size, PYRAMID_HEIGHT);
 #ifdef DEBUG
         printDecomposition(decomp);
 #endif
-        log << "finished decomposition.\n";
+        cout << "finished decomposition.\n";
         benchmarkCluster(cluster, decomp.getSubDomain(0), iterations,
                 step_div_Cap, Rx, Ry, Rz);
-        log << "benchmarked Cluster.\n";
+        cout << "benchmarked Cluster.\n";
         /* now perform the load balancing, assigning task blocks to each node */
         gettimeofday(&balance_start, NULL);
         // passing a 0 means use cpu and gpu on all nodes
         lb.perfBalance(*cluster, decomp, 0);
         // lb.balance(*cluster, decomp, 0);
-        log << "performed load balancing.\n";
+        cout << "performed load balancing.\n";
         gettimeofday(&balance_end, NULL);
         printCluster(*cluster); // DEBUG
         balance_sec = secondsElapsed(balance_start, balance_end);
         fprintf(stderr, "***********\nBALANCE TIME: %f seconds.\n", balance_sec);
         gettimeofday(&process_start, NULL);
-        log << "sending work to cluster.\n";
+        cout << "sending work to cluster.\n";
         sendWorkToCluster(cluster);
         // TODO(den4gr) Is this a deep copy??
         // root's work is in the first node
         myWork = cluster->getNode(0);
         /* PROCESS ROOT NODE WORK */
         gettimeofday(&comp_start, NULL);
-        log << "processing root work.\n";
+        cout << "processing root work.\n";
         processWork2D(&myWork, iterations, kPyramidHeight, new_stencil_size,
                 step_div_Cap, Rx, Ry, Rz);
         gettimeofday(&comp_end, NULL);
@@ -398,7 +412,7 @@ void runDistributedHotspot(int rank, int numTasks, DTYPE *data, int x_max, int y
         fprintf(stdout, "*********\nroot processing time: %f sec\n",
                 time_root_compute);
 
-        log << "getting results from cluster.\n";
+        cout << "getting results from cluster.\n";
         gettimeofday(&rec_start, NULL);
         getResultsFromCluster(cluster);
         gettimeofday(&rec_end, NULL);
@@ -418,17 +432,22 @@ void runDistributedHotspot(int rank, int numTasks, DTYPE *data, int x_max, int y
         const bool kInterleaveProcessing = true;
         int remainingIterations = 0;
         // send number of children to root
-        log << "[" << rank << "] sending number of children to root.\n";
+        cout << "[" << rank << "] sending number of children to root.\n";
         sendNumberOfChildren(0, deviceCount);
+        cout << "["<<rank<<"] sent number of children.\n";
         benchmarkMyself(&myWork, NULL, iterations, step_div_Cap, Rx, Ry, Rz);
+        cout << "["<<rank<<"] benchmarked myself\n";
         receiveData(0, &myWork, kInterleaveProcessing, kPyramidHeight,
                 step_div_Cap, Rx, Ry, Rz);
+        cout << "["<<rank<<"] received the data\n";
         remainingIterations = iterations - kPyramidHeight;
         processWork2D(&myWork, remainingIterations, kPyramidHeight, new_stencil_size,
                 step_div_Cap, Rx, Ry, Rz);
+        cout << "["<<rank<<"] processed the work.\n";
         // send my work back to the root
         myWork.setRank(0);
         sendData(&myWork);
+        cout << "["<<rank<<"] sent the results.\n";
     }
     log.close();
 }

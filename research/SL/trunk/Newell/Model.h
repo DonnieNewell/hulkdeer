@@ -13,7 +13,7 @@
 #include <stdint.h>
 
 // This flag controls whether the templates and mains are gathering statistics or running normally.
-#define STATISTICS
+//#define STATISTICS
 
 #define MIN(a, b) ((a < b) ? a : b)
 #define MAX(a, b) ((a > b) ? a : b)
