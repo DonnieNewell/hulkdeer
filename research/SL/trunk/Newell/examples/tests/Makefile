@@ -9,12 +9,12 @@ DEFINES = -DSL_MPI_TYPE=MPI_INT -DDTYPE=int
 CFLAGS	= $(DBG) -Wall -fopenmp $(DEFINES)
 LIBS	= -lcudart -L$(SDK)/C/common/lib -L$(CUDA)/lib64 
 
-all:		commTest
+all:		comm2DTest
 
-commTest:	commTest.o comm.o Cluster.o Node.o SubDomain.o
+comm2DTest:	comm2DTest.o comm.o Cluster.o Node.o SubDomain.o
 		mpic++ -o $@ $^ $(LDFLAGS) $(LIBS)
 
-commTest.o:	commTest.cpp ../comm.h
+comm2DTest.o:	comm2DTest.cpp ../comm.h
 		mpic++ $(INCLUDES) $(CFLAGS) -c $<
 
 comm.o:	        ../comm.cpp ../comm.h
