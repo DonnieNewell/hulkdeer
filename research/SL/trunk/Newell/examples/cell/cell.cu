@@ -27,6 +27,20 @@
  */
 __shared__ DTYPE shmem[TILE_DEPTH][TILE_HEIGHT][TILE_WIDTH];
 
+
+/**
+ * Store data between calls to SetData() and run().
+ * This is basically a hack.
+ */
+static DTYPE *global_ro_data = NULL;
+
+/**
+ * this depends on all blocks being the same size
+ */
+static DTYPE *device_input = NULL, *device_output = NULL;
+
+static int pyramid_height = -1;
+
 __device__ DTYPE get(int x, int y, int z)
 {
     return shmem[threadIdx.z+z][threadIdx.y+y][threadIdx.x+x];
@@ -116,13 +130,13 @@ void runCellKernel(dim3 input_size, dim3 stencil_size,
     ex = x;
     ey = y;
     ez = z;
-    const int kValidIndex = 1;
+    const int kValidIndex = 0;
     if (ex < kValidIndex) ex = kValidIndex;
     if (ey < kValidIndex) ey = kValidIndex;
     if (ez < kValidIndex) ez = kValidIndex;
-    if (ex >= input_size.x - kValidIndex) ex = input_size.x - 2 * kValidIndex;
-    if (ey >= input_size.y - kValidIndex) ey = input_size.y - 2 * kValidIndex;
-    if (ez >= input_size.z - kValidIndex) ez = input_size.z - 2 * kValidIndex;
+    if (ex >= input_size.x) ex = input_size.x - 1;
+    if (ey >= input_size.y) ey = input_size.y - 1;
+    if (ez >= input_size.z) ez = input_size.z - 1;
     inside = ((x == ex) && (y == ey) && (z == ez));
     // Get current cell value or edge value.
     //uidx = ez + input_size.y * (ey * input_size.x + ex);
@@ -140,13 +154,13 @@ void runCellKernel(dim3 input_size, dim3 stencil_size,
             border.x += stencil_size.x;
             border.y += stencil_size.y;
             border.z += stencil_size.z;
-            inside = ((tx >= border.x) && (tx < blockDim.x-border.x) &&
-                      (ty >= border.y) && (ty < blockDim.y-border.y) &&
-                      (tz >= border.z) && (tz < blockDim.z-border.z));
+            inside = ((tx >= border.x) && (tx < blockDim.x - border.x) &&
+                      (ty >= border.y) && (ty < blockDim.y - border.y) &&
+                      (tz >= border.z) && (tz < blockDim.z - border.z));
         }
         if (inside) {
-            value = CellValue(input_size, x, y, z, ro_data
-                              , bornMin, bornMax, dieMin, dieMax);
+            value = CellValue(input_size, x, y, z, ro_data, bornMin, bornMax,
+                    dieMin, dieMax);
         }
         if (iter >= pyramid_height) {
             if (inside) {
@@ -155,23 +169,10 @@ void runCellKernel(dim3 input_size, dim3 stencil_size,
             break;
         }
         __syncthreads();
-
         shmem[tz][ty][tx] = value;
     }
 }
 
-/**
- * Store data between calls to SetData() and run().
- * This is basically a hack.
- */
-static DTYPE *global_ro_data = NULL;
-
-/**
- * this depends on all blocks being the same size
- */
-static DTYPE *device_input = NULL, *device_output = NULL;
-
-static int pyramid_height = -1; 
 /**
  * Function exported to do the entire stencil computation.
  */

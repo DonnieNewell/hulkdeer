@@ -1,5 +1,5 @@
 /* copyright 2012 Donnie Newell */
-/* test numerical correctness of distributed MPI cell version */
+/* test numerical correctness of OpenMP and CUDA cell version */
 
 #include <stdio.h>
 #include "../ompCell.h"
@@ -11,7 +11,7 @@ DTYPE* initInput(const int kI, const int kJ, const int kK) {
     for (int y = 0; y < kJ; ++y) {
       for (int x = 0; x < kK; ++x) {
         int uidx = z * kJ * kK + y * kK + x;
-        data[uidx] = x;
+        data[uidx] = x % 2;
       }
     }
   }
@@ -20,9 +20,9 @@ DTYPE* initInput(const int kI, const int kJ, const int kK) {
 
 void printData(const DTYPE* data, const int I, const int J, const int K) {
   for (int i = 0; i < I; ++i) {
-    printf("i == %d *****************************************\n",i);
-    for (int j = 0; j < J; ++j) {
-      printf("row[%.2d]: ",j);
+    printf("i == %d *****************************************\n", i);
+    for (int j = J - 1; j >= 0; --j) {
+      printf("row[%.2d]: ", j);
       for (int k = 0; k < K; ++k) {
         printf("%d ", data[(i * K * J) + (j * K) + k]);
       }
@@ -43,19 +43,19 @@ bool compare(DTYPE* data1, DTYPE* data2, int length) {
 
 int main(int argc, char** argv) {
   DTYPE* ompData = NULL, *cudaData = NULL;
-  const int kDataSize = 8;
-  int iterations = 5;
+  const int kDataSize = 6;
+  int iterations = 1;
   int device = 0;
-  int dieMin = 10;
-  int dieMax = 3;
+  int dieMin = 15;
+  int dieMax = 25;
   int bornMin = 5;
-  int bornMax = 8;
+  int bornMax = 10;
   bool testPass;
   printf("starting correctness test.\n");
   printf("running OpenMP version.\n");
   ompData = initInput(kDataSize, kDataSize, kDataSize);
   runOMPCell(ompData, kDataSize, kDataSize, kDataSize, iterations,
-      bornMin, bornMax, dieMin, dieMax);
+          bornMin, bornMax, dieMin, dieMax);
   runOMPCellCleanup();
 
   printf("running CUDA version.\n");
@@ -63,20 +63,21 @@ int main(int argc, char** argv) {
   runCell(cudaData, kDataSize, kDataSize, kDataSize, iterations,
           bornMin, bornMax, dieMin, dieMax, device);
   //runCell(cudaData, kDataSize, kDataSize, kDataSize, iterations,
-    //      bornMin, bornMax, dieMin, dieMax);
+  //      bornMin, bornMax, dieMin, dieMax);
   runCellCleanup();
   printf("ending correctness test.\n");
   printf("cudaData:%p, ompData:%p\n", cudaData, ompData);
   testPass = compare(cudaData, ompData, kDataSize * kDataSize * kDataSize);
+  printf("CUDA DATA ======================\n");
+  printData(cudaData, kDataSize, kDataSize, kDataSize);
+  printf("OpenMP DATA ======================\n");
+  printData(ompData, kDataSize, kDataSize, kDataSize);
+
   if (testPass) {
     printf("Correctness passed\n");
     return 0;
   } else {
     printf("Correctness failed\n");
-    printf("CUDA DATA ======================\n");
-    printData(cudaData, kDataSize, kDataSize, kDataSize);
-    printf("OpenMP DATA ======================\n");
-    printData(ompData, kDataSize, kDataSize, kDataSize);
     return 1;
   }
 }
