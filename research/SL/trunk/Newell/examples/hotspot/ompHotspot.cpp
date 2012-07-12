@@ -41,19 +41,20 @@ static DTYPE *device_input = NULL, *device_output = NULL;
 
 // Macro to read read only data from within CellValue code.
 #define read(offset)(omp_global_ro_data[offset])
-#define get(x_off, y_off)(ro_data[x + x_off + (y + y_off) * input_size.x])
+#define get(x_off, y_off) ( ro_data[x + x_off + (y + y_off) * input_size.x] )
 
-DTYPE CellValue(dim3 input_size, int x, int y, DTYPE *ro_data,
-                float step_div_Cap, float Rx, float Ry, float Rz) {
-  int uidx = x + y * input_size.x;
+DTYPE CellValue(dim3 input_size, int x, int y, DTYPE *ro_data, 
+                float step_div_Cap, float Rx, float Ry, float Rz, dim3 border) {
+  int uidx = (x - border.x) + (y - border.y) * (input_size.x - 2 * border.x);
   float pvalue, value, term1, term2, term3, sum;
+  
   pvalue = read(uidx);
   value = get(0, 0);
   term1 = (get(0, 1) + get(0, -1) - value - value) / Ry;
   term2 = (get(1, 0) + get(-1, 0) - value - value) / Rx;
   term3 = (80.0 - value) / Rz;
   sum = pvalue + term1 + term2 + term3;
-  return(value + step_div_Cap * sum);
+  return value + step_div_Cap * sum;
 }
 
 /**
@@ -85,14 +86,62 @@ void runOMPHotspotKernel(dim3 input_size, dim3 stencil_size, DTYPE *input,
     int uidx = -1;
     // (x, y, z) is the location in the input of this thread.
   #pragma omp parallel for private(uidx) shared(output)
-    for (int y = border.y; y < input_size.y-border.y; ++y) {
-      for (int x = border.x; x < input_size.x-border.x; ++x) {
+    for (int y = border.y; y < input_size.y - border.y; ++y) {
+      for (int x = border.x; x < input_size.x - border.x; ++x) {
           // Get current cell value or edge value.
           // uidx = ez + input_size.y * (ey * input_size.x + ex);
           uidx = x + input_size.x * y;
-          output[uidx] = CellValue(input_size, x, y, input, step_div_Cap, Rx,
-                                    Ry, Rz);
+
+          output[uidx] = CellValue(input_size, x, y, input, step_div_Cap,
+                                    Rx, Ry, Rz, border);
       }
+    }
+  }
+}
+
+void copyFromHostData(DTYPE* dest_data, DTYPE* host_data, dim3 size, dim3 border) {
+  int length_y = size.y - 2 * border.y;
+  int length_x = size.x - 2 * border.x;
+  for (int i = 0; i < size.y; ++i) {
+    for (int j = 0; j < size.x; ++j) {
+      int src_i = i;
+      int src_j = j;
+
+      // set i
+      if (src_i < border.y)
+        src_i = 0;
+      else if (src_i >= border.y && src_i < (size.y - border.y - 1))
+        src_i -= border.y;
+      else
+        src_i = length_y - 1;
+
+      // set j
+      if (src_j < border.x)
+        src_j = 0;
+      else if (src_j >= border.x && src_j < (size.x - border.x - 1))
+        src_j -= border.x;
+      else
+        src_j = length_x - 1;
+
+      int src_index = src_i * length_x + src_j;
+      int dest_index = i * size.x + j;
+      dest_data[dest_index] = host_data[src_index];
+    }
+  }
+
+}
+
+void copyToHostData(DTYPE* host_data, DTYPE* src_data, dim3 size_src,
+        dim3 border) {
+  const int kLengthY = size_src.y - 2 * border.y;
+  const int kLengthX = size_src.x - 2 * border.x;
+  const int kOffsetY = border.y;
+  const int kOffsetX = border.x;
+  for (int i = 0; i < kLengthY; ++i) {
+    for (int j = 0; j < kLengthX; ++j) {
+      int source_index = (kOffsetY + i) * size_src.x + (kOffsetX + j);
+      int destination_index = i * kLengthX + j;
+      host_data[destination_index] = src_data[source_index];
     }
   }
 }
@@ -105,22 +154,24 @@ void runOMPHotspot(DTYPE *host_data, int x_max, int y_max,
                 float Rz) {
   //fprintf(stderr, "runOMPHotspot(host_data:%p, x_m:%d, y_m:%d, iterations:%d);", host_data, x_max, y_max, iterations);
   // User-specific parameters
-  dim3 input_size;
-  input_size.x = x_max;
-  input_size.y = y_max;
   dim3 stencil_size;
   stencil_size.x = 1;
   stencil_size.y = 1;
-  
+  dim3 border;
+  border.x = PYRAMID_HEIGHT * stencil_size.x;
+  border.y = PYRAMID_HEIGHT * stencil_size.y;
+  dim3 input_size;
+  input_size.x = x_max + 2 * border.x;
+  input_size.y = y_max + 2 * border.y;
+
   int size = input_size.x * input_size.y;
   if (NULL == device_input && NULL == device_output) {
     device_output = new DTYPE[size]();
     device_input = new DTYPE[size]();
   }
 
-  memcpy(static_cast<void*>(device_input), static_cast<void*>(host_data),
-          size * sizeof(DTYPE));
-
+  copyFromHostData(device_input, host_data, input_size, border);
+  
   // Now we can calculate the pyramid height.
   int pyramid_height = PYRAMID_HEIGHT;
 
@@ -135,10 +186,7 @@ void runOMPHotspot(DTYPE *host_data, int x_max, int y_max,
     device_output = temp;
   }
 
-  memcpy(static_cast<void*>(host_data), static_cast<void*>(device_input),
-          size*sizeof(DTYPE));
-
-  
+  copyToHostData(host_data, device_input, input_size, border);
 }
 
 void runOMPHotspotCleanup() {

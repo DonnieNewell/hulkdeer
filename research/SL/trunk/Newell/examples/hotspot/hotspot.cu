@@ -93,6 +93,7 @@ void runHotspotKernel(dim3 input_size, dim3 stencil_size,
   // Get current cell value or edge value.
   uidx = ey * input_size.x + ex;
   value = input[uidx];
+  
   inside = ((x == ex) && (y == ey));
 
   // Store value in shared memory for stencil calculations, and go.
@@ -109,8 +110,7 @@ void runHotspotKernel(dim3 input_size, dim3 stencil_size,
               (ty >= border.y) && (ty < blockDim.y - border.y));
     }
     if (inside) {
-      value = CellValue(input_size, x, y, ro_data
-              , step_div_Cap, Rx, Ry, Rz);
+      value = CellValue(input_size, x, y, ro_data, step_div_Cap, Rx, Ry, Rz);
     }
     if (iter >= pyramid_height) {
       if (inside)
@@ -177,6 +177,7 @@ void runHotspot(DTYPE *host_data, int x_max, int y_max, int iterations,
   // printf("runHotspot(host_data:%p, x_max:%d, y_max:%d, iterations:%d, step_div_Cap:%f, Rx:%f, Ry:%f, Rz:%f, device:%d);\n",
   //        host_data, x_max, y_max, iterations, step_div_Cap, Rx, Ry, Rz, device);
   // User-specific parameters
+  const int kZero = 0;
   dim3 input_size(x_max, y_max);
   dim3 stencil_size(1, 1);
   cudaError_t cuda_error;
@@ -198,11 +199,10 @@ void runHotspot(DTYPE *host_data, int x_max, int y_max, int iterations,
       return;
     }
   }
+// printf("about to cudaMemset();\n");
+    cuda_error = cudaMemset((void*) device_output[device], kZero, num_bytes);
+    // printf("cudaMemset(device_output[%d]:%p, newValue:%d, num_bytes:%d)\n", device, device_output[device], newValue, num_bytes);
 
-  const int newValue = 0;
-  // printf("about to cudaMemset();\n");
-  cuda_error = cudaMemset((void*) device_output[device], newValue, num_bytes);
-  // printf("cudaMemset(device_output[%d]:%p, newValue:%d, num_bytes:%d)\n", device, device_output[device], newValue, num_bytes);
   cudaMemcpy(device_input[device], host_data, num_bytes, cudaMemcpyHostToDevice);
   //cuda_error = cudaMemcpy(device_input, host_data, num_bytes, cudaMemcpyHostToDevice);
   if (cudaSuccess != cuda_error) {
@@ -241,13 +241,14 @@ void runHotspot(DTYPE *host_data, int x_max, int y_max, int iterations,
   for (int iter = 0; iter < iterations; iter += pyramid_height) {
     if (iter + pyramid_height > iterations)
       tmp_pyramid_height = iterations - iter;
-
+    
     runHotspotKernel <<< grid_dims, tile_size >>>(
             input_size, stencil_size, device_input[device], device_output[device],
             tmp_pyramid_height, cuda_global_ro_data[device], step_div_Cap, Rx, Ry, Rz);
     DTYPE *temp = device_input[device];
     device_input[device] = device_output[device];
     device_output[device] = temp;
+    
   }
 
   // Device to host
