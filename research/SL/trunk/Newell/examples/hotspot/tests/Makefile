@@ -11,13 +11,22 @@ CFLAGS	= $(DBG) -Wall -fopenmp $(DEFINES)
 NVFLAGS	= $(DBG)  $(EMU) $(F) -arch sm_20 $(DEFINES)
 LIBS	= -lcudart -L$(SDK)/C/common/lib -L$(CUDA)/lib64 
 
-all:		cudaOmpCorrectnessHotspot
+all:		cudaOmpCorrectnessHotspot ompMpiCorrectness
 
 cudaOmpCorrectnessHotspot:	cudaOmpCorrectnessHotspot.o hotspot.o ompHotspot.o
-		g++ -o $@ $^ -pg $(LDFLAGS) $(LIBS)
+		g++ -o $@ $^ $(LDFLAGS) $(LIBS)
+
+ompMpiCorrectness:	ompMpiCorrectness.o comm.o distributedHotspot.o hotspot.o ompHotspot.o Decomposition.o Node.o Cluster.o Balancer.o SubDomain.o
+		mpic++ -o $@ $^ -pg $(LDFLAGS) $(LIBS)
 
 cudaOmpCorrectnessHotspot.o:	cudaOmpCorrectnessHotspot.cpp ../ompHotspot.h ../hotspot.h
 		g++ $(INCLUDES) $(CFLAGS) -c $<
+ 
+ompMpiCorrectness.o:	ompMpiCorrectness.cpp ../ompHotspot.h ../distributedHotspot.h
+		mpic++ $(INCLUDES) $(CFLAGS) -c $<
+
+distributedHotspot.o:	../distributedHotspot.cpp ../distributedHotspot.h
+		mpic++ $(INCLUDES) $(CFLAGS) -c $<
 
 ompHotspot.o:	../ompHotspot.cpp ../ompHotspot.h
 		g++ $(INCLUDES) $(CFLAGS) -c $<

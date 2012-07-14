@@ -28,6 +28,12 @@ typedef struct dim {
   int z;
 } dim3;
 
+void copyToHostData(DTYPE* host_data, DTYPE* src_data, dim3 size_src,
+        dim3 border);
+void copyFromHostData(DTYPE* dest_data, DTYPE* host_data, dim3 size,
+        dim3 border);
+
+
 /**
  * Store data between calls to SetData() and run().
  * This is basically a hack.
@@ -92,59 +98,14 @@ void runOMPHotspotKernel(dim3 input_size, dim3 stencil_size, DTYPE *input,
           // uidx = ez + input_size.y * (ey * input_size.x + ex);
           uidx = x + input_size.x * y;
 
-          output[uidx] = CellValue(input_size, x, y, input, step_div_Cap,
-                                    Rx, Ry, Rz, border);
+          //output[uidx] = CellValue(input_size, x, y, input, step_div_Cap,
+            //                        Rx, Ry, Rz, border);
+          output[uidx] = input[uidx];  // DEBUG *******************************
       }
     }
   }
 }
 
-void copyFromHostData(DTYPE* dest_data, DTYPE* host_data, dim3 size, dim3 border) {
-  int length_y = size.y - 2 * border.y;
-  int length_x = size.x - 2 * border.x;
-  for (int i = 0; i < size.y; ++i) {
-    for (int j = 0; j < size.x; ++j) {
-      int src_i = i;
-      int src_j = j;
-
-      // set i
-      if (src_i < border.y)
-        src_i = 0;
-      else if (src_i >= border.y && src_i < (size.y - border.y - 1))
-        src_i -= border.y;
-      else
-        src_i = length_y - 1;
-
-      // set j
-      if (src_j < border.x)
-        src_j = 0;
-      else if (src_j >= border.x && src_j < (size.x - border.x - 1))
-        src_j -= border.x;
-      else
-        src_j = length_x - 1;
-
-      int src_index = src_i * length_x + src_j;
-      int dest_index = i * size.x + j;
-      dest_data[dest_index] = host_data[src_index];
-    }
-  }
-
-}
-
-void copyToHostData(DTYPE* host_data, DTYPE* src_data, dim3 size_src,
-        dim3 border) {
-  const int kLengthY = size_src.y - 2 * border.y;
-  const int kLengthX = size_src.x - 2 * border.x;
-  const int kOffsetY = border.y;
-  const int kOffsetX = border.x;
-  for (int i = 0; i < kLengthY; ++i) {
-    for (int j = 0; j < kLengthX; ++j) {
-      int source_index = (kOffsetY + i) * size_src.x + (kOffsetX + j);
-      int destination_index = i * kLengthX + j;
-      host_data[destination_index] = src_data[source_index];
-    }
-  }
-}
 
 /**
  * Function exported to do the entire stencil computation.
@@ -209,4 +170,52 @@ void runOMPHotspotSetData(DTYPE *host_data, int num_elements) {
   omp_global_ro_data = new DTYPE[num_elements];
   memcpy(static_cast<void*>(omp_global_ro_data), static_cast<void*>(host_data),
           num_elements*sizeof(DTYPE));
+}
+
+
+void copyFromHostData(DTYPE* dest_data, DTYPE* host_data, dim3 size, dim3 border) {
+  int length_y = size.y - 2 * border.y;
+  int length_x = size.x - 2 * border.x;
+  for (int i = 0; i < size.y; ++i) {
+    for (int j = 0; j < size.x; ++j) {
+      int src_i = i;
+      int src_j = j;
+
+      // set i
+      if (src_i < border.y)
+        src_i = 0;
+      else if (src_i >= border.y && src_i < (size.y - border.y - 1))
+        src_i -= border.y;
+      else
+        src_i = length_y - 1;
+
+      // set j
+      if (src_j < border.x)
+        src_j = 0;
+      else if (src_j >= border.x && src_j < (size.x - border.x - 1))
+        src_j -= border.x;
+      else
+        src_j = length_x - 1;
+
+      int src_index = src_i * length_x + src_j;
+      int dest_index = i * size.x + j;
+      dest_data[dest_index] = host_data[src_index];
+    }
+  }
+
+}
+
+void copyToHostData(DTYPE* host_data, DTYPE* src_data, dim3 size_src,
+        dim3 border) {
+  const int kLengthY = size_src.y - 2 * border.y;
+  const int kLengthX = size_src.x - 2 * border.x;
+  const int kOffsetY = border.y;
+  const int kOffsetX = border.x;
+  for (int i = 0; i < kLengthY; ++i) {
+    for (int j = 0; j < kLengthX; ++j) {
+      int source_index = (kOffsetY + i) * size_src.x + (kOffsetX + j);
+      int destination_index = i * kLengthX + j;
+      host_data[destination_index] = src_data[source_index];
+    }
+  }
 }

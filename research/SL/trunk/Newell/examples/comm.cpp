@@ -343,34 +343,34 @@ void getCornerDimensions(NeighborTag2D neighbor, int* segmentLength,
   segmentLength[1] = kBorder[1];
   if (x2DCorner0 == neighbor) {
     if (kBlockToBuffer) {
-      segmentOffset[0] = kHeight - 2 * kBorder[0];
+      segmentOffset[0] = kBorder[0];
       segmentOffset[1] = kBorder[1];
     } else {
-      segmentOffset[0] = kHeight - kBorder[0];
+      segmentOffset[0] = 0;
       segmentOffset[1] = 0;
     }
   } else if (x2DCorner1 == neighbor) {
     if (kBlockToBuffer) {
+      segmentOffset[0] = kBorder[0];
+      segmentOffset[1] = kWidth - 2 * kBorder[1];
+    } else {
+      segmentOffset[0] = 0;
+      segmentOffset[1] = kWidth - kBorder[1];
+    }
+  } else if (x2DCorner2 == neighbor) {
+    if (kBlockToBuffer) {
       segmentOffset[0] = kHeight - 2 * kBorder[0];
       segmentOffset[1] = kWidth - 2 * kBorder[1];
     } else {
       segmentOffset[0] = kHeight - kBorder[0];
       segmentOffset[1] = kWidth - kBorder[1];
     }
-  } else if (x2DCorner2 == neighbor) {
-    if (kBlockToBuffer) {
-      segmentOffset[0] = kBorder[0];
-      segmentOffset[1] = kWidth - 2 * kBorder[1];
-    } else {
-      segmentOffset[0] = 0;
-      segmentOffset[1] = kWidth - kBorder[1];
-    }
   } else if (x2DCorner3 == neighbor) {
     if (kBlockToBuffer) {
-      segmentOffset[0] = kBorder[0];
+      segmentOffset[0] = kHeight - 2 * kBorder[0];
       segmentOffset[1] = kBorder[1];
     } else {
-      segmentOffset[0] = 0;
+      segmentOffset[0] = kHeight - kBorder[0];
       segmentOffset[1] = 0;
     }
   }
@@ -378,12 +378,12 @@ void getCornerDimensions(NeighborTag2D neighbor, int* segmentLength,
 
 void getFaceDimensions(NeighborTag3D neighbor, int* segmentLength,
         int* segmentOffset, SubDomain* dataBlock,
-        const int kBorder[3], const bool kBlockToBuffer) {
+        const int kBorder[3], const bool kBlockToMPIBuffer) {
   if (x3DFace0 == neighbor) {
     segmentLength[0] = kBorder[0];
     segmentLength[1] = dataBlock->getLength(1) - 2 * kBorder[1];
     segmentLength[2] = dataBlock->getLength(2) - 2 * kBorder[2];
-    if (kBlockToBuffer) {
+    if (kBlockToMPIBuffer) {
       segmentOffset[0] = kBorder[0];
       segmentOffset[1] = kBorder[1];
       segmentOffset[2] = kBorder[2];
@@ -396,7 +396,7 @@ void getFaceDimensions(NeighborTag3D neighbor, int* segmentLength,
     segmentLength[0] = kBorder[0];
     segmentLength[1] = dataBlock->getLength(1) - 2 * kBorder[1];
     segmentLength[2] = dataBlock->getLength(2) - 2 * kBorder[2];
-    if (kBlockToBuffer) {
+    if (kBlockToMPIBuffer) {
       segmentOffset[0] = dataBlock->getLength(0) - 2 * kBorder[0];
       segmentOffset[1] = kBorder[1];
       segmentOffset[2] = kBorder[2];
@@ -409,7 +409,7 @@ void getFaceDimensions(NeighborTag3D neighbor, int* segmentLength,
     segmentLength[0] = dataBlock->getLength(0) - 2 * kBorder[0];
     segmentLength[1] = kBorder[1];
     segmentLength[2] = dataBlock->getLength(2) - 2 * kBorder[2];
-    if (kBlockToBuffer) {
+    if (kBlockToMPIBuffer) {
       segmentOffset[0] = kBorder[0];
       segmentOffset[1] = kBorder[1];
       segmentOffset[2] = kBorder[2];
@@ -422,7 +422,7 @@ void getFaceDimensions(NeighborTag3D neighbor, int* segmentLength,
     segmentLength[0] = dataBlock->getLength(0) - 2 * kBorder[0];
     segmentLength[1] = kBorder[1];
     segmentLength[2] = dataBlock->getLength(2) - 2 * kBorder[2];
-    if (kBlockToBuffer) {
+    if (kBlockToMPIBuffer) {
       segmentOffset[0] = kBorder[0];
       segmentOffset[1] = dataBlock->getLength(1) - 2 * kBorder[1];
       segmentOffset[2] = kBorder[2];
@@ -435,7 +435,7 @@ void getFaceDimensions(NeighborTag3D neighbor, int* segmentLength,
     segmentLength[0] = dataBlock->getLength(0) - 2 * kBorder[0];
     segmentLength[1] = dataBlock->getLength(1) - 2 * kBorder[1];
     segmentLength[2] = kBorder[2];
-    if (kBlockToBuffer) {
+    if (kBlockToMPIBuffer) {
       segmentOffset[0] = kBorder[0];
       segmentOffset[1] = kBorder[1];
       segmentOffset[2] = kBorder[2];
@@ -448,7 +448,7 @@ void getFaceDimensions(NeighborTag3D neighbor, int* segmentLength,
     segmentLength[0] = dataBlock->getLength(0) - 2 * kBorder[0];
     segmentLength[1] = dataBlock->getLength(1) - 2 * kBorder[1];
     segmentLength[2] = kBorder[2];
-    if (kBlockToBuffer) {
+    if (kBlockToMPIBuffer) {
       segmentOffset[0] = kBorder[0];
       segmentOffset[1] = kBorder[1];
       segmentOffset[2] = dataBlock->getLength(2) - 2 * kBorder[2];
@@ -624,23 +624,23 @@ void getPoleDimensions(NeighborTag3D neighbor, int* segmentLength,
 
 void getPoleDimensions(NeighborTag2D neighbor, int* segmentLength,
         int* segmentOffset, SubDomain* dataBlock,
-        const int kBorder[3], const bool kBlockToBuffer) {
+        const int kBorder[3], const bool kBlockToMPIBuffer) {
   const int kHeight = dataBlock->getLength(0);
   const int kWidth = dataBlock->getLength(1);
   if (x2DPole0 == neighbor) {
     segmentLength[0] = kBorder[0];
     segmentLength[1] = kWidth - 2 * kBorder[1];
-    if (kBlockToBuffer) {
-      segmentOffset[0] = kHeight - 2 * kBorder[0];
+    if (kBlockToMPIBuffer) {
+      segmentOffset[0] = kBorder[0];
       segmentOffset[1] = kBorder[1];
     } else {
-      segmentOffset[0] = kHeight - kBorder[0];
+      segmentOffset[0] = 0;
       segmentOffset[1] = kBorder[1];
     }
   } else if (x2DPole1 == neighbor) {
     segmentLength[0] = kHeight - 2 * kBorder[0];
     segmentLength[1] = kBorder[1];
-    if (kBlockToBuffer) {
+    if (kBlockToMPIBuffer) {
       segmentOffset[0] = kBorder[0];
       segmentOffset[1] = kWidth - 2 * kBorder[1];
     } else {
@@ -650,17 +650,17 @@ void getPoleDimensions(NeighborTag2D neighbor, int* segmentLength,
   } else if (x2DPole2 == neighbor) {
     segmentLength[0] = kBorder[0];
     segmentLength[1] = kWidth - 2 * kBorder[1];
-    if (kBlockToBuffer) {
-      segmentOffset[0] = kBorder[0];
+    if (kBlockToMPIBuffer) {
+      segmentOffset[0] = kHeight - 2 * kBorder[0];
       segmentOffset[1] = kBorder[1];
     } else {
-      segmentOffset[0] = 0;
+      segmentOffset[0] = kHeight - kBorder[0];
       segmentOffset[1] = kBorder[1];
     }
   } else if (x2DPole3 == neighbor) {
     segmentLength[0] = kHeight - 2 * kBorder[0];
     segmentLength[1] = kBorder[1];
-    if (kBlockToBuffer) {
+    if (kBlockToMPIBuffer) {
       segmentOffset[0] = kBorder[0];
       segmentOffset[1] = kBorder[1];
     } else {
@@ -689,28 +689,28 @@ int getMPITagForSegmentData(NeighborTag3D segment) {
 
 void getSegmentDimensions(NeighborTag3D neighbor, int* segmentLength,
         int* segmentOffset, SubDomain* dataBlock,
-        const int kBorder[3], const bool kBlockToBuffer) {
+        const int kBorder[3], const bool kBlockToMPIBuffer) {
   if (isSegmentFace(neighbor)) {
     getFaceDimensions(neighbor, segmentLength, segmentOffset, dataBlock,
-            kBorder, kBlockToBuffer);
+            kBorder, kBlockToMPIBuffer);
   } else if (isSegmentPole(neighbor)) {
     getPoleDimensions(neighbor, segmentLength, segmentOffset, dataBlock,
-            kBorder, kBlockToBuffer);
+            kBorder, kBlockToMPIBuffer);
   } else if (isSegmentCorner(neighbor)) {
     getCornerDimensions(neighbor, segmentLength, segmentOffset, dataBlock,
-            kBorder, kBlockToBuffer);
+            kBorder, kBlockToMPIBuffer);
   }
 }
 
 void getSegmentDimensions(NeighborTag2D neighbor, int* segmentLength,
         int* segmentOffset, SubDomain* dataBlock,
-        const int kBorder[3], const bool kBlockToBuffer) {
+        const int kBorder[3], const bool kBlockToMPIBuffer) {
   if (isSegmentPole(neighbor)) {
     getPoleDimensions(neighbor, segmentLength, segmentOffset, dataBlock,
-            kBorder, kBlockToBuffer);
+            kBorder, kBlockToMPIBuffer);
   } else if (isSegmentCorner(neighbor)) {
     getCornerDimensions(neighbor, segmentLength, segmentOffset, dataBlock,
-            kBorder, kBlockToBuffer);
+            kBorder, kBlockToMPIBuffer);
   }
 }
 
@@ -825,10 +825,12 @@ bool sendSegment(const NeighborTag2D kNeighbor, SubDomain* dataBlock,
     const NeighborTag2D kOppositeNeighbor = getOppositeNeighbor2D(kNeighbor);
     int index_tag = getMPITagForSegment(kOppositeNeighbor);
     int data_tag = getMPITagForSegmentData(kOppositeNeighbor);
-
+    //printf("block %d's %s is block %d's %s\n", dataBlock->getLinIndex(),
+      //      neighborString(kNeighbor), *destination_block_index,
+        //    neighborString(kOppositeNeighbor));
     //printf("sending %s to block:%d on rank:%d with index_tag:%d data_tag:%d\n",
-     //       neighborString(kOppositeNeighbor), *destination_block_index,
-       //     destination_rank, index_tag, data_tag);
+      //      neighborString(kOppositeNeighbor), *destination_block_index,
+        //    destination_rank, index_tag, data_tag);
     MPI_Isend(static_cast<void*> (destination_block_index), 1, MPI_INT,
             destination_rank, index_tag, MPI_COMM_WORLD, &request[0]);
     MPI_Isend(static_cast<void*> (sendBuffer), kSize, SL_MPI_TYPE,

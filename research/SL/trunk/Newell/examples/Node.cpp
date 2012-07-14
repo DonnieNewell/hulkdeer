@@ -191,8 +191,11 @@ const unsigned int Node::numTotalSubDomains() const {
 }
 
 void printNode(Node& node) {
+  printf("**********************************************\n");
   printf("node[%d]:\n", node.getRank());
   for (unsigned int i = 0; i < node.numTotalSubDomains(); ++i) {
-    printf("  block[%d]\n", node.globalGetSubDomain(i)->getLinIndex());
+    SubDomain* sub_domain = node.globalGetSubDomain(i);
+    printf("  block[%d]\n", sub_domain->getLinIndex());
+    printSubDomain(sub_domain);
   }
 }

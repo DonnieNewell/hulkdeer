@@ -196,7 +196,8 @@ dim3 initSAProps(int dims, dim3 input_size, dim3 stencil_size, int iterations, i
     // But for now, this is not a limiting factor for any of the sample apps.
     CudaFunctionAtts_t * CFAs = (CudaFunctionAtts_t *)malloc(sizeof(CudaFunctionAtts_t));
     SAPs->CFAs = CFAs;
-    CUDA_SAFE_CALL(cudaFuncGetAttributes(CFAs, kernelName));
+    //CUDA_SAFE_CALL(cudaFuncGetAttributes(CFAs, kernelName));
+    cudaFuncGetAttributes(CFAs, kernelName);
     //fprintf(stderr, "Max Threads per block in %s=%d, register count=%d, sharedMemUsage=%d.\n", kernelName, CFAs->maxThreadsPerBlock, CFAs->numRegs, CFAs->sharedSizeBytes);
     int blockLen = ilog(dims, CFAs->maxThreadsPerBlock);
     // fprintf(stderr, "Block Length=%d.\n", blockLen);

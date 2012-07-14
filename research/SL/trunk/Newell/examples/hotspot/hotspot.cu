@@ -113,8 +113,9 @@ void runHotspotKernel(dim3 input_size, dim3 stencil_size,
       value = CellValue(input_size, x, y, ro_data, step_div_Cap, Rx, Ry, Rz);
     }
     if (iter >= pyramid_height) {
-      if (inside)
+      if (inside) {
         output[uidx] = value;
+      }
       break;
     }
     __syncthreads();

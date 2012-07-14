@@ -4,9 +4,10 @@
 
 void initializeSubDomain(SubDomain* sub_domain, DTYPE value) {
   DTYPE* buffer = sub_domain->getBuffer();
-  int height = sub_domain->getLength(0);
-  int width = sub_domain->getLength(1);
-  for (int i = 0; i < height * width; ++i)
+  int depth = sub_domain->getLength(0);
+  int height = sub_domain->getLength(1);
+  int width = sub_domain->getLength(2);
+  for (int i = 0; i < depth * height * width; ++i)
     buffer[i] = value;
 }
 
@@ -17,10 +18,11 @@ void printNeighbors(SubDomain* block, int my_rank) {
 }
 
 int main(int argc, char** argv) {
-  int my_rank = -1, x_offset = 0, y_offset = 0, length = 3, grid_height = 1,
-          grid_width = 2;
-  int id[2] = {0};
-  int border[3] = {1, 1, 0};
+  int border[3] = {1, 1, 1};
+  int my_rank = -1, x_offset = -1 * border[2], y_offset = -1 * border[1],
+          z_offset = -1 * border[0], length = 3, grid_height = 2,
+          grid_width = 2, grid_depth = 2;
+  int id[3] = {0};
   const int kNumNeighbors3D = 26;
   int neighbors[kNumNeighbors3D];
   for (int i = 0; i < kNumNeighbors3D; ++i) neighbors[i] = -1;
@@ -30,24 +32,33 @@ int main(int argc, char** argv) {
   SubDomain* block = NULL;
   id[0] = 0;
   id[1] = 0;
+  id[2] = 0;
+
   node.setRank(my_rank);
-  NeighborTag2D neighbor = x2DPole2;
+  NeighborTag3D neighbor = x3DPole6;
   if (0 == my_rank) {
     // initialize block 0
     neighbors[neighbor] = 1;
     printf("rank %d exchanges neighbor %s\n", my_rank, neighborString(neighbor));
-    block = new SubDomain(id, y_offset, length + 2 * border[0], x_offset,
-            length + 2 * border[1], grid_height, grid_width, neighbors);
+    block = new SubDomain(id, z_offset, length + 2 * border[0],
+                            y_offset, length + 2 * border[1],
+                            x_offset, length + 2 * border[2],
+                            grid_depth, grid_height, grid_width,
+                            neighbors);
   } else if (1 == my_rank) {
     // initialize block 1
-    NeighborTag2D opposite_neighbor = getOppositeNeighbor2D(neighbor);
+    NeighborTag3D opposite_neighbor = getOppositeNeighbor3D(neighbor);
     printf("rank %d exchanges neighbor %s\n", my_rank, neighborString(opposite_neighbor));
     neighbors[opposite_neighbor] = 0;
     id[0] = 1;
     id[1] = 0;
-    x_offset += length;
-    block = new SubDomain(id, y_offset, length + 2 * border[0], x_offset,
-            length + 2 * border[1], grid_height, grid_width, neighbors);
+    id[2] = 1;
+    z_offset += length;
+    block = new SubDomain(id, z_offset, length + 2 * border[0],
+                            y_offset, length + 2 * border[1],
+                            x_offset, length + 2 * border[2],
+                            grid_depth, grid_height, grid_width,
+                            neighbors);
   }
 
 //  printNeighbors(block, my_rank);
@@ -57,7 +68,7 @@ int main(int argc, char** argv) {
   // perform exchange
   updateAllStaleData(&node, border);
 
-  if (1 == my_rank) {
+  if (0 == my_rank) {
     printSubDomain(block);
   }
   delete block;

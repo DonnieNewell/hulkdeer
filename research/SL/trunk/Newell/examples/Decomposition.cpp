@@ -48,8 +48,7 @@ void Decomposition::addSubDomain(SubDomain* s) {
 }
 
 void Decomposition::copyBlock3D(DTYPE* buffer, SubDomain* s,
-        const int numElementsDepth, const int numElementsRows,
-        const int numElementsCols) {
+        const int kDepth, const int kRows, const int kCols) {
   // subDomain should already have memory allocated.
   DTYPE *sBuff = s->getBuffer();
   if (NULL == sBuff) {
@@ -67,14 +66,15 @@ void Decomposition::copyBlock3D(DTYPE* buffer, SubDomain* s,
         int c = s->getOffset(2) + col;
 
         // don't copy if we aren't inside valid range
-        if(d < 0 || d >= numElementsDepth || r < 0 || r >= numElementsRows ||
-           c < 0 || c >= numElementsCols)
-          continue;
+        if (d < 0) d = 0;
+        if (r < 0) r = 0;
+        if (c < 0) c = 0;
+        if (d >= kDepth) d = kDepth - 1;
+        if (r >= kRows) r = kRows - 1;
+        if (c >= kCols) c = kCols - 1;
 
-        int newIndex =  depth * s->getLength(1) * s->getLength(2) +
-                        row * s->getLength(0) + col ;
-        int oldIndex =  d * numElementsCols * numElementsRows +
-                        r * numElementsCols + c ;
+        int newIndex = (depth * s->getLength(1) + row) * s->getLength(2) + col;
+        int oldIndex = (d * kRows + r) * kCols + c;
         sBuff[newIndex] = buffer[oldIndex];
       }
     }
@@ -97,10 +97,11 @@ void Decomposition::copyBlock2D(DTYPE* buffer, SubDomain* s,
         int r = s->getOffset(0) + row;
         int c = s->getOffset(1) + col;
 
-        //don't copy if we aren't inside valid range
-        if ( r < 0 || r >= numElementsRows || c < 0 || c >= numElementsCols)
-          continue;
-
+        if (r < 0) r = 0;
+        if (r >= numElementsRows) r = numElementsRows - 1;
+        if (c < 0) c = 0;
+        if (c >= numElementsCols) c = numElementsCols - 1;
+        
         int newIndex =  row * s->getLength(1) + col;
         int oldIndex =  r * numElementsCols + c;
         sBuff[newIndex] = buffer[oldIndex];
@@ -185,9 +186,9 @@ void Decomposition::decompose3D(DTYPE* buffer, const int numElementsDepth,
         int widthOff  = blockDimWidth  * k - border[2];
 
         //length may be too large when added to offset
-        int depthLen  = blockDimDepth   + 2*border[0];
-        int heightLen = blockDimHeight  + 2*border[1];
-        int widthLen  = blockDimWidth   + 2*border[2];
+        int depthLen  = blockDimDepth   + 2 * border[0];
+        int heightLen = blockDimHeight  + 2 * border[1];
+        int widthLen  = blockDimWidth   + 2 * border[2];
         int fakeNeighbors[26] = {0};
         SubDomain* s = NULL;
         s= new SubDomain(id, depthOff, depthLen, heightOff, heightLen,

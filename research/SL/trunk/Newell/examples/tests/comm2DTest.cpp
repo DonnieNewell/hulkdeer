@@ -35,6 +35,7 @@ int main(int argc, char** argv) {
   if (0 == my_rank) {
     // initialize block 0
     neighbors[neighbor] = 1;
+    
     printf("rank %d exchanges neighbor %s\n", my_rank, neighborString(neighbor));
     block = new SubDomain(id, y_offset - 1, length + 2 * border[0], x_offset - 1,
             length + 2 * border[1], grid_height, grid_width, neighbors);

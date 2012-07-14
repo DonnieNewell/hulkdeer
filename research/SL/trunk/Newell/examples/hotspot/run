@@ -2,17 +2,17 @@
 #run
 
 WEAK_LIMIT=2
-STRONG_LIMIT=2
+STRONG_LIMIT=4
 for ((p=1; p <= WEAK_LIMIT ; p++))
 do
   echo -e "***** BEGIN WEAK ITERATION $p *****\n" 
-  mpirun -np $p -machinefile ../../machinefile -x LD_LIBRARY_PATH /af21/den4gr/hulkdeer/research/SL/trunk/Newell/examples/hotspot/hotspot 2000 100 1
+  mpirun -np $p -machinefile ../../machinefile -x LD_LIBRARY_PATH /af21/den4gr/hulkdeer/research/SL/trunk/Newell/examples/hotspot/hotspot 2000 100
   echo -e "***** END WEAK ITERATION   $p *****\n" 
 done
 
-#for q in 64 128 256 512 1024
-#do
-#  echo -e "***** BEGIN STRONG ITERATION $q *****\n" 
-#  mpirun -np $STRONG_LIMIT -machinefile ../../machinefile -x LD_LIBRARY_PATH /af21/den4gr/hulkdeer/research/SL/trunk/Newell/examples/hotspot/hotspot $q 1 1
-#  echo -e "***** END STRONG ITERATION   $q *****\n" 
-#done
+for q in 64 128 256 512 1024
+do
+  echo -e "***** BEGIN STRONG ITERATION $q *****\n" 
+  mpirun -np $STRONG_LIMIT -machinefile ../../machinefile -x LD_LIBRARY_PATH /af21/den4gr/hulkdeer/research/SL/trunk/Newell/examples/hotspot/hotspot 2000 $q
+  echo -e "***** END STRONG ITERATION   $q *****\n" 
+done

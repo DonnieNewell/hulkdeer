@@ -1,7 +1,7 @@
 #!/bin/bash
 #run
 NUMBER_PROCESSES=2
-mpirun -np $NUMBER_PROCESSES -machinefile ../../machinefile -x LD_LIBRARY_PATH /af21/den4gr/hulkdeer/research/SL/trunk/Newell/examples/tests/commTest
+mpirun -np $NUMBER_PROCESSES -machinefile ../../machinefile -x LD_LIBRARY_PATH /af21/den4gr/hulkdeer/research/SL/trunk/Newell/examples/tests/comm3DTest
 
 #for q in 64 128 256 512 1024
 #do

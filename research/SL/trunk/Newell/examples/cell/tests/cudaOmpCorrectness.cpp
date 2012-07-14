@@ -11,7 +11,7 @@ DTYPE* initInput(const int kI, const int kJ, const int kK) {
     for (int y = 0; y < kJ; ++y) {
       for (int x = 0; x < kK; ++x) {
         int uidx = z * kJ * kK + y * kK + x;
-        data[uidx] = x % 2;
+        data[uidx] = (x) % 2;
       }
     }
   }

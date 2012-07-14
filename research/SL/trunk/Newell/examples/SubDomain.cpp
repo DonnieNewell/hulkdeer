@@ -248,7 +248,7 @@ int SubDomain::getNeighborPole(const NeighborTag2D tag) {
   const int j = id[1];
   const int dimI = gridDim[0];
   const int dimJ = gridDim[1];
-
+  //printf("getNeighborPole: i:%d, j:%d, dimI:%d, dimJ:%d\n", i, j, dimI, dimJ);
   if (x2DPole0 == tag && 0 < i) {
     neighbor = twoDToLin(i - 1, j, dimI, dimJ);
   } else if (x2DPole1 == tag && (dimJ - 1) > j) {
@@ -338,6 +338,8 @@ int SubDomain::getNeighborIndex(const NeighborTag2D tag) {
     neighbor = getNeighborPole(tag);
   else if (x2DCorner0 <= tag && x2DCorner3 >= tag)
     neighbor = getNeighborCorner(tag);
+  //printf("id[%d,%d] - neighbor %s has block index:%d\n", id[0], id[1],
+    //      neighborString(tag), neighbor);
   return neighbor;
 }
 
@@ -560,19 +562,19 @@ void printSubDomain(const SubDomain *s) {
   printf(" length{%d, %d, %d}\n", s->getLength(0), s->getLength(1), s->getLength(2));
   DTYPE* buffer = s->getBuffer();
   if (2 == s->getDimensionality()) {
-    for (int i = 0; i < s->getLength(0); ++i) {
+    for (int i = s->getLength(0) - 1; i >= 0; --i) {
       printf("[%d]", i);
       for (int j = 0; j < s->getLength(1); ++j) {
         int index = i * s->getLength(1) + j;
-        printf(" %.2d", buffer[index]);
+        printf(" %.4f", buffer[index]);
       }
       printf("\n");
     }
   } else if (3 == s->getDimensionality()) {
     for (int i = 0; i < s->getLength(0); ++i) {
-      printf("PLANE %d ***********************************",i);
-      for (int j = 0; j < s->getLength(1); ++j) {
-        printf("[%d]", i);
+      printf("PLANE %d ***********************************\n",i);
+      for (int j = s->getLength(1) - 1; j >= 0; --j) {
+        printf("[%d]", j);
         for (int k = 0; k < s->getLength(2); ++k) {
           int index = i * s->getLength(1) * s->getLength(2) +
                         j * s->getLength(2) + k;

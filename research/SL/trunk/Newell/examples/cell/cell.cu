@@ -259,9 +259,7 @@ void runCell(DTYPE *host_data, int x_max, int y_max, int z_max, int iterations
   // Device to host
   cudaMemcpy(host_data, device_input, num_bytes, cudaMemcpyDeviceToHost);
 
-
-  if (global_ro_data != NULL)
-  {
+  if (global_ro_data != NULL) {
     cudaFree(global_ro_data);
     global_ro_data = NULL;
   }

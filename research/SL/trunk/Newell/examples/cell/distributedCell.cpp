@@ -204,28 +204,25 @@ double benchmarkPCIBus(SubDomain* pS, int gpuIndex) {
   buffer, accounting for invalid ghost zone around edges
 */
 void copy_result_block(DTYPE* buffer, SubDomain* s, const int kBorder[3],
-                        const int kBufferSize[3]) {
+                        const int kBuffSize[3]) {
   const int kLength[3] = { s->getLength(0) - 2 * kBorder[0],
                           s->getLength(1) - 2 * kBorder[1],
                           s->getLength(2) - 2 * kBorder[2] };
-  const int kOffset[3] = { s->getOffset(0) + kBorder[0],
+  const int kDestinationOffset[3] = { s->getOffset(0) + kBorder[0],
                           s->getOffset(1) + kBorder[1],
                           s->getOffset(2) + kBorder[2] };
+  const int kSourceOffset[3] = { kBorder[0], kBorder[1], kBorder[2] };
   for (int i = 0; i < kLength[0]; ++i) {
     for (int j = 0; j < kLength[1]; ++j) {
       for (int k = 0; k < kLength[2]; ++k) {
-        int destI = i + kOffset[0];
-        int destJ = j + kOffset[1];
-        int destK = k + kOffset[2];
-        int srcI = i + kBorder[0];
-        int srcJ = j + kBorder[1];
-        int srcK = k + kBorder[2];
-        int destIndex = destI * kBufferSize[1] * kBufferSize[2] +
-                        destJ * kBufferSize[2] +
-                        destK;
-        int srcIndex = srcI * kLength[1] * kLength[2] +
-                        srcJ * kLength[2] +
-                        srcK;
+        int destI = kDestinationOffset[0] + i;
+        int destJ = kDestinationOffset[1] + j;
+        int destK = kDestinationOffset[2] + k;
+        int srcI = kSourceOffset[0] + i;
+        int srcJ = kSourceOffset[1] + j;
+        int srcK = kSourceOffset[2] + k;
+        int destIndex = (destI * kBuffSize[1] + destJ) * kBuffSize[2] + destK;
+        int srcIndex = (srcI * s->getLength(1) + srcJ) * s->getLength(2) + srcK;
         buffer[destIndex] = s->getBuffer()[srcIndex];
       }
     }
