@@ -14,7 +14,9 @@ class Cluster{
     void setBlockLoc(size_t, int);
     void storeBlockLocs();
     Node& getNode(int);
+    Node& getGlobalGPU(const int);
     unsigned int getNumNodes() const;
+    unsigned int getNumTotalGPUs();
     SubDomain* getBlockLinear(const int);
   private:
     void updateBlockNeighbors();

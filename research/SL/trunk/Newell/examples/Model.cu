@@ -202,10 +202,10 @@ dim3 initSAProps(int dims, dim3 input_size, dim3 stencil_size, int iterations, i
     int blockLen = ilog(dims, CFAs->maxThreadsPerBlock);
     // fprintf(stderr, "Block Length=%d.\n", blockLen);
     // The block size can't be larger than the data size!
-    SAPs->blockDims.x = MIN(blockLen, SAPs->dataDims.x);
+    SAPs->blockDims.x = MIN(blockLen, static_cast<int>(SAPs->dataDims.x));
     SAPs->blockDims.y = SAPs->blockDims.z = 1;
-    if (dims > 1) SAPs->blockDims.y = MIN(blockLen, SAPs->dataDims.y);
-    if (dims > 2) SAPs->blockDims.z = MIN(blockLen, SAPs->dataDims.z);
+    if (dims > 1) SAPs->blockDims.y = MIN(blockLen, static_cast<int>(SAPs->dataDims.y));
+    if (dims > 2) SAPs->blockDims.z = MIN(blockLen, static_cast<int>(SAPs->dataDims.z));
 
     // Fill in the cuda device properties.
     SAPs->CDPs = getCurrentCudaDeviceProps ();
@@ -244,7 +244,6 @@ static struct timeval starttime, endtime;
 clock_t startclock, endclock;
 #endif
 static unsigned int usec;
-static cudaError_t cudaerr;
 #ifndef WIN32
 #define timeInMicroSeconds(var, funcall)                                  \
     ({                                                                    \
@@ -496,7 +495,7 @@ int calcPyramidHeight(dim3 grid_dims, unsigned int oneIterTime, unsigned int two
 {
     
     // Now we have enough information for the training period.
-    // First call a kernel to make sure device is fully intialized.
+    // First call a kernel to make sure device is fully initialized.
     dummyKernel<<<grid_dims, SAPs->blockDims>>>();
     long int ekTime = 0;
     timeInMicroSeconds(ekTime, (dummyKernel<<<grid_dims, SAPs->blockDims>>>()));

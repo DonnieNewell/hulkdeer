@@ -12,9 +12,10 @@ class Balancer {
 	public:
 		Balancer();
 		~Balancer();
-		void balance(Cluster&,Decomposition&, int);
-		void perfBalance(Cluster&,Decomposition&, int);
-		bool balanceNode(Node&,double);
+		void balance(Cluster&, Decomposition&, int);
+        void perfBalanceGPU(Cluster&, Decomposition&);
+		void perfBalance(Cluster&, Decomposition&, int);
+		bool balanceNode(Node&, double, const int);
 
 };
 

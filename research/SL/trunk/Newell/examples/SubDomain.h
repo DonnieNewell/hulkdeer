@@ -64,8 +64,8 @@ class SubDomain {
   public:
     SubDomain();
     SubDomain(const SubDomain&);
-    SubDomain(int[3],int, int, int, int, int, int, int, int, int, int[]);
-    SubDomain(int[2],int, int, int, int, int, int, int[]);
+    SubDomain(int*, int, int, int, int, int, int, int, int, int, int*);
+    SubDomain(int*, int, int, int, int, int, int, int*);
     SubDomain& operator=(const SubDomain &);
     ~SubDomain();
     //needs to be set by compiler. DTYPE maybe?
@@ -79,7 +79,7 @@ class SubDomain {
     const int* getId()const;
     const int* getGridDim()const;
     int* getNeighbors();
-    const int getLinIndex()const;
+    int getLinIndex()const;
     int getLength(int)const;
     int getOffset(int)const;
     int getNeighborLoc(const int)const;
@@ -91,8 +91,8 @@ class SubDomain {
     int getNeighborPole(const NeighborTag2D);
     int getNeighborCorner(const NeighborTag3D);
     int getNeighborCorner(const NeighborTag2D);
-    int threeDToLin(int,int,int,int,int,int) const;
-    int twoDToLin(int,int,int,int) const;
+    int threeDToLin(int, int, int, int, int) const;
+    int twoDToLin(int, int, int) const;
     int gridDim[3];
     int id[3];
     int offset[3];

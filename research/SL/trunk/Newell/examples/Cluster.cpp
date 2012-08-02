@@ -13,6 +13,30 @@ Cluster::Cluster(int numNodes) {
   }
 }
 
+unsigned int Cluster::getNumTotalGPUs() {
+  unsigned int total_gpus = 0;
+  for (unsigned int node_index = 0;
+          node_index < this->getNumNodes();
+          ++node_index) {
+    Node& node = this->getNode(node_index);
+    total_gpus += node.getNumChildren();
+  }
+  return total_gpus;
+}
+
+Node& Cluster::getGlobalGPU(const int gpu_index) {
+  int current_index = gpu_index;
+  const int kExplodeIndex = -1;
+  for (int cpu_index = 0; cpu_index < this->getNumNodes(); ++cpu_index) {
+    Node& current_node = this->getNode(cpu_index);
+    if (current_index < current_node.getNumChildren())
+      return current_node.getChild(current_index);
+    current_index -= current_node.getNumChildren();
+  }
+  // hack and I hate this so much but no time
+  return this->getNode(kExplodeIndex);
+}
+
 /* returns the specified machine node */
 Node& Cluster::getNode(int index) {
   return nodes.at(index);

@@ -39,12 +39,13 @@ bool compare(DTYPE* data1, DTYPE* data2, int length) {
 
 int main(int argc, char** argv) {
   DTYPE* ompData = NULL, *mpiData = NULL;
-  const int kDataSize = 16;
+  const int kDataSize = 32;
   int iterations = 1;
   int dieMin = 10;
   int dieMax = 3;
   int bornMin = 5;
   int bornMax = 8;
+  const int kNumberBlocksPerDimension = 4;
   bool testPass;
   int returnCode, numTasks, rank;
   returnCode = MPI_Init(&argc, &argv);
@@ -66,7 +67,7 @@ int main(int argc, char** argv) {
     printf("running MPI version.\n");
   }
   runDistributedCell(rank, numTasks, mpiData, kDataSize, kDataSize, kDataSize,
-      iterations, bornMin, bornMax, dieMin, dieMax);
+      iterations, bornMin, bornMax, dieMin, dieMax, kNumberBlocksPerDimension);
   printf("ending correctness test.\n");
   if (0 == rank) {
     printf("mpiData:%p, ompData:%p\n", mpiData, ompData);

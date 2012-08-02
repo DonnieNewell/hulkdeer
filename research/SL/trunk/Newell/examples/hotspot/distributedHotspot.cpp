@@ -12,13 +12,13 @@ Copyright 2012 Donald Newell
 #include <fstream>
 #include <sstream>
 #include "../comm.h"
-#include "hotspot.h"
-#include "ompHotspot.h"
+#include "./hotspot.h"
+#include "./ompHotspot.h"
 #include "../Cluster.h"
 #include "../Decomposition.h"
 #include "../Balancer.h"
 #include "../Model.h"
-#include "distributedHotspot.h"
+#include "./distributedHotspot.h"
 #define PYRAMID_HEIGHT 1
 
 const int kCPUIndex = -1;
@@ -345,7 +345,8 @@ void benchmarkCluster(Cluster* cluster, SubDomain* data,
 }
 
 void runDistributedHotspot(int rank, int numTasks, DTYPE *data, int x_max, int y_max,
-        int iterations, float step_div_Cap, float Rx, float Ry, float Rz) {
+        int iterations, float step_div_Cap, float Rx, float Ry, float Rz,
+        const int kNumberBlocksPerDimension) {
   // hack because we want the compiler to give us the
   // stencil size, but we don't want to have to include
   // the cuda headers in every file, so we convert
@@ -381,7 +382,8 @@ void runDistributedHotspot(int rank, int numTasks, DTYPE *data, int x_max, int y
     cout << "received number of children.\n";
     /* perform domain decomposition */
     int numElements[2] = {y_max, x_max};
-    decomp.decompose(data, 2, numElements, new_stencil_size, PYRAMID_HEIGHT);
+    decomp.decompose(data, 2, numElements, new_stencil_size, PYRAMID_HEIGHT,
+            kNumberBlocksPerDimension);
 #ifdef DEBUG
     printDecomposition(decomp);
 #endif

@@ -1,4 +1,4 @@
-DBG	= -g 
+DBG	= -g -pg
 SDK 	= /af21/den4gr/NVIDIA_GPU_Computing_SDK
 #EMU	= -deviceemu
 CUDA	= /usr/local/cuda

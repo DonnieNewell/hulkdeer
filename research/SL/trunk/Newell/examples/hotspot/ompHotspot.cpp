@@ -98,9 +98,8 @@ void runOMPHotspotKernel(dim3 input_size, dim3 stencil_size, DTYPE *input,
           // uidx = ez + input_size.y * (ey * input_size.x + ex);
           uidx = x + input_size.x * y;
 
-          //output[uidx] = CellValue(input_size, x, y, input, step_div_Cap,
-            //                        Rx, Ry, Rz, border);
-          output[uidx] = input[uidx];  // DEBUG *******************************
+          output[uidx] = CellValue(input_size, x, y, input, step_div_Cap,
+                                    Rx, Ry, Rz, border);
       }
     }
   }

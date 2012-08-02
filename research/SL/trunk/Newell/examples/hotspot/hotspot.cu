@@ -93,7 +93,7 @@ void runHotspotKernel(dim3 input_size, dim3 stencil_size,
   // Get current cell value or edge value.
   uidx = ey * input_size.x + ex;
   value = input[uidx];
-  
+
   inside = ((x == ex) && (y == ey));
 
   // Store value in shared memory for stencil calculations, and go.
@@ -126,7 +126,7 @@ void runHotspotKernel(dim3 input_size, dim3 stencil_size,
 void allocateCUDADataBuffers(DTYPE** &buffer1, DTYPE** &buffer2, int num_bytes) {
   //fprintf(stderr, "allocating gpu memory.\n");
   int num_devices = 0;
-  cudaError_t cuda_error;
+  cudaError_t cuda_return;
   if (cudaSuccess != cudaGetDeviceCount(&num_devices)) {
     printf("ERROR: allocateCUDADataBuffers(): device count.\n");
     return;
@@ -138,23 +138,28 @@ void allocateCUDADataBuffers(DTYPE** &buffer1, DTYPE** &buffer2, int num_bytes) 
   buffer2 = new DTYPE*[num_devices];
 
   for (int i = 0; i < num_devices; ++i) {
-    cuda_error = cudaSetDevice(i);
-    if (cudaSuccess != cuda_error) {
+    if (cudaSuccess != cudaSetDevice(i)) {
       fprintf(stderr, "allocateCUDADataBuffers(): couldn't select GPU index:%d.\nERROR: %s\n",
-              i, cudaGetErrorString(cuda_error));
+              i, cudaGetErrorString(cuda_return));
       return;
     }
-    cuda_error = cudaMalloc(reinterpret_cast<void**> (&buffer1[i]),
+    cuda_return = cudaMalloc(reinterpret_cast<void**> (&buffer1[i]),
             num_bytes);
-    cuda_error = cudaMalloc(reinterpret_cast<void**> (&buffer2[i]),
+    if (cudaSuccess != cuda_return) {
+      printf("runHotspot: ERROR allocating output/input buffers.\n");
+      return;
+    }
+    cuda_return = cudaMalloc(reinterpret_cast<void**> (&buffer2[i]),
             num_bytes);
+    if (cudaSuccess != cuda_return) {
+      printf("runHotspot: ERROR allocating output/input buffers.\n");
+      return;
+    }
   }
-  if (cudaSuccess != cuda_error) {
-    printf("runHotspot: ERROR allocating output/input buffers.\n");
-    return;
-  }
+
   // restore original device
-  cudaSetDevice(current_device);
+  if (cudaSuccess != cudaSetDevice(current_device))
+    printf("runHotspot: ERROR allocating output/input buffers.\n");
 }
 
 /**
@@ -200,9 +205,9 @@ void runHotspot(DTYPE *host_data, int x_max, int y_max, int iterations,
       return;
     }
   }
-// printf("about to cudaMemset();\n");
-    cuda_error = cudaMemset((void*) device_output[device], kZero, num_bytes);
-    // printf("cudaMemset(device_output[%d]:%p, newValue:%d, num_bytes:%d)\n", device, device_output[device], newValue, num_bytes);
+  // printf("about to cudaMemset();\n");
+  cuda_error = cudaMemset((void*) device_output[device], kZero, num_bytes);
+  // printf("cudaMemset(device_output[%d]:%p, newValue:%d, num_bytes:%d)\n", device, device_output[device], newValue, num_bytes);
 
   cudaMemcpy(device_input[device], host_data, num_bytes, cudaMemcpyHostToDevice);
   //cuda_error = cudaMemcpy(device_input, host_data, num_bytes, cudaMemcpyHostToDevice);
@@ -238,18 +243,18 @@ void runHotspot(DTYPE *host_data, int x_max, int y_max, int iterations,
   // Run computation
   int tmp_pyramid_height = pyramid_height;
   // fprintf(stdout, "runHotspotKernel(device_input:%p, device_output:%p, cuda_global_ro_data:%p);\n",
-   //       device_input, device_output, cuda_global_ro_data);
+  //       device_input, device_output, cuda_global_ro_data);
   for (int iter = 0; iter < iterations; iter += pyramid_height) {
     if (iter + pyramid_height > iterations)
       tmp_pyramid_height = iterations - iter;
-    
-    runHotspotKernel <<< grid_dims, tile_size >>>(
+
+    runHotspotKernel << < grid_dims, tile_size >> >(
             input_size, stencil_size, device_input[device], device_output[device],
             tmp_pyramid_height, cuda_global_ro_data[device], step_div_Cap, Rx, Ry, Rz);
     DTYPE *temp = device_input[device];
     device_input[device] = device_output[device];
     device_output[device] = temp;
-    
+
   }
 
   // Device to host
@@ -313,7 +318,7 @@ void runHotspotSetData(DTYPE *host_data, int num_elements) {
               i, cudaGetErrorString(cuda_error));
       return;
     }
-    
+
     cudaMalloc((void **) &cuda_global_ro_data[i], num_bytes);
     cudaMemcpy(cuda_global_ro_data[i], host_data, num_bytes,
             cudaMemcpyHostToDevice);

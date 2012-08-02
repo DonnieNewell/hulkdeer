@@ -2,13 +2,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#ifndef WIN32
 #include <sys/time.h>
-#else
-#include<time.h>
-#endif
-#include "distributedHotspot.h"
-#include "mpi.h"
+#include "./hotspot.h"
+#include "../Model.h"
 
 /* maximum power density possible (say 300W for a 10mm x 10mm chip) */
 #define MAX_PD (3.0e6)
@@ -29,47 +25,31 @@ void readInput(float *vect, int grid_rows, int grid_cols, char *filename);
 void writeOutput(float *vect, int grid_rows, int grid_cols, char *filename);
 
 int main(int argc, char** argv) {
-    int rc, numTasks, rank;
-    rc = MPI_Init(&argc, &argv);
-    if (rc != MPI_SUCCESS) {
-        fprintf(stderr, "Error initializing MPI.\n");
-        MPI_Abort(MPI_COMM_WORLD, rc);
-    }
-    MPI_Comm_size(MPI_COMM_WORLD, &numTasks);
-    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-
-    int grid_rows, grid_cols, iterations;
+    int grid_rows = 0, grid_cols = 0, iterations = 0;
     float *MatrixTemp = NULL, *MatrixPower = NULL;
     char tfile[] = "temp.dat";
     char pfile[] = "power.dat";
     char ofile[] = "output.dat";
-    const int kRootIndex = 0;
-    int number_blocks_per_dimension = 0;
+
     if (argc >= 3) {
         grid_rows = atoi(argv[1]);
         grid_cols = atoi(argv[1]);
         iterations = atoi(argv[2]);
         if (argc >= 4) setenv("BLOCKSIZE", argv[3], 1);
         if (argc >= 5) setenv("HEIGHT", argv[4], 1);
-        if (argc >= 6) number_blocks_per_dimension = atoi(argv[5]);
     } else {
-        printf("Usage: hotspot grid_rows_and_cols iterations [blocksize] [height] [blocks_per_dimension]\n");
+        printf("Usage: hotspot grid_rows_and_cols iterations [blocksize]\n");
         return 0;
     }
 
     // Read the power grid, which is read-only.
     int num_elements = grid_rows * grid_cols;
-    MatrixPower = (float *) malloc(num_elements * sizeof (float));
-    if (rank == kRootIndex) {
-        readInput(MatrixPower, grid_rows, grid_cols, pfile);
+    MatrixPower = (float *) malloc(num_elements * sizeof(float));
+    readInput(MatrixPower, grid_rows, grid_cols, pfile);
 
-        // Read the temperature grid, which will change over time.
-        MatrixTemp = (float *) malloc(num_elements * sizeof (float));
-        readInput(MatrixTemp, grid_rows, grid_cols, tfile);
-    }
-    // printf("about to set the Data.\n");
-    runDistributedHotspotSetData(MatrixPower, num_elements);
-    printf("Set the Data.\n");
+    // Read the temperature grid, which will change over time.
+    MatrixTemp = (float *) malloc(num_elements * sizeof(float));
+    readInput(MatrixTemp, grid_rows, grid_cols, tfile);
 
     float grid_width = chip_width / grid_cols;
     float grid_height = chip_height / grid_rows;
@@ -81,30 +61,26 @@ int main(int argc, char** argv) {
     float max_slope = MAX_PD / (FACTOR_CHIP * t_chip * SPEC_HEAT_SI);
     float step = PRECISION / max_slope;
     float step_div_Cap = step / Cap;
-
+    const int kDevice = 0;
     struct timeval starttime, endtime;
-    long usec;
-
+    long usec = 0l;
+    runHotspotSetData(MatrixPower, num_elements);
     gettimeofday(&starttime, NULL);
-    runDistributedHotspot(rank, numTasks, MatrixTemp, grid_cols, grid_rows,
-            iterations, step_div_Cap, Rx, Ry, Rz, number_blocks_per_dimension);
+    runHotspot(MatrixTemp, grid_cols, grid_rows, iterations, step_div_Cap, Rx, Ry, Rz, kDevice);
     gettimeofday(&endtime, NULL);
-
     usec = ((endtime.tv_sec - starttime.tv_sec) * 1000000 +
             (endtime.tv_usec - starttime.tv_usec));
     printf("Total time=%ld\n", usec);
-    if (0 == rank)
-      writeOutput(MatrixTemp, grid_rows, grid_cols, ofile);
+    writeOutput(MatrixTemp, grid_rows, grid_cols, ofile);
 
-    MPI_Finalize();
     free(MatrixTemp);
     free(MatrixPower);
     return 0;
 }
 
 void readInput(float *vect, int grid_rows, int grid_cols, char *filename) {
-    FILE *fp;
-    int i, j;
+    FILE *fp = NULL;
+    int i = 0, j = 0;
     char str[80];
 
     printf("Reading %s...\n", filename);
@@ -115,7 +91,7 @@ void readInput(float *vect, int grid_rows, int grid_cols, char *filename) {
     }
     for (i = 0; i < grid_rows; i++) {
         for (j = 0; j < grid_cols; j++) {
-            if (NULL != fgets(str, sizeof (str), fp))
+            if (NULL != fgets(str, sizeof(str), fp))
                 vect[i * grid_cols + j] = strtod(str, NULL);
         }
     }
@@ -123,8 +99,8 @@ void readInput(float *vect, int grid_rows, int grid_cols, char *filename) {
 }
 
 void writeOutput(float *vect, int grid_rows, int grid_cols, char *filename) {
-    FILE *fp;
-    int i, j, val, count, next;
+    FILE *fp = NULL;
+    int i = 0, j = 0, val = 0, count = 0, next = 0;
 
     printf("Writing %s...\n", filename);
     fp = fopen(filename, "w");

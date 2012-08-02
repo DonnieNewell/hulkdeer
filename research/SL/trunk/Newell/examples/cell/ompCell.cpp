@@ -20,7 +20,6 @@
 #define TILE_WIDTH  10
 #define TILE_HEIGHT 10
 #define TILE_DEPTH  10
-#define PYRAMID_HEIGHT 1
 
 typedef struct dim {
   int x;
@@ -118,7 +117,7 @@ static DTYPE *device_input = NULL, *device_output = NULL;
  * Function exported to do the entire stencil computation.
  */
 void runOMPCell(DTYPE *host_data, int x_max, int y_max, int z_max,
-        int iterations, int bornMin, int bornMax,
+        int iterations, const int kPyramidHeight, int bornMin, int bornMax,
         int dieMin, int dieMax) {
   // User-specific parameters
   dim3 input_size;
@@ -127,9 +126,9 @@ void runOMPCell(DTYPE *host_data, int x_max, int y_max, int z_max,
   stencil_size.x = 1;
   stencil_size.y = 1;
   stencil_size.z = 1;
-  border.x = PYRAMID_HEIGHT * stencil_size.x;
-  border.y = PYRAMID_HEIGHT * stencil_size.y;
-  border.z = PYRAMID_HEIGHT * stencil_size.z;
+  border.x = kPyramidHeight * stencil_size.x;
+  border.y = kPyramidHeight * stencil_size.y;
+  border.z = kPyramidHeight * stencil_size.z;
   input_size.x = x_max + 2 * border.x;
   input_size.y = y_max + 2 * border.y;
   input_size.z = z_max + 2 * border.z;
@@ -144,12 +143,13 @@ void runOMPCell(DTYPE *host_data, int x_max, int y_max, int z_max,
   copyFromHostData(device_input, host_data, input_size, border);
 
   // Now we can calculate the pyramid height.
-  int pyramid_height = PYRAMID_HEIGHT;
+  int pyramid_height = kPyramidHeight;
 
   // Run computation
   for (int iter = 0; iter < iterations; iter += pyramid_height) {
     if (iter + pyramid_height > iterations)
       pyramid_height = iterations - iter;
+    //printf("runOMPCellKernel: ph:%d iterations:%d\n", pyramid_height, iterations);
     runOMPCellKernel(input_size, stencil_size, device_input, device_output,
             pyramid_height, global_ro_data, bornMin, bornMax,
             dieMin, dieMax);

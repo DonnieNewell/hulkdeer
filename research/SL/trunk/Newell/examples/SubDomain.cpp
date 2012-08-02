@@ -27,9 +27,9 @@ SubDomain::SubDomain(const SubDomain& sd) {
   (*this) = sd;
 }
 
-SubDomain::SubDomain(int id[2], int yOffset, int yLength, int xOffset,
+SubDomain::SubDomain(int* id, int yOffset, int yLength, int xOffset,
         int xLength, int gridHeight, int gridWidth,
-        int newNeighbors[kNumNeighbors2D]) {
+        int* newNeighbors) {
   this->gridDim[0] = gridHeight;
   this->gridDim[1] = gridWidth;
   this->gridDim[2] = -1;
@@ -47,9 +47,9 @@ SubDomain::SubDomain(int id[2], int yOffset, int yLength, int xOffset,
           kNumNeighbors2D * sizeof (DTYPE));
 }
 
-SubDomain::SubDomain(int id[3], int zOffset, int zLength, int yOffset,
+SubDomain::SubDomain(int* id, int zOffset, int zLength, int yOffset,
         int yLength, int xOffset, int xLength, int gridDepth, int gridHeight,
-        int gridWidth, int newNeighbors[kNumNeighbors3D]) {
+        int gridWidth, int* newNeighbors) {
   this->gridDim[0] = gridDepth;
   this->gridDim[1] = gridHeight;
   this->gridDim[2] = gridWidth;
@@ -155,13 +155,12 @@ DTYPE* SubDomain::getBuffer() const {
   return this->buffer;
 }
 
-int SubDomain::threeDToLin(int i, int j, int k,
-        int dim0, int dim1, int dim2) const {
-  return i * dim2 * dim1 + j * dim2 + k;
+int SubDomain::threeDToLin(int i, int j, int k, int dimJ, int dimK) const {
+  return i * dimK * dimJ + j * dimK + k;
 }
 
-int SubDomain::twoDToLin(int i, int j, int dim0, int dim1) const {
-  return i * dim1 + j;
+int SubDomain::twoDToLin(int i, int j, int dimJ) const {
+  return i * dimJ + j;
 }
 
 int SubDomain::getNeighborFace(const NeighborTag3D tag) {
@@ -174,22 +173,22 @@ int SubDomain::getNeighborFace(const NeighborTag3D tag) {
   int neighbor = -1;
 
   if (x3DFace0 == tag && 0 < i) {
-    neighbor = threeDToLin(i - 1, j, k, dimI, dimJ, dimK);
+    neighbor = threeDToLin(i - 1, j, k, dimJ, dimK);
 
   } else if (x3DFace1 == tag && (dimI - 1) > i) {
-    neighbor = threeDToLin(i + 1, j, k, dimI, dimJ, dimK);
+    neighbor = threeDToLin(i + 1, j, k, dimJ, dimK);
 
   } else if (x3DFace2 == tag && 0 < j) {
-    neighbor = threeDToLin(i, j - 1, k, dimI, dimJ, dimK);
+    neighbor = threeDToLin(i, j - 1, k, dimJ, dimK);
 
   } else if (x3DFace3 == tag && (dimJ - 1) > j) {
-    neighbor = threeDToLin(i, j + 1, k, dimI, dimJ, dimK);
+    neighbor = threeDToLin(i, j + 1, k, dimJ, dimK);
 
   } else if (x3DFace4 == tag && 0 < k) {
-    neighbor = threeDToLin(i, j, k - 1, dimI, dimJ, dimK);
+    neighbor = threeDToLin(i, j, k - 1, dimJ, dimK);
 
   } else if (x3DFace5 == tag && (dimK - 1) > k) {
-    neighbor = threeDToLin(i, j, k + 1, dimI, dimJ, dimK);
+    neighbor = threeDToLin(i, j, k + 1, dimJ, dimK);
   }
   return neighbor;
 }
@@ -204,40 +203,40 @@ int SubDomain::getNeighborPole(const NeighborTag3D tag) {
   const int dimK = gridDim[2];
 
   if (x3DPole0 == tag && 0 < i && 0 < j) {
-    neighbor = threeDToLin(i - 1, j - 1, k, dimI, dimJ, dimK);
+    neighbor = threeDToLin(i - 1, j - 1, k, dimJ, dimK);
 
   } else if (x3DPole1 == tag && 0 < i && (dimJ - 1) > j) {
-    neighbor = threeDToLin(i - 1, j + 1, k, dimI, dimJ, dimK);
+    neighbor = threeDToLin(i - 1, j + 1, k, dimJ, dimK);
 
   } else if (x3DPole2 == tag && (dimI - 1) > i && (dimJ - 1) > j) {
-    neighbor = threeDToLin(i + 1, j + 1, k, dimI, dimJ, dimK);
+    neighbor = threeDToLin(i + 1, j + 1, k, dimJ, dimK);
 
   } else if (x3DPole3 == tag && (dimI - 1) > i && 0 < j) {
-    neighbor = threeDToLin(i + 1, j - 1, k, dimI, dimJ, dimK);
+    neighbor = threeDToLin(i + 1, j - 1, k, dimJ, dimK);
 
   } else if (x3DPole4 == tag && 0 < i && 0 < k) {
-    neighbor = threeDToLin(i - 1, j, k - 1, dimI, dimJ, dimK);
+    neighbor = threeDToLin(i - 1, j, k - 1, dimJ, dimK);
 
   } else if (x3DPole5 == tag && 0 < i && (dimK - 1) > k) {
-    neighbor = threeDToLin(i - 1, j, k + 1, dimI, dimJ, dimK);
+    neighbor = threeDToLin(i - 1, j, k + 1, dimJ, dimK);
 
   } else if (x3DPole6 == tag && (dimI - 1) > i && (dimK - 1) > k) {
-    neighbor = threeDToLin(i + 1, j, k + 1, dimI, dimJ, dimK);
+    neighbor = threeDToLin(i + 1, j, k + 1, dimJ, dimK);
 
   } else if (x3DPole7 == tag && (dimI - 1) > i && 0 < k) {
-    neighbor = threeDToLin(i + 1, j, k - 1, dimI, dimJ, dimK);
+    neighbor = threeDToLin(i + 1, j, k - 1, dimJ, dimK);
 
   } else if (x3DPole8 == tag && 0 < j && 0 < k) {
-    neighbor = threeDToLin(i, j - 1, k - 1, dimI, dimJ, dimK);
+    neighbor = threeDToLin(i, j - 1, k - 1, dimJ, dimK);
 
   } else if (x3DPole9 == tag && 0 < j && (dimK - 1) > k) {
-    neighbor = threeDToLin(i, j - 1, k + 1, dimI, dimJ, dimK);
+    neighbor = threeDToLin(i, j - 1, k + 1, dimJ, dimK);
 
   } else if (x3DPole10 == tag && (dimJ - 1) > j && (dimK - 1) > k) {
-    neighbor = threeDToLin(i, j + 1, k + 1, dimI, dimJ, dimK);
+    neighbor = threeDToLin(i, j + 1, k + 1, dimJ, dimK);
 
   } else if (x3DPole11 == tag && (dimJ - 1) > j && 0 < k) {
-    neighbor = threeDToLin(i, j + 1, k - 1, dimI, dimJ, dimK);
+    neighbor = threeDToLin(i, j + 1, k - 1, dimJ, dimK);
   }
   return neighbor;
 }
@@ -250,13 +249,13 @@ int SubDomain::getNeighborPole(const NeighborTag2D tag) {
   const int dimJ = gridDim[1];
   //printf("getNeighborPole: i:%d, j:%d, dimI:%d, dimJ:%d\n", i, j, dimI, dimJ);
   if (x2DPole0 == tag && 0 < i) {
-    neighbor = twoDToLin(i - 1, j, dimI, dimJ);
+    neighbor = twoDToLin(i - 1, j, dimJ);
   } else if (x2DPole1 == tag && (dimJ - 1) > j) {
-    neighbor = twoDToLin(i, j + 1, dimI, dimJ);
+    neighbor = twoDToLin(i, j + 1, dimJ);
   } else if (x2DPole2 == tag && (dimI - 1) > i) {
-    neighbor = twoDToLin(i + 1, j, dimI, dimJ);
+    neighbor = twoDToLin(i + 1, j, dimJ);
   } else if (x2DPole3 == tag && 0 < j) {
-    neighbor = twoDToLin(i, j - 1, dimI, dimJ);
+    neighbor = twoDToLin(i, j - 1, dimJ);
   }
   return neighbor;
 }
@@ -271,28 +270,28 @@ int SubDomain::getNeighborCorner(const NeighborTag3D tag) {
   int neighbor = -1;
 
   if (x3DCorner0 == tag && 0 < i && 0 < j && 0 < k) {
-    neighbor = threeDToLin(i - 1, j - 1, k - 1, dimI, dimJ, dimK);
+    neighbor = threeDToLin(i - 1, j - 1, k - 1, dimJ, dimK);
 
   } else if (x3DCorner1 == tag && 0 < i && 0 < j && (dimK - 1) > k) {
-    neighbor = threeDToLin(i - 1, j - 1, k + 1, dimI, dimJ, dimK);
+    neighbor = threeDToLin(i - 1, j - 1, k + 1, dimJ, dimK);
 
   } else if (x3DCorner2 == tag && 0 < i && (dimJ - 1) > j && 0 < k) {
-    neighbor = threeDToLin(i - 1, j + 1, k - 1, dimI, dimJ, dimK);
+    neighbor = threeDToLin(i - 1, j + 1, k - 1, dimJ, dimK);
 
   } else if (x3DCorner3 == tag && 0 < i && (dimJ - 1) > j && (dimK - 1) > k) {
-    neighbor = threeDToLin(i - 1, j + 1, k + 1, dimI, dimJ, dimK);
+    neighbor = threeDToLin(i - 1, j + 1, k + 1, dimJ, dimK);
 
   } else if (x3DCorner4 == tag && (dimI - 1) > i && 0 < j && 0 < k) {
-    neighbor = threeDToLin(i + 1, j - 1, k - 1, dimI, dimJ, dimK);
+    neighbor = threeDToLin(i + 1, j - 1, k - 1, dimJ, dimK);
 
   } else if (x3DCorner5 == tag && (dimI - 1) > i && 0 < j && (dimK - 1) > k) {
-    neighbor = threeDToLin(i + 1, j - 1, k + 1, dimI, dimJ, dimK);
+    neighbor = threeDToLin(i + 1, j - 1, k + 1, dimJ, dimK);
 
   } else if (x3DCorner6 == tag && (dimI - 1) > i && (dimJ - 1) > j && 0 < k) {
-    neighbor = threeDToLin(i + 1, j + 1, k - 1, dimI, dimJ, dimK);
+    neighbor = threeDToLin(i + 1, j + 1, k - 1, dimJ, dimK);
 
   } else if (x3DCorner7 == tag && (dimI - 1) > i && (dimJ - 1) > j && (dimK - 1) > k) {
-    neighbor = threeDToLin(i + 1, j + 1, k + 1, dimI, dimJ, dimK);
+    neighbor = threeDToLin(i + 1, j + 1, k + 1, dimJ, dimK);
   }
   return neighbor;
 }
@@ -305,13 +304,13 @@ int SubDomain::getNeighborCorner(const NeighborTag2D tag) {
   int neighbor = -1;
 
   if (x2DCorner0 == tag && 0 < i && 0 < j) {
-    neighbor = twoDToLin(i - 1, j - 1, dimI, dimJ);
+    neighbor = twoDToLin(i - 1, j - 1, dimJ);
   } else if (x2DCorner1 == tag && 0 < i && (dimJ - 1) > j) {
-    neighbor = twoDToLin(i - 1, j + 1, dimI, dimJ);
+    neighbor = twoDToLin(i - 1, j + 1, dimJ);
   } else if (x2DCorner2 == tag && (dimI - 1) > i && (dimJ - 1) > j) {
-    neighbor = twoDToLin(i + 1, j + 1, dimI, dimJ);
+    neighbor = twoDToLin(i + 1, j + 1, dimJ);
   } else if (x2DCorner3 == tag && (dimI - 1) > i && 0 < j) {
-    neighbor = twoDToLin(i + 1, j - 1, dimI, dimJ);
+    neighbor = twoDToLin(i + 1, j - 1, dimJ);
   }
   return neighbor;
 }
@@ -343,19 +342,17 @@ int SubDomain::getNeighborIndex(const NeighborTag2D tag) {
   return neighbor;
 }
 
-// TODO (donnie) need to differentiate 2d or 3d linear index
-
-const int SubDomain::getLinIndex() const {
+int SubDomain::getLinIndex() const {
   const int kDimensionality = this->getDimensionality();
   const int k2D = 2;
   const int k3D = 3;
   if (k3D == kDimensionality) {
-    int ret = threeDToLin(id[0], id[1], id[2], gridDim[0], gridDim[1], gridDim[2]);
+    int ret = threeDToLin(id[0], id[1], id[2], gridDim[1], gridDim[2]);
     // printf("threeDToLin(id:%d, %d, %d gridDim:%d, %d, %d) == %d\n",id[0], id[1],
     //        id[2], gridDim[0], gridDim[1], gridDim[2], ret);
     return ret;
   } else if (k2D == kDimensionality) {
-    return twoDToLin(id[0], id[1], gridDim[0], gridDim[1]);
+    return twoDToLin(id[0], id[1], gridDim[1]);
   } else { // 1 dimension
     return id[0];
   }
@@ -578,7 +575,7 @@ void printSubDomain(const SubDomain *s) {
         for (int k = 0; k < s->getLength(2); ++k) {
           int index = i * s->getLength(1) * s->getLength(2) +
                         j * s->getLength(2) + k;
-          printf(" %.2d", buffer[index]);
+printf(" %.2d", buffer[index]);
         }
         printf("\n");
       }

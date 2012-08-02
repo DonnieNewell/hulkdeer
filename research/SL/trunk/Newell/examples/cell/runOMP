@@ -1,0 +1,49 @@
+#!/bin/bash
+#run
+
+WEAK_LIMIT=3
+STRONG_LIMIT=2
+HOME=/af21/den4gr
+WORKING_DIR=$HOME/hulkdeer/research/SL/trunk/Newell
+CELL_DIR=$WORKING_DIR/examples/cell
+REMOTE_SCRIPT=$HOME/scripts/remote.sh
+OMP_MACHINES=$WORKING_DIR/machinefile.openmp
+CUDA_MACHINES=$WORKING_DIR/machinefile.cuda
+MPI_MACHINES=$WORKING_DIR/machinefile
+echo -e "***** BEGIN OPENMP *****\n" 
+for q in 64 128 256 512 1024
+do
+  echo -e "***** BEGIN STRONG ITERATION $q *****\n" 
+        $CELL_DIR/ompCell $q $q $q 128 1 
+  echo -e "***** END STRONG ITERATION   $q *****\n" 
+done
+for r in 64 128 256 512 1024
+do
+  echo -e "***** BEGIN TIMESTEPS ITERATION $r *****\n" 
+  $CELL_DIR/ompCell 128 128 128 $r 1
+  echo -e "***** END TIMESTEPS ITERATION   $r *****\n" 
+done
+echo -e "***** END OPENMP *****\n" 
+
+echo -e "***** BEGIN MPI *****\n" 
+for ((p=1; p <= WEAK_LIMIT ; p++))
+do
+  for t in 2 4 8
+  do
+    for balance in 0 1
+    do
+      for gpu_cpu_config in 0 
+      echo -e "***** BEGIN WEAK ITERATION $p *****\n" 
+      mpirun -np $p -machinefile $WORKING_DIR/machinefile -x LD_LIBRARY_PATH $CELL_DIR/distributedCell 256 256 256 128 1 t
+      echo -e "***** END WEAK ITERATION   $p *****\n" 
+    done
+  done
+done
+
+for q in 64 128 256 512 1024
+do
+  echo -e "***** BEGIN STRONG ITERATION $q *****\n" 
+  mpirun -np $STRONG_LIMIT -machinefile $WORKING_DIR/machinefile -x LD_LIBRARY_PATH $CELL_DIR/distributedCell $q $q $q 128 1 4
+  echo -e "***** END STRONG ITERATION   $q *****\n" 
+done
+echo -e "***** END MPI *****\n" 

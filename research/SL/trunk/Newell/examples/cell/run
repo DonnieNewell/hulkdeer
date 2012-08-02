@@ -1,18 +1,34 @@
 #!/bin/bash
 #run
 
-WEAK_LIMIT=2
-STRONG_LIMIT=2
-for ((p=1; p <= WEAK_LIMIT ; p++))
+PROCESS_LIMIT=3
+HOME=/af21/den4gr
+WORKING_DIR=$HOME/hulkdeer/research/SL/trunk/Newell
+CELL_DIR=$WORKING_DIR/examples/cell
+REMOTE_SCRIPT=$HOME/scripts/remote.sh
+OMP_MACHINES=$WORKING_DIR/machinefile.openmp
+CUDA_MACHINES=$WORKING_DIR/machinefile.cuda
+MPI_MACHINES=$WORKING_DIR/machinefile
+iterations=64
+pyramid_height=2
+echo -e "***** BEGIN MPI *****\n" 
+for ((p=2; p <= PROCESS_LIMIT ; p++))
 do
-  echo -e "***** BEGIN WEAK ITERATION $p *****\n" 
-  mpirun -np $p -machinefile ../../machinefile -x LD_LIBRARY_PATH /af21/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/cell 128 128 128 120 1
-  echo -e "***** END WEAK ITERATION   $p *****\n" 
+  for data_size in 256 192 128
+  do
+    echo -e "data_size\tnum_processes\tblocks_per_dimension\tload_balance\tdevice_setting"
+    for blocks_per_dimension in  4 8
+    do
+      for balance in 0 1
+      do
+        for gpu_cpu_config in 0 1 2
+        do
+          echo -e "$data_size,\t$p,\t$blocks_per_dimension,\t$balance,\t$gpu_cpu_config"
+          
+          mpirun -np $p -machinefile $WORKING_DIR/machinefile -x LD_LIBRARY_PATH $CELL_DIR/distributedCell $data_size $data_size $data_size $iterations $pyramid_height $blocks_per_dimension $balance $gpu_cpu_config
+        done
+      done
+    done
+  done
 done
-
-#for q in 64 128 192 256
-#do
-#  echo -e "***** BEGIN STRONG ITERATION $q *****\n" 
-#  mpirun -np $STRONG_LIMIT -machinefile ../../machinefile -x LD_LIBRARY_PATH /af21/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/cell $q $q $q 120 1
-#  echo -e "***** END STRONG ITERATION   $q *****\n" 
-#done
+echo -e "***** END MPI *****\n"

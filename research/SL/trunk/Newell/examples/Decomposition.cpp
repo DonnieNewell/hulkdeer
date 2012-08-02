@@ -2,8 +2,6 @@
 #include <stdio.h>
 Decomposition::Decomposition(){ }
 
-Decomposition::Decomposition(const int numSubDomains){ }
-
 Decomposition::Decomposition(const Decomposition &d){ *this = d;  }
 
 Decomposition::~Decomposition() {
@@ -109,35 +107,22 @@ void Decomposition::copyBlock2D(DTYPE* buffer, SubDomain* s,
   }
 }//end copyBlock2D
 
-void Decomposition::decompose1D(DTYPE* buffer, const int numElementsX,
-        const int stencil_size[3], const int iterations) {
-  if (0 < numElementsX) {
-    int numLeftX=numElementsX;
-    const int num_chunks = 64;
-    int stride = numElementsX/num_chunks;
-    for (size_t i=0; i < domain.size(); ++i) {
-      SubDomain* s = domain.at(i);
-      s->setLength(0, stride);
-      s->setOffset(0, numElementsX - numLeftX);
-      numLeftX -= s->getLength(0);
-    } //end for
-  }//end if
-}//end decompose1D
-
 void Decomposition::decompose2D(DTYPE* buffer, const int numElementsRows,
-        const int numElementsCols, const int stencil_size[3],
-        const int pyramidHeight) {
-  int number_of_chunks = 8;
-  int blockDimHeight  = static_cast<int>((numElementsRows /(double)number_of_chunks)+.5);
-  int blockDimWidth   = static_cast<int>((numElementsCols /(double)number_of_chunks)+.5);
+        const int kNumElementsCols, const int stencil_size[3],
+        const int kPyramidHeight, const int kNumberBlocksPerDimension) {
+
+  int blockDimHeight  = static_cast<int>((numElementsRows /
+                                    (double)kNumberBlocksPerDimension) + .5);
+  int blockDimWidth   = static_cast<int>((kNumElementsCols /
+                                    (double)kNumberBlocksPerDimension) + .5);
 
   //calculate ghost zone
-  int border[2] = { pyramidHeight * stencil_size[0],
-                    pyramidHeight * stencil_size[1]};
+  int border[2] = { kPyramidHeight * stencil_size[0],
+                    kPyramidHeight * stencil_size[1]};
 
   domain.clear();
-  for (int i = 0; i < number_of_chunks; ++i) {
-    for (int j = 0; j < number_of_chunks; ++j) {
+  for (int i = 0; i < kNumberBlocksPerDimension; ++i) {
+    for (int j = 0; j < kNumberBlocksPerDimension; ++j) {
         int id[2] = {i, j};
 
         //offset to account for ghost zone, may be negative
@@ -150,11 +135,11 @@ void Decomposition::decompose2D(DTYPE* buffer, const int numElementsRows,
         int fakeNeighbors[8] = {0};
         SubDomain* s = NULL;
         s= new SubDomain(id,heightOff, heightLen, widthOff, widthLen,
-                number_of_chunks, number_of_chunks,
+                kNumberBlocksPerDimension, kNumberBlocksPerDimension,
                 fakeNeighbors);
 
         //get data for this block from the buffer
-        copyBlock2D(buffer, s, numElementsRows, numElementsCols);
+        copyBlock2D(buffer, s, numElementsRows, kNumElementsCols);
         domain.push_back(s);
         s=NULL;
       }
@@ -163,21 +148,25 @@ void Decomposition::decompose2D(DTYPE* buffer, const int numElementsRows,
 
 void Decomposition::decompose3D(DTYPE* buffer, const int numElementsDepth,
         const int numElementsRows, const int numElementsCols,
-        const int stencil_size[3], const int pyramidHeight) {
-  int number_of_chunks = 8;
-  int blockDimDepth   = static_cast<int>((numElementsDepth/(double)number_of_chunks)+.5);
-  int blockDimHeight  = static_cast<int>((numElementsRows /(double)number_of_chunks)+.5);
-  int blockDimWidth   = static_cast<int>((numElementsCols /(double)number_of_chunks)+.5);
+        const int stencil_size[3], const int pyramidHeight,
+        const int kNumberBlocksPerDimension) {
+  
+  int blockDimDepth   = static_cast<int>((numElementsDepth /
+                                    (double)kNumberBlocksPerDimension) + .5);
+  int blockDimHeight  = static_cast<int>((numElementsRows /
+                                    (double)kNumberBlocksPerDimension) + .5);
+  int blockDimWidth   = static_cast<int>((numElementsCols /
+                                    (double)kNumberBlocksPerDimension) + .5);
 
   //calculate ghost zone
-  int border[3] = { pyramidHeight*stencil_size[0],
-                    pyramidHeight*stencil_size[1],
-                    pyramidHeight*stencil_size[2]};
+  int border[3] = { pyramidHeight * stencil_size[0],
+                    pyramidHeight * stencil_size[1],
+                    pyramidHeight * stencil_size[2]};
 
   domain.clear();
-  for (int i = 0; i < number_of_chunks; ++i) {
-    for (int j = 0; j < number_of_chunks; ++j) {
-      for (int k = 0; k < number_of_chunks; ++k) {
+  for (int i = 0; i < kNumberBlocksPerDimension; ++i) {
+    for (int j = 0; j < kNumberBlocksPerDimension; ++j) {
+      for (int k = 0; k < kNumberBlocksPerDimension; ++k) {
         int id[3] = {i, j, k};
 
         //offset to account for ghost zone, may be negative
@@ -192,14 +181,14 @@ void Decomposition::decompose3D(DTYPE* buffer, const int numElementsDepth,
         int fakeNeighbors[26] = {0};
         SubDomain* s = NULL;
         s= new SubDomain(id, depthOff, depthLen, heightOff, heightLen,
-                            widthOff, widthLen, number_of_chunks, number_of_chunks, number_of_chunks,
+                            widthOff, widthLen, kNumberBlocksPerDimension, kNumberBlocksPerDimension, kNumberBlocksPerDimension,
                             fakeNeighbors);
 
         //get data for this block from the buffer
         copyBlock3D(buffer, s, numElementsDepth, numElementsRows,
-                  numElementsCols);
+                    numElementsCols);
         domain.push_back(s);
-        s=NULL;
+        s = NULL;
       }
     }
   }
@@ -207,15 +196,13 @@ void Decomposition::decompose3D(DTYPE* buffer, const int numElementsDepth,
 
 void Decomposition::decompose(DTYPE* buffer, const int numDimensions,
         const int numElements[3], const int stencil_size[3],
-        const int pyramidHeight) {
-  if (1 == numDimensions)
-    decompose1D(buffer, numElements[0], stencil_size, pyramidHeight);
-  else if (2 == numDimensions)
+        const int pyramidHeight, const int kNumberBlocksPerDimension) {
+  if (2 == numDimensions)
     decompose2D(buffer, numElements[0], numElements[1], stencil_size,
-            pyramidHeight);
+            pyramidHeight, kNumberBlocksPerDimension);
   else if (3 == numDimensions)
     decompose3D(buffer, numElements[0], numElements[1], numElements[2],
-                stencil_size, pyramidHeight);
+                stencil_size, pyramidHeight, kNumberBlocksPerDimension);
 }
 
 void printDecomposition(Decomposition& d) {

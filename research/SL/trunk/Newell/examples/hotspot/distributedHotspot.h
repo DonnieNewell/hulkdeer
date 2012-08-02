@@ -7,7 +7,8 @@ void benchmarkMyself(Node*, SubDomain*, int, int, int, int, int);
 void processSubDomain(int device, SubDomain *task, int timesteps,
                       float step_div_Cap, float Rx, float Ry, float Rz);
 void runDistributedHotspot(int rank, int numTasks, DTYPE *data, int x_max, int y_max,
-    int iterations, float step_div_Cap, float Rx, float Ry, float Rz);
+    int iterations, int pyramid_height, float step_div_Cap, float Rx, float Ry, float Rz,
+        const int number_blocks_per_dimension);
 void runDistributedHotspotSetData(DTYPE *MatrixPower, int num_elements);
 void processSubDomain(int device, SubDomain *task, int timesteps,
                       float step_div_Cap, float Rx, float Ry, float Rz);

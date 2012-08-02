@@ -1,0 +1,28 @@
+#!/bin/bash
+#run
+
+WEAK_LIMIT=4
+STRONG_LIMIT=2
+HOME=/af21/den4gr
+WORKING_DIR=$HOME/hulkdeer/research/SL/trunk/Newell
+CELL_DIR=$WORKING_DIR/examples/cell
+REMOTE_SCRIPT=$HOME/scripts/remote.sh
+OMP_MACHINES=$WORKING_DIR/machinefile.openmp
+CUDA_MACHINES=$WORKING_DIR/machinefile.cuda
+MPI_MACHINES=$WORKING_DIR/machinefile
+
+echo -e "***** BEGIN CUDA *****\n" 
+for q in 64 128 256 512 1024
+do
+  echo -e "***** BEGIN STRONG ITERATION $q *****\n" 
+  $CELL_DIR/cudaCell $q $q $q 128 1
+  echo -e "***** END STRONG ITERATION   $q *****\n" 
+done
+for p in 64 128 256 512 1024
+do
+  echo -e "***** BEGIN TIMESTEPS ITERATION $p *****\n" 
+  $CELL_DIR/cudaCell 128 128 128 $p 1
+  echo -e "***** END TIMESTEPS ITERATION   $p *****\n" 
+done
+
+echo -e "***** END CUDA *****\n" 

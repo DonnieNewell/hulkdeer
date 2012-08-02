@@ -2,6 +2,7 @@
 #define NODE_H
 #include "SubDomain.h"
 #include <vector>
+#include <map>
 #include <queue>
 #include <utility>
 
@@ -50,37 +51,40 @@ class Node{
   double weight;
   double edgeWeight;
   int rank;
+  bool is_CPU;
   vector<SubDomain*> subD;
   vector<Node> children;
-
+  map<int,int> linear_lookup;
   public:
   Node();
   Node(double);
   Node(const Node&);
   ~Node();
-  Node& operator=(const Node& rhs);
+  Node& operator=(const Node&);
   void addSubDomain(SubDomain*);
   void setEdgeWeight(double);
   void setWeight(double);
   void setRank(int);
-  void setNumChildren(int);
-  const unsigned int getNumChildren() const;
-  const int getRank() const;
-  const double getTimeEst(int extra) const;
-  int getWorkNeeded(const double runtime) const;
-  int getTotalWorkNeeded(const double runtime) const;
-  const unsigned int numTotalSubDomains() const;
+  void setCPU(const bool);
+  bool isCPU() const;
+  void setNumChildren(const int);
+  unsigned int getNumChildren() const;
+  int getRank() const;
+  double getTimeEst(const int, const int) const;
+  int getWorkNeeded(const double) const;
+  int getTotalWorkNeeded(const double, const int) const;
+  unsigned int numTotalSubDomains() const;
   SubDomain* getSubDomain(int index) const;
-  SubDomain* globalGetSubDomain(int index) const;
-  SubDomain* getSubDomainLinear(int index) const;
+  SubDomain* globalGetSubDomain(int) const;
+  SubDomain* getSubDomainLinear(int) const;
   SubDomain* popSubDomain() ;
-  Node& getChild(int index);
-  const Node& getChild(int index) const;
-  const unsigned int numSubDomains() const;
-  const double getWeight() const;
-  const double getEdgeWeight() const;
-  const double getTotalWeight() const;
-  const double getMinEdgeWeight() const;
+  Node& getChild(int);
+  const Node& getChild(int) const;
+  unsigned int numSubDomains() const;
+  double getWeight() const;
+  double getEdgeWeight() const;
+  double getTotalWeight(const int) const;
+  double getMinEdgeWeight(const int) const;
 };
 
 void printNode(Node& node);
