@@ -10,8 +10,6 @@
 #include<time.h>
 #endif
 
-#define PYRAMID_HEIGHT 1
-
 // The size of the tile is calculated at compile time by the SL processor.
 // But the data array is statically sized.
 // So, make these are big as they can get.
@@ -179,7 +177,8 @@ static int pyramid_height = -1;
  * Function exported to do the entire stencil computation.
  */
 void runHotspot(DTYPE *host_data, int x_max, int y_max, int iterations,
-        float step_div_Cap, float Rx, float Ry, float Rz, int device) {
+        const int kPyramidHeight, float step_div_Cap, float Rx, float Ry,
+        float Rz, int device) {
   // printf("runHotspot(host_data:%p, x_max:%d, y_max:%d, iterations:%d, step_div_Cap:%f, Rx:%f, Ry:%f, Rz:%f, device:%d);\n",
   //        host_data, x_max, y_max, iterations, step_div_Cap, Rx, Ry, Rz, device);
   // User-specific parameters
@@ -227,7 +226,7 @@ void runHotspot(DTYPE *host_data, int x_max, int y_max, int iterations,
   dim3 border, tile_data_size, grid_dims;
 
   // Now we can calculate the pyramid height.
-  if (-1 == pyramid_height) pyramid_height = PYRAMID_HEIGHT;
+  if (-1 == pyramid_height) pyramid_height = kPyramidHeight;
 
   // And use the result to calculate various sizes.
   filldim3(&border,
@@ -318,7 +317,6 @@ void runHotspotSetData(DTYPE *host_data, int num_elements) {
               i, cudaGetErrorString(cuda_error));
       return;
     }
-
     cudaMalloc((void **) &cuda_global_ro_data[i], num_bytes);
     cudaMemcpy(cuda_global_ro_data[i], host_data, num_bytes,
             cudaMemcpyHostToDevice);

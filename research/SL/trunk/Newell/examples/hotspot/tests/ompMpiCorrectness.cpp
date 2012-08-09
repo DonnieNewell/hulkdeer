@@ -32,8 +32,10 @@ int main(int argc, char** argv) {
   const int kDataSize = 32;
   int iterations = 2;
   bool testPass;
-  int returnCode, numTasks, rank;
+  int returnCode, numTasks, rank, pyramid_height = 2;
   int grid_rows, grid_cols;
+  int number_blocks_per_dimension = 4, device_configuration = 0;
+  bool perform_load_balancing = true;
   float *ompMatrixTemp = NULL, *mpiMatrixTemp = NULL, *MatrixPower = NULL;
   char tfile[] = "../temp.dat";
   char pfile[] = "../power.dat";
@@ -76,13 +78,15 @@ int main(int argc, char** argv) {
     printf("Set the OpenMP Data.\n");
     printf("running OpenMP version.\n");
     runOMPHotspot(ompMatrixTemp, kDataSize, kDataSize, iterations,
-            step_div_Cap, Rx, Ry, Rz);
+            pyramid_height, step_div_Cap, Rx, Ry, Rz);
     runOMPHotspotCleanup();
     printf("running MPI version.\n");
   }
   runDistributedHotspotSetData(MatrixPower, num_elements);
   runDistributedHotspot(rank, numTasks, mpiMatrixTemp, kDataSize, kDataSize,
-          iterations, step_div_Cap, Rx, Ry, Rz);
+          iterations, pyramid_height, step_div_Cap, Rx, Ry, Rz,
+          number_blocks_per_dimension, perform_load_balancing,
+          device_configuration);
   returnCode = 1;
   if (0 == rank) {
     printf("mpiData:%p, ompData:%p\n", mpiMatrixTemp, ompMatrixTemp);

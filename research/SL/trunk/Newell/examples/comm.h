@@ -26,10 +26,13 @@ enum MPISubDomainBufferIndex {
   xNeighborsStartIndex = 14
 };
 
+const int kMagicNumber = 100000;  // used to calculate mpi tag for segments
+const int kSendAndReceive = 2;
+
 int getMPITagForSegment(NeighborTag2D);
 int getMPITagForSegment(NeighborTag3D);
-int getMPITagForSegmentData(NeighborTag2D);
-int getMPITagForSegmentData(NeighborTag3D);
+int getMPITagForSegmentData(NeighborTag2D, const int);
+int getMPITagForSegmentData(NeighborTag3D, const int);
 double secondsElapsed(struct timeval start, struct timeval stop);
 void sendDataToNode(const int, int, SubDomain*);
 void receiveNumberOfChildren(int, Cluster*);
@@ -64,8 +67,10 @@ void copySegment(NeighborTag3D, Node*, SubDomain*, const int []);
 void copySegment(NeighborTag2D, Node*, SubDomain*, const int []);
 bool sendSegment(const NeighborTag3D, const int, SubDomain*, DTYPE*, const int, MPI_Request*);
 bool sendSegment(const NeighborTag2D, const int, SubDomain*, DTYPE*, const int, MPI_Request*);
-bool receiveSegment(const NeighborTag3D, const int, SubDomain*, DTYPE*, const int, int*);
-bool receiveSegment(const NeighborTag2D, const int, SubDomain*, DTYPE*, const int, int*);
+bool receiveSegment(const NeighborTag3D, const int, SubDomain*, DTYPE*,
+        const int, Node*, int*);
+bool receiveSegment(const NeighborTag2D, const int, SubDomain*, DTYPE*,
+        const int, Node*, int*);
 void sendNewGhostZones(const NeighborTag3D, Node*, const int [], MPI_Request*,
         int*, DTYPE***, int*, int*);
 void sendNewGhostZones(const NeighborTag2D, Node*, const int [], MPI_Request*,
@@ -81,8 +86,19 @@ void receiveNewGhostZones(const NeighborTag2D, Node*, const int[], DTYPE***,
 int getMaxSegmentSize(const SubDomain*, const int[], const int);
 int getMaxSegmentSize2D(const SubDomain*, const int[]);
 int getMaxSegmentSize3D(const SubDomain*, const int[]);
+double benchmarkSubDomainCopy(SubDomain*);
 void delete3DBuffer(const int, const int, DTYPE***);
 DTYPE*** new3DBuffer(const int, const int, const int);
+void initGhostZoneType(const SubDomain*, NeighborTag3D, const int [],
+        MPI_Datatype*, MPI_Datatype*, int[]);
+void initGhostZoneType(const SubDomain*, NeighborTag2D, const int [],
+        MPI_Datatype*, MPI_Datatype*, int[]);
+void initAll2DGhostZoneTypes(const SubDomain*, const int [], MPI_Datatype[],
+        MPI_Datatype[], int[][kSendAndReceive]);
+void initAll3DGhostZoneTypes(const SubDomain*, const int [], MPI_Datatype[],
+        MPI_Datatype[], int[][kSendAndReceive]);
+void initAllGhostZoneTypes(const SubDomain*, const int, const int [],
+        MPI_Datatype[], MPI_Datatype[], int[][kSendAndReceive]);
 void updateAllStaleData(Node*, const int[]);
 void cleanupComm(const int);
 

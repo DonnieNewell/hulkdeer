@@ -200,7 +200,6 @@ void runCell(DTYPE *host_data, int x_max, int y_max, int z_max, int iterations,
     cudaMalloc((void**) &device_output, num_bytes);
     cudaMalloc((void**) &device_input, num_bytes);
   }
-  const int newValue = 0;
   //cudaMemset(static_cast<void*> (device_output), newValue, num_bytes);
   cudaMemcpy(device_input, host_data, num_bytes, cudaMemcpyHostToDevice);
 

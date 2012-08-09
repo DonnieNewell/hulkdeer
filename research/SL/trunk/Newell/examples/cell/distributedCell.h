@@ -11,5 +11,5 @@ void processSubDomain(int device, SubDomain *task, const int kPyramidHeight,
         int bornMin, int bornMax, int dieMin, int dieMax);
 void receiveData(int, Node*, bool, int, int, int, int, int);
 double benchmarkPCIBus(SubDomain* pS, int gpuIndex);
-double benchmarkSubDomainCopy(SubDomain*);
+
 #endif

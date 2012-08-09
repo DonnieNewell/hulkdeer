@@ -1,8 +1,14 @@
 #include "comm.h"
 #include <stdexcept>
-
+const int kNumNeighbors3D = 26;
 static DTYPE*** ghost_buffers = NULL;
 static MPI_Request* requests = NULL;
+static double buffer_copy_time = 0.0;
+static MPI_Datatype mpi_types[kNumNeighbors3D];
+static MPI_Datatype mpi_sub_types[kNumNeighbors3D];
+static int segment_offsets[kNumNeighbors3D][kSendAndReceive];
+const int kSendIndex = 0;
+const int kReceiveIndex = 1;
 
 double secondsElapsed(struct timeval start, struct timeval stop) {
   return static_cast<double> ((stop.tv_sec - start.tv_sec) +
@@ -646,6 +652,121 @@ void getPoleDimensions(NeighborTag2D neighbor, int* segmentLength,
   }
 }
 
+/**
+  brief: creates the MPI Datatype for a Stencil Ghost Zone segment.
+*/
+void initGhostZoneType(const SubDomain* kBlock, NeighborTag3D neighbor,
+        const int kBorder[], MPI_Datatype* type, MPI_Datatype* sub_type,
+        int ghost_offset[]) {
+  int length[] = {0, 0, 0};
+  int send_offset[] = {0, 0, 0};
+  int receive_offset[] = {0, 0, 0};
+  MPI_Aint size_of_sl_mpi_type = 0;
+  int segment_height = 1, segment_width = 1, segment_depth = 1;
+  int block_height = 1, block_width = 1, block_depth = 1;
+  MPI_Datatype one_dimension, two_dimension;
+  bool block_to_mpi_buffer = false;
+  getSegmentDimensions(neighbor, length, receive_offset, const_cast<SubDomain*> (kBlock),
+          kBorder, block_to_mpi_buffer);
+  block_to_mpi_buffer = true;
+  getSegmentDimensions(neighbor, length, send_offset, const_cast<SubDomain*> (kBlock),
+          kBorder, block_to_mpi_buffer);
+  segment_depth = length[0];
+  segment_height = length[1];
+  segment_width = length[2];
+  block_depth = kBlock->getLength(0);
+  block_height = kBlock->getLength(1);
+  block_width = kBlock->getLength(2);
+
+  // set the offsets for the beginning of the blocks for send and receive
+  ghost_offset[kReceiveIndex] = receive_offset[0] * block_height * block_width +
+          receive_offset[1] * block_width +
+          receive_offset[2];
+  ghost_offset[kSendIndex] = send_offset[0] * block_height * block_width +
+          send_offset[1] * block_width +
+          send_offset[2];
+  printf("%s: send_offset: %d receive_offset:%d\n",
+          neighborString(neighbor), ghost_offset[kSendIndex],
+          ghost_offset[kReceiveIndex]);
+  printf("%s: sub_type: num blocks:%d block_len:%d block_stride:%d\n",
+          neighborString(neighbor), 1, segment_width, block_width);
+  MPI_Type_extent(SL_MPI_TYPE, &size_of_sl_mpi_type);
+  MPI_Type_vector(1, segment_width, block_width, SL_MPI_TYPE,
+          &one_dimension);
+  MPI_Type_hvector(segment_height, 1, block_width * size_of_sl_mpi_type,
+          one_dimension, &two_dimension);
+  printf("%s: type: num blocks:%d block_len:%d block_stride:%d\n",
+          neighborString(neighbor), segment_depth, segment_height,
+          block_width * block_height);
+  MPI_Type_hvector(segment_depth, 1,
+          block_width * block_height * size_of_sl_mpi_type, two_dimension,
+          type);
+  MPI_Type_commit(type);
+}
+
+void initGhostZoneType(const SubDomain* kBlock, NeighborTag2D neighbor,
+        const int kBorder[], MPI_Datatype* type, MPI_Datatype* sub_type,
+        int ghost_offset[]) {
+  int length[] = {0, 0, 0};
+  int send_offset[] = {0, 0, 0};
+  int receive_offset[] = {0, 0, 0};
+  int segment_height = 1, segment_width = 1, segment_depth = 1;
+  int block_height = 1, block_width = 1, block_depth = 1;
+  bool block_to_mpi_buffer = false;
+  getSegmentDimensions(neighbor, length, receive_offset,
+          const_cast<SubDomain*> (kBlock), kBorder, block_to_mpi_buffer);
+  block_to_mpi_buffer = true;
+  getSegmentDimensions(neighbor, length, send_offset,
+          const_cast<SubDomain*> (kBlock), kBorder, block_to_mpi_buffer);
+  segment_height = length[0];
+  segment_width = length[1];
+  block_height = kBlock->getLength(0);
+  block_width = kBlock->getLength(1);
+
+  ghost_offset[kReceiveIndex] = receive_offset[0] * block_width +
+          receive_offset[1];
+  ghost_offset[kSendIndex] = send_offset[0] * block_width +
+          send_offset[1];
+  MPI_Type_vector(segment_height, segment_width, block_width, SL_MPI_TYPE,
+          sub_type);
+  MPI_Type_commit(sub_type);
+  *type = *sub_type;
+}
+
+void initAll2DGhostZoneTypes(const SubDomain* kBlock, const int kBorder[],
+        MPI_Datatype types[], MPI_Datatype sub_types[],
+        int offsets[][kSendAndReceive]) {
+  for (NeighborTag2D neighbor = x2DNeighborBegin;
+          neighbor < x2DNeighborEnd;
+          ++neighbor) {
+    initGhostZoneType(kBlock, neighbor, kBorder, &types[neighbor],
+            &sub_types[neighbor], offsets[neighbor]);
+  }
+}
+
+void initAll3DGhostZoneTypes(const SubDomain* kBlock, const int kBorder[],
+        MPI_Datatype types[], MPI_Datatype sub_types[],
+        int offsets[][kSendAndReceive]) {
+  for (NeighborTag3D neighbor = x3DNeighborBegin;
+          neighbor < x3DNeighborEnd;
+          ++neighbor) {
+    initGhostZoneType(kBlock, neighbor, kBorder, &types[neighbor],
+            &sub_types[neighbor], offsets[neighbor]);
+  }
+}
+
+void initAllGhostZoneTypes(const SubDomain* kBlock, const int kNumberDimensions,
+        const int kBorder[], MPI_Datatype types[], MPI_Datatype sub_types[],
+        int offsets[][kSendAndReceive]) {
+  const int k2D = 2;
+  const int k3D = 3;
+  if (k2D == kNumberDimensions) {
+    initAll2DGhostZoneTypes(kBlock, kBorder, types, sub_types, offsets);
+  } else if (k3D == kNumberDimensions) {
+    initAll3DGhostZoneTypes(kBlock, kBorder, types, sub_types, offsets);
+  }
+}
+
 int getMPITagForSegment(NeighborTag2D segment) {
   return static_cast<MPITagType> (static_cast<int> (segment) + 20);
 }
@@ -654,12 +775,14 @@ int getMPITagForSegment(NeighborTag3D segment) {
   return static_cast<MPITagType> (static_cast<int> (segment) + 30);
 }
 
-int getMPITagForSegmentData(NeighborTag2D segment) {
-  return static_cast<MPITagType> (static_cast<int> (segment) + 200);
+int getMPITagForSegmentData(NeighborTag2D segment, const int kBlockIndex) {
+  return static_cast<MPITagType> (static_cast<int> (segment) * kMagicNumber
+          + kBlockIndex);
 }
 
-int getMPITagForSegmentData(NeighborTag3D segment) {
-  return static_cast<MPITagType> (static_cast<int> (segment) + 300);
+int getMPITagForSegmentData(NeighborTag3D segment, const int kBlockIndex) {
+  return static_cast<MPITagType> (static_cast<int> (segment) * kMagicNumber
+          + kBlockIndex);
 }
 // TODO(den4gr)
 
@@ -778,6 +901,8 @@ void copySegment(NeighborTag2D neighbor, Node* node, SubDomain* source_block,
 void copySegment(NeighborTag3D neighbor, SubDomain* dataBlock,
         DTYPE* buffer, const int kBorder[3], const bool kBlockToBuffer,
         int* segmentSize) {
+  struct timeval start, stop;
+  gettimeofday(&start, NULL);
   int segmentLength[3] = {0};
   int segmentOffset[3] = {0};
   int blockLength[3] = {dataBlock->getLength(0),
@@ -809,6 +934,8 @@ void copySegment(NeighborTag3D neighbor, SubDomain* dataBlock,
       }
     }
   }
+  gettimeofday(&stop, NULL);
+  buffer_copy_time += secondsElapsed(start, stop);
 }
 
 /* copies to/from the buffer based on the bool flag */
@@ -850,17 +977,22 @@ bool sendSegment(const NeighborTag3D kNeighbor, const int kDestinationRank,
         SubDomain* data_block, DTYPE* send_buffer, const int kSize,
         MPI_Request* request) {
   if (-1 < kDestinationRank) {
-    send_buffer[kSize] =
-            static_cast<DTYPE> (data_block->getNeighborIndex(kNeighbor));
+    // calculate the memory address of first element in segment
+    void* segment_pointer =
+            static_cast<void*> (send_buffer + segment_offsets[kNeighbor][kSendIndex]);
+    //send_buffer[kSize] =
+    //      static_cast<DTYPE> (data_block->getNeighborIndex(kNeighbor));
+    int block_index = data_block->getNeighborIndex(kNeighbor);
     const NeighborTag3D kOppositeNeighbor = getOppositeNeighbor3D(kNeighbor);
     //int index_tag = getMPITagForSegment(kOppositeNeighbor);
-    int data_tag = getMPITagForSegmentData(kOppositeNeighbor);
+    int data_tag = getMPITagForSegmentData(kOppositeNeighbor, block_index);
 
     //MPI_Isend(static_cast<void*> (destination_block_index), 1, SL_MPI_TYPE, sendRank,
     //      index_tag, MPI_COMM_WORLD, &request[0]);
+
     //printf("sent %s to %d with tag %d for block: %d.\n", neighborString(kOppositeNeighbor), destination_rank, data_tag, send_buffer[kSize]);
-    MPI_Isend(static_cast<void*> (send_buffer), kSize + 1, SL_MPI_TYPE, kDestinationRank,
-            data_tag, MPI_COMM_WORLD, request);
+    MPI_Isend(segment_pointer, 1, mpi_types[kOppositeNeighbor],
+            kDestinationRank, data_tag, MPI_COMM_WORLD, request);
     return true;
   }
   return false;
@@ -873,14 +1005,18 @@ bool sendSegment(const NeighborTag3D kNeighbor, const int kDestinationRank,
     segment
  */
 bool sendSegment(const NeighborTag2D kNeighbor, const int kDestinationRank,
-        SubDomain* dataBlock, DTYPE* sendBuffer, const int kSize,
+        SubDomain* dataBlock, DTYPE* send_buffer, const int kSize,
         MPI_Request* request) {
-  sendBuffer[kSize] =
-          static_cast<DTYPE> (dataBlock->getNeighborIndex(kNeighbor));
   if (-1 < kDestinationRank) {
+    // calculate the memory address of first element in segment
+    void* segment_pointer =
+            static_cast<void*> (send_buffer + segment_offsets[kNeighbor][kSendIndex]);
+    //sendBuffer[kSize] =
+    //    static_cast<DTYPE> (dataBlock->getNeighborIndex(kNeighbor));
+    int block_index = dataBlock->getNeighborIndex(kNeighbor);
     const NeighborTag2D kOppositeNeighbor = getOppositeNeighbor2D(kNeighbor);
     //int index_tag = getMPITagForSegment(kOppositeNeighbor);
-    int data_tag = getMPITagForSegmentData(kOppositeNeighbor);
+    int data_tag = getMPITagForSegmentData(kOppositeNeighbor, block_index);
     //printf("block %d's %s is block %d's %s\n", dataBlock->getLinIndex(),
     //      neighborString(kNeighbor), *destination_block_index,
     //    neighborString(kOppositeNeighbor));
@@ -889,7 +1025,7 @@ bool sendSegment(const NeighborTag2D kNeighbor, const int kDestinationRank,
     //    destination_rank, data_tag);
     //MPI_Isend(static_cast<void*> (destination_block_index), 1, SL_MPI_TYPE,
     //      destination_rank, index_tag, MPI_COMM_WORLD, &request[0]);
-    MPI_Isend(static_cast<void*> (sendBuffer), kSize + 1, SL_MPI_TYPE,
+    MPI_Isend(segment_pointer, 1, mpi_types[kOppositeNeighbor],
             kDestinationRank, data_tag, MPI_COMM_WORLD, request);
     return true;
   }
@@ -897,36 +1033,50 @@ bool sendSegment(const NeighborTag2D kNeighbor, const int kDestinationRank,
 }
 
 bool receiveSegment(const NeighborTag3D kNeighbor, const int kSourceRank,
-        DTYPE* receiveBuffer, const int kSegmentSize, int* linearIndex) {
-  int envelope_size = 0;
+        DTYPE* receive_buffer, const int kSegmentSize, Node* node,
+        int* linearIndex) {
+  //int envelope_size = 0;
   const int kNoNeighbor = -1;
   MPI_Status status;
   //int error = -1;
   //int index_tag = getMPITagForSegment(kNeighbor);
   if (kNoNeighbor < kSourceRank) {
-    int data_tag = getMPITagForSegmentData(kNeighbor);
+    //int data_tag = getMPITagForSegmentData(kNeighbor);
     //error = MPI_Recv(static_cast<void*> (linearIndex), 1, SL_MPI_TYPE,
     //      source_rank, index_tag, MPI_COMM_WORLD, &status);
     //printf("data_block: %d waiting for %s from rank:%d tag: %d...", data_block->getLinIndex(), neighborString(kNeighbor), source_rank, data_tag);
-    MPI_Recv(static_cast<void*> (receiveBuffer), kSegmentSize + 1,
-            SL_MPI_TYPE, kSourceRank, data_tag, MPI_COMM_WORLD, &status);
-    //printf("received.\n");
+    SubDomain* block = NULL;
+    int offset = -1;
+    int tag = -1;
+    int source_rank = -1;
+    MPI_Probe(MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
+
+    tag = status.MPI_TAG;
+    source_rank = status.MPI_SOURCE;
+    *linearIndex = tag % kMagicNumber;
+    NeighborTag3D neighbor =  static_cast<NeighborTag3D>(tag / kMagicNumber);
+    offset = segment_offsets[neighbor][kReceiveIndex];
+    block = node->getSubDomainLinear(*linearIndex);
+    DTYPE* block_buffer = block->getBuffer();
+    void* segment_pointer = static_cast<void*> (block_buffer + offset);
+    MPI_Recv(segment_pointer, 1, mpi_types[neighbor], source_rank, tag,
+            MPI_COMM_WORLD, &status);
     if (MPI_SUCCESS != status.MPI_ERROR)
       printf("ERROR: receiveSegment(): MPI_Recv().\n");
-    MPI_Get_count(&status, SL_MPI_TYPE, &envelope_size);
-    *linearIndex = static_cast<int> (receiveBuffer[envelope_size - 1]);
-
+    //MPI_Get_count(&status, SL_MPI_TYPE, &envelope_size);
+    //*linearIndex = static_cast<int> (receive_buffer[envelope_size - 1]);
     return true;
   }
   return false;
 }
 
 bool receiveSegment(const NeighborTag2D kNeighbor, const int kSourceRank,
-        DTYPE* receiveBuffer, const int kSegmentSize, int* linearIndex) {
-  int envelope_size = 0;
+        DTYPE* receive_buffer, const int kSegmentSize, Node* node,
+        int* linearIndex) {
+  //int envelope_size = 0;
   const int kNoNeighbor = -1;
   //int index_tag = getMPITagForSegment(kNeighbor);
-  int data_tag = getMPITagForSegmentData(kNeighbor);
+  //int data_tag = getMPITagForSegmentData(kNeighbor);
   MPI_Status status;
   if (kNoNeighbor < kSourceRank) {
     //printf("linear index before receive:%d \n", *linearIndex);
@@ -937,12 +1087,26 @@ bool receiveSegment(const NeighborTag2D kNeighbor, const int kSourceRank,
     //if (MPI_SUCCESS != status.MPI_ERROR) printf("receiveSegment: ERROR in MPI_Recv for linearIndex.\n");
     //printf("received segment %s from rank %d for block:%d \n",
     //      neighborString(kNeighbor), status.MPI_SOURCE, *linearIndex);
-    MPI_Recv(static_cast<void*> (receiveBuffer), kSegmentSize + 1, SL_MPI_TYPE,
-            kSourceRank, data_tag, MPI_COMM_WORLD, &status);
+    SubDomain* block = NULL;
+    int offset = -1;
+    int tag = -1;
+    int source_rank = -1;
+    MPI_Probe(MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
+
+    tag = status.MPI_TAG;
+    source_rank = status.MPI_SOURCE;
+    *linearIndex = tag % kMagicNumber;
+    NeighborTag2D neighbor =  static_cast<NeighborTag2D>(tag / kMagicNumber);
+    offset = segment_offsets[neighbor][kReceiveIndex];
+    block = node->getSubDomainLinear(*linearIndex);
+    DTYPE* block_buffer = block->getBuffer();
+    void* segment_pointer = static_cast<void*> (block_buffer + offset);
+    MPI_Recv(segment_pointer, 1, mpi_types[neighbor], source_rank, tag,
+            MPI_COMM_WORLD, &status);
     if (MPI_SUCCESS != status.MPI_ERROR)
       printf("receiveSegment: ERROR in MPI_Recv for receiveBuffer.\n");
-    MPI_Get_count(&status, SL_MPI_TYPE, &envelope_size);
-    *linearIndex = static_cast<int> (receiveBuffer[envelope_size - 1]);
+    //MPI_Get_count(&status, SL_MPI_TYPE, &envelope_size);
+    //*linearIndex = static_cast<int> (receive_buffer[envelope_size - 1]);
     return true;
   }
   return false;
@@ -968,11 +1132,12 @@ void sendNewGhostZones(const NeighborTag3D kNeighbor, Node* node,
     if (kDestinationRank == my_rank) { // copy instead of mpi send
       copySegment(kNeighbor, node, data_block, kBorder);
     } else {
-      DTYPE* send_buffer = buffers[block_index][kSendIndex];
+      //DTYPE* send_buffer = buffers[blockIndex][kSendIndex];
+      DTYPE* send_buffer = data_block->getBuffer();
       /* copy halo segment to buffer */
       bool copy_to_mpi_buffer = true;
-      copySegment(kNeighbor, data_block, send_buffer, kBorder,
-              copy_to_mpi_buffer, segment_size);
+      //copySegment(kNeighbor, data_block, send_buffer, kBorder,
+      //      copy_to_mpi_buffer, segment_size);
       bool send_occured = sendSegment(kNeighbor, kDestinationRank, data_block,
               send_buffer, *segment_size, &requests[*number_messages_sent]);
       if (send_occured)
@@ -997,13 +1162,14 @@ void sendNewGhostZones(const NeighborTag2D kNeighbor, Node* node,
     if (kDestinationRank == my_rank) { // copy instead of mpi send
       copySegment(kNeighbor, node, data_block, kBorder);
     } else {
-      DTYPE* sendBuffer = buffers[blockIndex][kSendIndex];
+      //DTYPE* sendBuffer = buffers[blockIndex][kSendIndex];
+      DTYPE* send_buffer = data_block->getBuffer();
       /* copy halo segment to buffer */
-      bool copyBlockToBuffer = true;
-      copySegment(kNeighbor, data_block, sendBuffer, kBorder, copyBlockToBuffer,
-              segmentSize);
+      bool copy_to_mpi_buffer = true;
+      //copySegment(kNeighbor, data_block, sendBuffer, kBorder, copyBlockToBuffer,
+        //      segmentSize);
       bool didSend = sendSegment(kNeighbor, kDestinationRank, data_block,
-              sendBuffer, *segmentSize, &requests[*numberMessagesSent]);
+              send_buffer, *segmentSize, &requests[*numberMessagesSent]);
       if (didSend)
         ++(*numberMessagesSent);
     }
@@ -1107,14 +1273,15 @@ void receiveNewGhostZones(const NeighborTag3D kNeighbor, Node* node,
         const int kBorder[3], DTYPE*** buffers, const int kSegmentSize) {
   //fprintf(stderr, "entering receiveNewGhostZones()\n");
   const int kNoNeighbor = -1;
-  int my_rank = -1;
-  MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
+  int my_rank = node->getRank();
+  //MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
   bool copy_to_mpi_buffer = false;
   const int kReceiveBufferIndex = 1;
   int counter = 0;
   for (unsigned int block_index = 0;
           block_index < node->numTotalSubDomains();
           ++block_index) {
+
     SubDomain* data_block = node->globalGetSubDomain(block_index);
     DTYPE* receive_buffer = buffers[block_index][kReceiveBufferIndex];
     int index_of_received_block = kNoNeighbor;
@@ -1123,18 +1290,49 @@ void receiveNewGhostZones(const NeighborTag3D kNeighbor, Node* node,
     const int kSourceRank =
             data_block->getNeighborLoc(static_cast<int> (kNeighbor));
     if (kSourceRank != my_rank && kSourceRank != kNoNeighbor) {
-      receiveSegment(kNeighbor, kSourceRank, receive_buffer,
-              kSegmentSize, &index_of_received_block);
+      receiveSegment(kNeighbor, kSourceRank, receive_buffer, kSegmentSize,
+              node, &index_of_received_block);
     }
-    if (kNoNeighbor == index_of_received_block) continue;
+    //if (kNoNeighbor == index_of_received_block) continue;
     ++counter; // DEBUG
     //printf("[%d] received %s for block %d\n", node->getRank(),
     //      neighborString(kNeighbor), index_of_received_block);
-    SubDomain* received_block = node->getSubDomainLinear(index_of_received_block);
-    copySegment(kNeighbor, received_block, receive_buffer, kBorder,
-            copy_to_mpi_buffer, NULL);
+    //SubDomain* received_block = NULL;
+    //received_block = node->getSubDomainLinear(index_of_received_block);
+    //copySegment(kNeighbor, received_block, receive_buffer, kBorder,
+      //      copy_to_mpi_buffer, NULL);
   }
   //fprintf(stderr, "leaving receiveNewGhostZones()\n");
+}
+
+double benchmarkSubDomainCopy(SubDomain* sub_domain) {
+  struct timeval start, stop;
+  int size = 0;
+  const int kNumberIterations = 20;
+  double time_elapsed = 0.0;
+
+  gettimeofday(&start, NULL);
+  const int kDimensionality = sub_domain->getDimensionality();
+  const int kLength[] = {sub_domain->getLength(0),
+    sub_domain->getLength(1),
+    sub_domain->getLength(2)};
+  const int kTypeSize = sizeof (DTYPE);
+  if (kDimensionality == 3)
+    size = kLength[0] * kLength[1] * kLength[2];
+  else if (kDimensionality == 2)
+    size = kLength[0] * kLength[1];
+  else if (kDimensionality == 1)
+    size = kLength[0];
+
+  DTYPE* destination = new DTYPE[size]();
+  for (int iteration = 0; iteration < kNumberIterations; ++iteration) {
+    memcpy(destination, sub_domain->getBuffer(), size * kTypeSize);
+    memcpy(sub_domain->getBuffer(), destination, size * kTypeSize);
+  }
+  delete [] destination;
+  gettimeofday(&stop, NULL);
+  time_elapsed = secondsElapsed(start, stop) / kNumberIterations;
+  return 1 / time_elapsed;
 }
 
 void receiveNewGhostZones(const NeighborTag2D kNeighbor, Node* node,
@@ -1157,16 +1355,16 @@ void receiveNewGhostZones(const NeighborTag2D kNeighbor, Node* node,
             data_block->getNeighborLoc(static_cast<int> (kNeighbor));
 
     if (kSourceRank != my_rank && kSourceRank != kNoNeighbor) {
-      receiveSegment(kNeighbor, kSourceRank, receiveBuffer, kSegmentSize,
+      receiveSegment(kNeighbor, kSourceRank, receiveBuffer, kSegmentSize, node,
               &indexOfIntendedBlock);
     }
-    if (-1 == indexOfIntendedBlock) continue;
+    //if (-1 == indexOfIntendedBlock) continue;
 
-    SubDomain* received_block = node->getSubDomainLinear(indexOfIntendedBlock);
-    if (NULL == received_block)
-      printf("***COULDN'T FIND BLOCK %d***\n", indexOfIntendedBlock);
-    copySegment(kNeighbor, received_block, receiveBuffer, kBorder,
-            copy_to_mpi_buffer, NULL);
+    //SubDomain* received_block = node->getSubDomainLinear(indexOfIntendedBlock);
+    //if (NULL == received_block)
+      //printf("***COULDN'T FIND BLOCK %d***\n", indexOfIntendedBlock);
+    //copySegment(kNeighbor, received_block, receiveBuffer, kBorder,
+      //      copy_to_mpi_buffer, NULL);
   }
 }
 
@@ -1269,6 +1467,9 @@ void exchangeGhostZones2D(Node* node, const int kBorder[3], DTYPE*** buffers,
   }
 }
 
+static double total_gz_time = 0.0;
+static double receive_gz_time = 0.0;
+
 void exchangeGhostZones3D(Node* node, const int kBorder[3], DTYPE*** buffers,
         MPI_Request* requests) {
   //fprintf(stderr, "entering exchangeGhostZones3D()\n");
@@ -1284,20 +1485,28 @@ void exchangeGhostZones3D(Node* node, const int kBorder[3], DTYPE*** buffers,
   for (NeighborTag3D neighbor = x3DNeighborBegin;
           neighbor < x3DNeighborEnd;
           ++neighbor) {
+    struct timeval total_start, total_end, receive_start, receive_end;
     int segment_size = 0;
     int number_messages_sent = 0;
+    gettimeofday(&total_start, NULL);
     sendNewGhostZones(neighbor, node, kBorder, requests, buffers, &segment_size,
             &number_messages_sent);
+    gettimeofday(&receive_start, NULL);
+
     const NeighborTag3D kOppositeNeighbor = getOppositeNeighbor3D(neighbor);
     //fprintf(stderr, "sent %d new ghost zones for %s\n", number_messages_sent,
     //    neighborString(kOppositeNeighbor));
 
     receiveNewGhostZones(kOppositeNeighbor, node, kBorder, buffers, segment_size);
+    gettimeofday(&receive_end, NULL);
     //fprintf(stderr, "[%d] %s waiting on %d send messages to finish.\n", node->getRank(),
     //  neighborString(kOppositeNeighbor), number_messages_sent);
     MPI_Waitall(number_messages_sent, requests, MPI_STATUSES_IGNORE);
     //fprintf(stderr, "finished waiting on %s sends to finish!!!!!!!!!!!!!!!!!!!!!!!!\n",
     //   neighborString(kOppositeNeighbor));
+    gettimeofday(&total_end, NULL);
+    receive_gz_time += secondsElapsed(receive_start, receive_end);
+    total_gz_time += secondsElapsed(total_start, total_end);
   }
   //fprintf(stderr, "leaving exchangeGhostZones3D()\n");
 }
@@ -1308,7 +1517,6 @@ void exchangeGhostZones3D(Node* node, const int kBorder[3], DTYPE*** buffers,
 void updateAllStaleData(Node* node, const int kBorder[3]) {
   const int kNumBlocks = node->numTotalSubDomains();
   if (kNumBlocks == 0) return;
-  //  const int kNumMessagesPerSegment = 2;
   const int kSendAndReceive = 2;
   const SubDomain* dataBlock = node->globalGetSubDomain(0);
   const int kNumberDimensions = getNumberDimensions(dataBlock);
@@ -1321,26 +1529,19 @@ void updateAllStaleData(Node* node, const int kBorder[3]) {
             kMaxSegmentSize + 1);
   }
   if (NULL == requests) {
-    //fprintf(stderr, "[%d] allocated requests array w/ %d elements.\n",
-    //      node->getRank(), kNumBlocks);
     /* one non-blocking send per block */
     requests = new MPI_Request[kNumBlocks];
+    initAllGhostZoneTypes(dataBlock, kNumberDimensions, kBorder, mpi_types,
+            mpi_sub_types, segment_offsets);
   }
-  // printf("allocated send/receive array for node %d dimensions[%d][%d][%d].\n",
-  //        node->getRank(), kNumBlocks, kSendAndReceive, kMaxSegmentSize);
-
-  /* LOOP: over all halo segments */
   if (3 == kNumberDimensions)
     exchangeGhostZones3D(node, kBorder, ghost_buffers, requests);
   else if (2 == kNumberDimensions)
     exchangeGhostZones2D(node, kBorder, ghost_buffers, requests);
-
-  //fprintf(stderr, "[%d] finished updating stale data.\n", node->getRank());
-  //delete [] block_indices;
-  //block_indices = NULL;
 }
 
 void cleanupComm(const int kNumBlocks) {
+  printf("buffer segment copy time: %f.\n", buffer_copy_time);
   const int kSendAndReceive = 2;
   delete [] requests;
   requests = NULL;

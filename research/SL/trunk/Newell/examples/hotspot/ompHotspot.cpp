@@ -110,16 +110,16 @@ void runOMPHotspotKernel(dim3 input_size, dim3 stencil_size, DTYPE *input,
  * Function exported to do the entire stencil computation.
  */
 void runOMPHotspot(DTYPE *host_data, int x_max, int y_max,
-                int iterations, float step_div_Cap, float Rx, float Ry,
-                float Rz) {
+                int iterations, const int kPyramidHeight, float step_div_Cap,
+        float Rx, float Ry,float Rz) {
   //fprintf(stderr, "runOMPHotspot(host_data:%p, x_m:%d, y_m:%d, iterations:%d);", host_data, x_max, y_max, iterations);
   // User-specific parameters
   dim3 stencil_size;
   stencil_size.x = 1;
   stencil_size.y = 1;
   dim3 border;
-  border.x = PYRAMID_HEIGHT * stencil_size.x;
-  border.y = PYRAMID_HEIGHT * stencil_size.y;
+  border.x = kPyramidHeight * stencil_size.x;
+  border.y = kPyramidHeight * stencil_size.y;
   dim3 input_size;
   input_size.x = x_max + 2 * border.x;
   input_size.y = y_max + 2 * border.y;
@@ -133,7 +133,7 @@ void runOMPHotspot(DTYPE *host_data, int x_max, int y_max,
   copyFromHostData(device_input, host_data, input_size, border);
   
   // Now we can calculate the pyramid height.
-  int pyramid_height = PYRAMID_HEIGHT;
+  int pyramid_height = kPyramidHeight;
 
   // Run computation
   for (int iter = 0; iter < iterations; iter += pyramid_height) {
@@ -166,7 +166,7 @@ void runOMPHotspotCleanup() {
  * Store unnamed data on device.
  */
 void runOMPHotspotSetData(DTYPE *host_data, int num_elements) {
-  omp_global_ro_data = new DTYPE[num_elements];
+  omp_global_ro_data = new DTYPE[num_elements]();
   memcpy(static_cast<void*>(omp_global_ro_data), static_cast<void*>(host_data),
           num_elements*sizeof(DTYPE));
 }

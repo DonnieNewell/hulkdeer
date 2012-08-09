@@ -23,23 +23,27 @@
 float t_chip = 0.0005;
 float chip_height = 0.016;
 float chip_width = 0.016;
+int pyramid_height = 2;
+bool perform_load_balancing = false;
+int device_configuration = 0;
 
 // Forward declaration
 void readInput(float *vect, int grid_rows, int grid_cols, char *filename);
 void writeOutput(float *vect, int grid_rows, int grid_cols, char *filename);
 
 int main(int argc, char** argv) {
-    int rc, numTasks, rank;
-    rc = MPI_Init(&argc, &argv);
-    if (rc != MPI_SUCCESS) {
+    int return_code = 0, num_tasks = 0, my_rank = 0;
+    return_code = MPI_Init(&argc, &argv);
+    if (return_code != MPI_SUCCESS) {
         fprintf(stderr, "Error initializing MPI.\n");
-        MPI_Abort(MPI_COMM_WORLD, rc);
+        MPI_Abort(MPI_COMM_WORLD, return_code);
     }
-    MPI_Comm_size(MPI_COMM_WORLD, &numTasks);
-    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+    
+    MPI_Comm_size(MPI_COMM_WORLD, &num_tasks);
+    MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
 
-    int grid_rows, grid_cols, iterations;
-    float *MatrixTemp = NULL, *MatrixPower = NULL;
+    int grid_rows = 0, grid_cols = 0, iterations = 0;
+    float *matrix_temp = NULL, *matrix_power = NULL;
     char tfile[] = "temp.dat";
     char pfile[] = "power.dat";
     char ofile[] = "output.dat";
@@ -49,9 +53,18 @@ int main(int argc, char** argv) {
         grid_rows = atoi(argv[1]);
         grid_cols = atoi(argv[1]);
         iterations = atoi(argv[2]);
-        if (argc >= 4) setenv("BLOCKSIZE", argv[3], 1);
-        if (argc >= 5) setenv("HEIGHT", argv[4], 1);
-        if (argc >= 6) number_blocks_per_dimension = atoi(argv[5]);
+        if (argc >= 4)
+          setenv("BLOCKSIZE", argv[3], 1);
+        if (argc >= 5) {
+          setenv("HEIGHT", argv[4], 1);
+          pyramid_height = atoi(argv[4]);
+        }
+        if (argc >= 6)
+          number_blocks_per_dimension = atoi(argv[5]);
+        if (argc >= 7)
+          perform_load_balancing = (atoi(argv[6]) != 0) ? true : false;
+        if (argc >= 8)
+          device_configuration = atoi(argv[7]);
     } else {
         printf("Usage: hotspot grid_rows_and_cols iterations [blocksize] [height] [blocks_per_dimension]\n");
         return 0;
@@ -59,16 +72,16 @@ int main(int argc, char** argv) {
 
     // Read the power grid, which is read-only.
     int num_elements = grid_rows * grid_cols;
-    MatrixPower = (float *) malloc(num_elements * sizeof (float));
-    if (rank == kRootIndex) {
-        readInput(MatrixPower, grid_rows, grid_cols, pfile);
+    matrix_power = new float[num_elements]();
+    if (my_rank == kRootIndex) {
+        readInput(matrix_power, grid_rows, grid_cols, pfile);
 
         // Read the temperature grid, which will change over time.
-        MatrixTemp = (float *) malloc(num_elements * sizeof (float));
-        readInput(MatrixTemp, grid_rows, grid_cols, tfile);
+        matrix_temp = new float[num_elements]();
+        readInput(matrix_temp, grid_rows, grid_cols, tfile);
     }
     // printf("about to set the Data.\n");
-    runDistributedHotspotSetData(MatrixPower, num_elements);
+    runDistributedHotspotSetData(matrix_power, num_elements);
     printf("Set the Data.\n");
 
     float grid_width = chip_width / grid_cols;
@@ -86,19 +99,21 @@ int main(int argc, char** argv) {
     long usec;
 
     gettimeofday(&starttime, NULL);
-    runDistributedHotspot(rank, numTasks, MatrixTemp, grid_cols, grid_rows,
-            iterations, step_div_Cap, Rx, Ry, Rz, number_blocks_per_dimension);
+    runDistributedHotspot(my_rank, num_tasks, matrix_temp, grid_cols, grid_rows,
+            iterations, pyramid_height, step_div_Cap, Rx, Ry, Rz,
+            number_blocks_per_dimension, perform_load_balancing,
+            device_configuration);
     gettimeofday(&endtime, NULL);
 
     usec = ((endtime.tv_sec - starttime.tv_sec) * 1000000 +
             (endtime.tv_usec - starttime.tv_usec));
     printf("Total time=%ld\n", usec);
-    if (0 == rank)
-      writeOutput(MatrixTemp, grid_rows, grid_cols, ofile);
+    if (0 == my_rank)
+      writeOutput(matrix_temp, grid_rows, grid_cols, ofile);
 
     MPI_Finalize();
-    free(MatrixTemp);
-    free(MatrixPower);
+    delete [] matrix_temp;
+    delete [] matrix_power;
     return 0;
 }
 

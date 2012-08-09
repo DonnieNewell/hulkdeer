@@ -15,7 +15,7 @@ comm2DTest:	comm2DTest.o comm.o Cluster.o Node.o SubDomain.o
 		mpic++ -o $@ $^ $(LDFLAGS) $(LIBS)
 
 comm3DTest:	comm3DTest.o comm.o Cluster.o Node.o SubDomain.o
-		mpic++ -o $@ $^ $(LDFLAGS) $(LIBS)
+		mpic++ -o $@ $^ $(DBG) $(LDFLAGS) $(LIBS)
 
 comm2DTest.o:	comm2DTest.cpp ../comm.h
 		mpic++ $(INCLUDES) $(CFLAGS) -c $<

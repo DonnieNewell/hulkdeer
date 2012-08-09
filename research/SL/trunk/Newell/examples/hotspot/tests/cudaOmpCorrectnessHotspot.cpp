@@ -31,6 +31,7 @@ void writeOutput(float *vect, int grid_rows, int grid_cols, char *filename);
 int main(int argc, char** argv) {
   const int kDataSize = 8;
   int iterations = 1;
+  int pyramid_height = 2;
   int device = 0;
   bool testPass;
   int grid_rows, grid_cols;
@@ -38,7 +39,7 @@ int main(int argc, char** argv) {
   char tfile[] = "../temp.dat";
   char pfile[] = "../power.dat";
   grid_rows = grid_cols = 2000;
-  iterations = 1;
+  iterations = 3;
 
   // Read the power grid, which is read-only.
   int num_elements = grid_rows * grid_cols;
@@ -68,8 +69,8 @@ int main(int argc, char** argv) {
   printf("starting correctness test.\n");
   printf("running OpenMP version.\n");
 
-  runOMPHotspot(ompMatrixTemp, kDataSize, kDataSize, iterations, step_div_Cap,
-          Rx, Ry, Rz);
+  runOMPHotspot(ompMatrixTemp, kDataSize, kDataSize, iterations, pyramid_height,
+           step_div_Cap, Rx, Ry, Rz);
   runOMPHotspotCleanup();
 
   printf("running CUDA version.\n");
@@ -77,8 +78,8 @@ int main(int argc, char** argv) {
 
   printf("CUDA DATA PRE KERNEL ======================\n");
   printData(cudaMatrixTemp, kDataSize, kDataSize);
-  runHotspot(cudaMatrixTemp, kDataSize, kDataSize, iterations, step_div_Cap,
-          Rx, Ry, Rz, device);
+  runHotspot(cudaMatrixTemp, kDataSize, kDataSize, iterations, pyramid_height,
+          step_div_Cap, Rx, Ry, Rz, device);
   runHotspotCleanup();
 
   printf("ending correctness test.\n");

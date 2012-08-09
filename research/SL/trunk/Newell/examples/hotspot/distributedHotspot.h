@@ -3,12 +3,12 @@
 
 class SubDomain;
 class Node;
-void benchmarkMyself(Node*, SubDomain*, int, int, int, int, int);
+void benchmarkMyself(Node*, SubDomain*, int, const int, float, float, float, float);
 void processSubDomain(int device, SubDomain *task, int timesteps,
                       float step_div_Cap, float Rx, float Ry, float Rz);
-void runDistributedHotspot(int rank, int numTasks, DTYPE *data, int x_max, int y_max,
-    int iterations, int pyramid_height, float step_div_Cap, float Rx, float Ry, float Rz,
-        const int number_blocks_per_dimension);
+void runDistributedHotspot(const int, const int, DTYPE*, const int, const int,
+        const int, const int, const float, const float, const float, const float,
+        const int, const bool, const int);
 void runDistributedHotspotSetData(DTYPE *MatrixPower, int num_elements);
 void processSubDomain(int device, SubDomain *task, int timesteps,
                       float step_div_Cap, float Rx, float Ry, float Rz);

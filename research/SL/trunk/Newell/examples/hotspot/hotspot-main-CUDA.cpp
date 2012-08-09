@@ -19,6 +19,8 @@
 float t_chip = 0.0005;
 float chip_height = 0.016;
 float chip_width = 0.016;
+int pyramid_height = 2;
+
 
 // Forward declaration
 void readInput(float *vect, int grid_rows, int grid_cols, char *filename);
@@ -36,7 +38,10 @@ int main(int argc, char** argv) {
         grid_cols = atoi(argv[1]);
         iterations = atoi(argv[2]);
         if (argc >= 4) setenv("BLOCKSIZE", argv[3], 1);
-        if (argc >= 5) setenv("HEIGHT", argv[4], 1);
+        if (argc >= 5) {
+          setenv("HEIGHT", argv[4], 1);
+          pyramid_height = atoi(argv[4]);
+        }
     } else {
         printf("Usage: hotspot grid_rows_and_cols iterations [blocksize]\n");
         return 0;
@@ -66,7 +71,8 @@ int main(int argc, char** argv) {
     long usec = 0l;
     runHotspotSetData(MatrixPower, num_elements);
     gettimeofday(&starttime, NULL);
-    runHotspot(MatrixTemp, grid_cols, grid_rows, iterations, step_div_Cap, Rx, Ry, Rz, kDevice);
+    runHotspot(MatrixTemp, grid_cols, grid_rows, iterations, pyramid_height,
+            step_div_Cap, Rx, Ry, Rz, kDevice);
     gettimeofday(&endtime, NULL);
     usec = ((endtime.tv_sec - starttime.tv_sec) * 1000000 +
             (endtime.tv_usec - starttime.tv_usec));

@@ -18,9 +18,9 @@ void printNeighbors(SubDomain* block, int my_rank) {
 }
 
 int main(int argc, char** argv) {
-  int border[3] = {1, 1, 1};
+  int border[3] = {2, 2, 2};
   int my_rank = -1, x_offset = -1 * border[2], y_offset = -1 * border[1],
-          z_offset = -1 * border[0], length = 3, grid_height = 2,
+          z_offset = -1 * border[0], length = 5, grid_height = 2,
           grid_width = 2, grid_depth = 2;
   int id[3] = {0};
   const int kNumNeighbors3D = 26;
