@@ -9,12 +9,15 @@ DEFINES = -DSL_MPI_TYPE=MPI_INT -DDTYPE=int
 CFLAGS	= $(DBG) -Wall -fopenmp $(DEFINES)
 LIBS	= -lcudart -L$(SDK)/C/common/lib -L$(CUDA)/lib64 
 
-all:		comm2DTest comm3DTest
+all:		comm2DTest comm3DTest profilerTest
 
 comm2DTest:	comm2DTest.o comm.o Cluster.o Node.o SubDomain.o
 		mpic++ -o $@ $^ $(LDFLAGS) $(LIBS)
 
 comm3DTest:	comm3DTest.o comm.o Cluster.o Node.o SubDomain.o
+		mpic++ -o $@ $^ $(DBG) $(LDFLAGS) $(LIBS)
+
+profilerTest:	profilerTest.o Profiler.o
 		mpic++ -o $@ $^ $(DBG) $(LDFLAGS) $(LIBS)
 
 comm2DTest.o:	comm2DTest.cpp ../comm.h
@@ -23,7 +26,13 @@ comm2DTest.o:	comm2DTest.cpp ../comm.h
 comm3DTest.o:	comm3DTest.cpp ../comm.h
 		mpic++ $(INCLUDES) $(CFLAGS) -c $<
 
+profilerTest.o:	profilerTest.cpp ../Profiler.h
+		mpic++ $(INCLUDES) $(CFLAGS) -c $<
+
 comm.o:	        ../comm.cpp ../comm.h
+		mpic++ $(INCLUDES) $(CFLAGS) -c $< 
+
+Profiler.o:	../Profiler.cpp ../Profiler.h 
 		mpic++ $(INCLUDES) $(CFLAGS) -c $< 
 
 Cluster.o:	../Cluster.cpp ../Cluster.h 
@@ -36,4 +45,4 @@ SubDomain.o:	../SubDomain.cpp ../SubDomain.h
 		mpic++ $(INCLUDES) $(CFLAGS) -c $< 
 
 clean:
-		rm -f commTest *.o *.linkinfo *~ lint.txt
+		rm -f comm2DTest com3DTest profilerTest *.o *.linkinfo *~ lint.txt

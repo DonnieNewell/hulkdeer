@@ -1,7 +1,8 @@
 DBG	= -g -pg
 SDK 	= /af21/den4gr/NVIDIA_GPU_Computing_SDK
 #EMU	= -deviceemu
-CUDA	= /usr/local/cuda
+CUDA	= /localtmp/cuda
+#CUDA	= /usr/local/cuda
 F	= --compiler-options -fno-strict-aliasing
 INCLUDES= -I$(SDK)/C/common/inc -I$(CUDA)/include
 #MPIFLAGS= -rpath=/af21/den4gr/openmpi-install/lib

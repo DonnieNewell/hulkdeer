@@ -67,21 +67,21 @@ void copySegment(NeighborTag3D, Node*, SubDomain*, const int []);
 void copySegment(NeighborTag2D, Node*, SubDomain*, const int []);
 bool sendSegment(const NeighborTag3D, const int, SubDomain*, DTYPE*, const int, MPI_Request*);
 bool sendSegment(const NeighborTag2D, const int, SubDomain*, DTYPE*, const int, MPI_Request*);
-bool receiveSegment(const NeighborTag3D, const int, SubDomain*, DTYPE*,
-        const int, Node*, int*);
-bool receiveSegment(const NeighborTag2D, const int, SubDomain*, DTYPE*,
-        const int, Node*, int*);
+bool receiveSegment(const NeighborTag3D, const int, SubDomain*,
+                    const int, Node*, int*);
+bool receiveSegment(const NeighborTag2D, const int, SubDomain*,
+                    const int, Node*, int*);
 void sendNewGhostZones(const NeighborTag3D, Node*, const int [], MPI_Request*,
         int*, DTYPE***, int*, int*);
 void sendNewGhostZones(const NeighborTag2D, Node*, const int [], MPI_Request*,
         int*, DTYPE***, int*, int*);
 NeighborTag3D getOppositeNeighbor3D(const NeighborTag3D);
 NeighborTag2D getOppositeNeighbor2D(const NeighborTag2D);
-void exchangeGhostZones2D(Node*, const int[], DTYPE***, MPI_Request*);
-void exchangeGhostZones3D(Node*, const int[], DTYPE***, MPI_Request*);
-void receiveNewGhostZones(const NeighborTag3D, Node*, const int[], DTYPE***,
+void exchangeGhostZones2D(Node*, const int[], MPI_Request*);
+void exchangeGhostZones3D(Node*, const int[], MPI_Request*);
+void receiveNewGhostZones(const NeighborTag3D, Node*, const int[],
         const int);
-void receiveNewGhostZones(const NeighborTag2D, Node*, const int[], DTYPE***,
+void receiveNewGhostZones(const NeighborTag2D, Node*, const int[],
         const int);
 int getMaxSegmentSize(const SubDomain*, const int[], const int);
 int getMaxSegmentSize2D(const SubDomain*, const int[]);

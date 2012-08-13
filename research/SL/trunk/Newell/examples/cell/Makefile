@@ -1,6 +1,7 @@
 #DBG	= -g
 SDK 	= /af21/den4gr/NVIDIA_GPU_Computing_SDK
 #EMU	= -deviceemu
+#CUDA	= /localtmp/cuda
 CUDA	= /usr/local/cuda
 F	= --compiler-options -fno-strict-aliasing
 NVINCLUDES= -I$(SDK)/C/common/inc -I$(CUDA)/include
