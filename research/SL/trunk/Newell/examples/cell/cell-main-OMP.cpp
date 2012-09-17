@@ -75,7 +75,9 @@ int main(int argc, char** argv) {
   init(argc, argv);
 
   gettimeofday(&start, NULL);
-  runOMPCell(data, J, K, L, timesteps, pyramid_height, bornMin, bornMax, dieMin,
+  runOMPCellOuter(data, J, K, L, timesteps, pyramid_height, bornMin, bornMax, dieMin,
+          dieMax);
+  runOMPCellInner(data, J, K, L, timesteps, pyramid_height, bornMin, bornMax, dieMin,
           dieMax);
   gettimeofday(&end, NULL);
 

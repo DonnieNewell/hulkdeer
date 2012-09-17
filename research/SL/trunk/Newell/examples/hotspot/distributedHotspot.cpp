@@ -11,6 +11,8 @@ Copyright 2012 Donald Newell
 #include <limits>
 #include <fstream>
 #include <sstream>
+#include <boost/scoped_array.hpp>
+#include <boost/scoped_ptr.hpp>
 #include "../comm.h"
 #include "./hotspot.h"
 #include "./ompHotspot.h"
@@ -19,7 +21,6 @@ Copyright 2012 Donald Newell
 #include "../Balancer.h"
 #include "../Model.h"
 #include "./distributedHotspot.h"
-#define PYRAMID_HEIGHT 1
 
 const int kCPUIndex = -1;
 static DTYPE* global_data = NULL;
@@ -27,17 +28,36 @@ static DTYPE* global_data = NULL;
 void benchmarkMyself(Node* node, SubDomain* sub_domain, int iterations,
         const int kPyramidHeight, float step_div_Cap, float Rx, float Ry,
         float Rz) {
-  // fprintf(stderr, "benchmarkMyself(n:%p, pS:%p, timesteps:%d.\n", n, pS, timesteps);
   // receive results for each device
   int total_devices = static_cast<int> (node->getNumChildren()) + 1;
-  double *compute_rate = new double[2 * total_devices - 1]();
+  boost::scoped_array<double> compute_rate(new double[2 * total_devices - 1]());
   double *comm_rate = &compute_rate[total_devices];
   const int kRootRank = 0;
   SubDomain *benchmark_block = NULL;
   int intended_device = -2;
+  const int kCommIterations = 3;
 
   if (sub_domain == NULL) {
-    benchmark_block = receiveDataFromNode(kRootRank, &intended_device);
+    {
+      /*{
+        int i = 0;
+        char hostname[256];
+        gethostname(hostname, sizeof (hostname));
+        printf("PID %d on %s ready for attach\n", getpid(), hostname);
+        fflush(stdout);
+        while (0 == i)
+          sleep(5);
+      } // */
+      const int kCPUIndex = -1;
+      SubDomain * blocks[3];
+      for (int i = 0; i < kCommIterations; ++i) {
+        blocks[i] = receiveDataFromNode(kRootRank, &intended_device);
+        sendDataToNode(kRootRank, kCPUIndex, blocks[i]);
+      }
+      benchmark_block = blocks[0];
+      for (int i = 1; i < kCommIterations; ++i)
+        delete blocks[i];
+    }
     if (-1 != intended_device) {
       fprintf(stderr, "data should be sent to device: -1, not:%d\n", intended_device);
     }
@@ -58,9 +78,7 @@ void benchmarkMyself(Node* node, SubDomain* sub_domain, int iterations,
     }
     gettimeofday(&end, NULL);
     total_sec = secondsElapsed(start, end);
-    compute_rate[device_index] = iterations / total_sec;
-    fprintf(stderr, "[%d]device:%d of %d processes %f iter/sec.\n",
-            node->getRank(), device_index - 1, total_devices, compute_rate[device_index]);
+    compute_rate[device_index] = 1 / total_sec;
     if (device_index == 0) {
       node->setWeight(compute_rate[device_index]);
       node->setEdgeWeight(benchmarkSubDomainCopy(benchmark_block));
@@ -73,13 +91,14 @@ void benchmarkMyself(Node* node, SubDomain* sub_domain, int iterations,
 
   if (NULL == sub_domain) {
     // send the result back to the host
-    MPI_Send(static_cast<void*> (compute_rate), 2 * total_devices - 1,
-            MPI_DOUBLE, kRootRank, xWeight, MPI_COMM_WORLD);
+    int result = MPI_Send(static_cast<void*> (compute_rate.get()),
+            2 * total_devices - 1, MPI_DOUBLE, kRootRank, xWeight,
+            MPI_COMM_WORLD);
+    mpiCheckError(result);
   }
 
   // clean up
-  delete [] compute_rate;
-  compute_rate = comm_rate = NULL;
+  comm_rate = NULL;
   if (sub_domain == NULL) {
     delete benchmark_block;
     benchmark_block = NULL;
@@ -90,54 +109,41 @@ void runDistributedHotspotSetData(DTYPE *data, int num_elements) {
   // TODO (donnie) this needs to have the MPI data type set dynamically
   const int kRootIndex = 0;
   global_data = data;
-  // printf("MPI_Bcast()\n");
   MPI_Bcast(global_data, num_elements, SL_MPI_TYPE, kRootIndex, MPI_COMM_WORLD);
   runHotspotSetData(global_data, num_elements);
-  // printf("runHotspotSetData()\n");
   runOMPHotspotSetData(global_data, num_elements);
-  // printf("runOMPHotspotSetData()\n");
 }
 
 void receiveData(int rank, Node* n, bool processNow, int pyramidHeight,
         float step_div_Cap, float Rx, float Ry, float Rz) {
   // receive number of task blocks that will be sent
-  int numTaskBlocks = 0;
+  int num_blocks = 0;
   MPI_Status stat;
-  MPI_Recv(static_cast<void*> (&numTaskBlocks), 1, MPI_INT, rank, xNumBlocks,
-          MPI_COMM_WORLD, &stat);
+  int result = MPI_Recv(static_cast<void*> (&num_blocks), 1, MPI_INT, rank,
+          xNumBlocks, MPI_COMM_WORLD, &stat);
   struct timeval start, end;
-  double receiveDataTime = 0.0, processBlockTime = 0.0;
-  for (int block = 0; block < numTaskBlocks; ++block) {
+  double receive_time = 0.0, process_time = 0.0;
+  for (int block_index = 0; block_index < num_blocks; ++block_index) {
     SubDomain* s = NULL;
-    int device = -1;
+    int device = -2;
     gettimeofday(&start, NULL);
     s = receiveDataFromNode(rank, &device);
     gettimeofday(&end, NULL);
-    receiveDataTime += secondsElapsed(start, end);
-    if (-1 == device) {
-      if (processNow) {
-        gettimeofday(&start, NULL);
-        processSubDomain(device, s, pyramidHeight, step_div_Cap,
-                Rx, Ry, Rz);
-        gettimeofday(&end, NULL);
-        processBlockTime += secondsElapsed(start, end);
-      }
-      // add block to cpu queue
-      n->addSubDomain(s);
-    } else {
-      if (processNow) {
-        gettimeofday(&start, NULL);
-        processSubDomain(device, s, pyramidHeight, step_div_Cap, Rx, Ry,
-                Rz);
-        gettimeofday(&end, NULL);
-        processBlockTime += secondsElapsed(start, end);
-      }
-      // add block to gpu queue
-      n->getChild(device).addSubDomain(s);
+    receive_time += secondsElapsed(start, end);
+    if (processNow) {
+      gettimeofday(&start, NULL);
+      processSubDomain(device, s, pyramidHeight, step_div_Cap,
+              Rx, Ry, Rz);
+      gettimeofday(&end, NULL);
+      process_time += secondsElapsed(start, end);
     }
+    // add block to cpu queue
+
+    if (-1 == device)
+      n->addSubDomain(s);
+    else
+      n->getChild(device).addSubDomain(s);
   }
-  fprintf(stderr, "[%d] comm. time %f, process time %f.\n",
-          n->getRank(), receiveDataTime, processBlockTime);
   //runHotspotCleanup();
 }
 
@@ -150,14 +156,6 @@ void getNumberOfChildren(int* numChildren) {
     fprintf(stderr, "no CUDA-enabled devices.\n");
     *numChildren = 0;
   }
-}
-
-void sendNumberOfChildren(const int dest_rank, const int kNumChildren) {
-  MPI_Request req;
-  int number_children = kNumChildren;
-  MPI_Isend(static_cast<void*> (&number_children), 1, MPI_INT, dest_rank,
-          xChildren, MPI_COMM_WORLD, &req);
-  MPI_Waitall(1, &req, MPI_STATUSES_IGNORE);
 }
 
 void processSubDomain(int device, SubDomain *task, int kPyramidHeight,
@@ -218,7 +216,7 @@ void copyResultBlock2D(DTYPE* buffer, SubDomain* s, const int kBorder[2],
   const int kLength[2] = {s->getLength(0) - 2 * kBorder[0],
     s->getLength(1) - 2 * kBorder[1]};
   const int kDestinationOffset[2] = {s->getOffset(0) + kBorder[0],
-                                     s->getOffset(1) + kBorder[1]};
+    s->getOffset(1) + kBorder[1]};
   const int kSourceOffset[2] = {kBorder[0], kBorder[1]};
 
   for (int i = 0; i < kLength[0]; ++i) {
@@ -283,37 +281,59 @@ void processGPUWork(Node* machine, const int kPyramidHeight,
   }
 }
 
-void processWork2D(Node* machine, const int kIterations, const int kPyramidHeight,
-        const int kStencilSize[2], const float kStepDivCap, const float kRx,
-        const float kRy, const float kRz) {
-  int currentPyramidHeight = kPyramidHeight;
-  const int kFirstIteration = 0;
-  for (int iter = kFirstIteration; iter < kIterations; iter += kPyramidHeight) {
+void processWork2D(Node* machine, const int kIterations, const bool kInterleave,
+        const int kPyramidHeight, const int kStencilSize[3],
+        const float kStepDivCap, const float kRx, const float kRy,
+        const float kRz) {
+  int current_pyramid_height(kPyramidHeight), first_iteration(0);
+
+  struct timeval start, end;
+  double ghost_time(0.0), compute_time(0.0);
+  if (kInterleave)
+    first_iteration = kIterations - kPyramidHeight;
+  else
+    first_iteration = 0;
+
+  for (int iter = first_iteration; iter < kIterations; iter += kPyramidHeight) {
     if (iter + kPyramidHeight > kIterations) {
-      currentPyramidHeight = kIterations - iter;
+      current_pyramid_height = kIterations - iter;
     }
-    int staleBorder[3] = {kStencilSize[0] * currentPyramidHeight,
-      kStencilSize[1] * currentPyramidHeight,
-      kStencilSize[2] * currentPyramidHeight};
+    int stale_border[3] = {kStencilSize[0] * current_pyramid_height,
+      kStencilSize[1] * current_pyramid_height,
+      kStencilSize[2] * current_pyramid_height};
     /* The data is initially sent with the ghost zones, but since
         we actually process each subdomain interleaved with the communication,
       in receiveData, we have to update the stale cells starting with the
       first iteration. Note, this is why the number of iterations passed
       into this function should be totalIterations - pyramidHeight, due to
       the previously mentioned reason. */
-    if ((machine->getRank() == 0 && iter > 0) || (machine->getRank() > 0))
-      updateAllStaleData(machine, staleBorder);
-    processCPUWork(machine, currentPyramidHeight, kStepDivCap, kRx, kRy, kRz);
-    processGPUWork(machine, currentPyramidHeight, kStepDivCap, kRx, kRy, kRz);
+    if (iter > 0) {
+      gettimeofday(&start, NULL);
+      updateAllStaleData(machine, stale_border);
+      gettimeofday(&end, NULL);
+      ghost_time += secondsElapsed(start, end);
+    }
+    gettimeofday(&start, NULL);
+    processGPUWork(machine, current_pyramid_height, kStepDivCap, kRx, kRy, kRz);
+    processCPUWork(machine, current_pyramid_height, kStepDivCap, kRx, kRy, kRz);
+    gettimeofday(&end, NULL);
+    compute_time += secondsElapsed(start, end);
   }
+  // deallocate IO buffers and synchronization buffers
+  //cleanupComm(machine->numTotalSubDomains());
+  printf("[%d]exchange:%10.4e\tcompute:%10.4e\n", machine->getRank(),
+          ghost_time, compute_time);
 }
 
 void getResultsFromCluster(Cluster* cluster) {
   /* TODO(den4gr) receives results, needs to be asynchronous */
   const bool kNoInterleavedCompute = false;
-  for (unsigned int nodeRank = 1; nodeRank < cluster->getNumNodes(); ++nodeRank) {
-    receiveData(nodeRank, &(cluster->getNode(nodeRank)), kNoInterleavedCompute,
-            1, 0, 0, 0, 0);
+  for (unsigned int rank = 1; rank < cluster->getNumNodes(); ++rank) {
+    Node &node = cluster->getNode(rank);
+    if (node.numTotalSubDomains() > 0) {
+      receiveData(rank, &node, kNoInterleavedCompute, 1, 0, 0, 0, 0);
+      // printf("[0] received results from node %d.\n", rank);
+    }
   }
 }
 
@@ -329,10 +349,11 @@ void benchmarkCluster(Cluster* cluster, SubDomain* data,
         const int kIterations, const int kPyramidHeight,
         const float kStepDivCap, const float kRx, const float kRy,
         const float kRz) {
+
   /* TODO(den4gr) this is inefficient, need to use Bcast */
-  for (unsigned int node = 1; node < cluster->getNumNodes(); ++node) {
+  for (unsigned int node = 1; node < cluster->getNumNodes(); ++node)
     benchmarkNode(&(cluster->getNode(node)), data);
-  }
+
   benchmarkMyself(&(cluster->getNode(0)), data, kIterations, kPyramidHeight,
           kStepDivCap, kRx, kRy, kRz);
 }
@@ -350,13 +371,11 @@ void runDistributedHotspot(const int kMyRank, const int kNumTasks, DTYPE *data,
   const int kRootRank = 0;
   int new_stencil_size[3] = {stencil_size.z, stencil_size.y, stencil_size.x};
   int device_count = 0;
-  double balance_time = -1.0, compute_time = -1.0, send_time = -1.0,
-          receive_time = -1.0, total_time = -1.0, benchmark_time = -1.0;
+  double total_time = -1.0;
 
   const int kBorder[2] = {new_stencil_size[0] * kPyramidHeight,
     new_stencil_size[1] * kPyramidHeight};
   Node my_work;
-  Cluster* cluster = NULL;
   struct timeval send_start, send_end, rec_start, rec_end, comp_start, comp_end,
           process_start, process_end, balance_start, balance_end,
           benchmark_start, benchmark_end;
@@ -364,67 +383,67 @@ void runDistributedHotspot(const int kMyRank, const int kNumTasks, DTYPE *data,
   my_work.setRank(kMyRank);
   getNumberOfChildren(&device_count);
   my_work.setNumChildren(device_count);
-  
+
   if (kRootRank == kMyRank) {
     Decomposition decomp;
     Balancer balancer;
     // get the number of children from other nodes
-    cluster = new Cluster(kNumTasks);
+    boost::scoped_ptr<Cluster> cluster(new Cluster(kNumTasks));
     cluster->getNode(kRootRank).setNumChildren(device_count);
-    receiveNumberOfChildren(kNumTasks, cluster);
+    receiveNumberOfChildren(kNumTasks, cluster.get());
     printf("about to decompose.\n");
     /* perform domain decomposition */
-    int numElements[2] = {kYMax, kXMax};
-    decomp.decompose(data, 2, numElements, new_stencil_size, kPyramidHeight,
+    const int kNumElements[2] = {kYMax, kXMax};
+    decomp.decompose(data, 2, kNumElements, new_stencil_size, kPyramidHeight,
             kNumberBlocksPerDimension);
 #ifdef DEBUG
     printDecomposition(decomp);
 #endif
     printf("about to benchmark.\n");
     gettimeofday(&benchmark_start, NULL);
-    benchmarkCluster(cluster, decomp.getSubDomain(0), kIterations,
+    benchmarkCluster(cluster.get(), decomp.getSubDomain(0), kIterations,
             kPyramidHeight, kStepDivCap, kRx, kRy, kRz);
     gettimeofday(&benchmark_end, NULL);
-    
+
     /* now perform the load balancing, assigning task blocks to each node */
     printf("about to balance.\n");
     gettimeofday(&balance_start, NULL);
     // passing a 0 means use cpu and gpu on all nodes
     if (kPerformLoadBalancing)
-        balancer.perfBalance(*cluster, decomp, kDeviceConfiguration);
+      balancer.perfBalance(*(cluster.get()), decomp, kDeviceConfiguration);
     else
-        balancer.balance(*cluster, decomp, kDeviceConfiguration);
+      balancer.balance(*(cluster.get()), decomp, kDeviceConfiguration);
     gettimeofday(&balance_end, NULL);
-    
+
+    printCluster(*cluster); // DEBUG
     gettimeofday(&process_start, NULL);
     gettimeofday(&send_start, NULL);
-    sendWorkToCluster(cluster);
+    sendWorkToCluster(cluster.get());
     gettimeofday(&send_end, NULL);
     // TODO(den4gr) Is this a deep copy??
     // root's work is in the first node
     my_work = cluster->getNode(kRootRank);
     /* PROCESS ROOT NODE WORK */
     gettimeofday(&comp_start, NULL);
-    processWork2D(&my_work, kIterations, kPyramidHeight, new_stencil_size,
-            kStepDivCap, kRx, kRy, kRz);
+    const bool kNoInterleave = false;
+    processWork2D(&my_work, kIterations, kNoInterleave, kPyramidHeight,
+            new_stencil_size, kStepDivCap, kRx, kRy, kRz);
     gettimeofday(&comp_end, NULL);
-    
-    cout << "getting results from cluster.\n";
+
+    printf("getting results from cluster.\n");
     gettimeofday(&rec_start, NULL);
-    getResultsFromCluster(cluster);
+    getResultsFromCluster(cluster.get());
     gettimeofday(&rec_end, NULL);
 
-    copyResults2D(data, cluster, kBorder, numElements);
-    //printCluster(*cluster); // DEBUG
-
+    copyResults2D(data, cluster.get(), kBorder, kNumElements);
+    printf("copied data back to original memory.\n");
     gettimeofday(&process_end, NULL);
-    
-    delete cluster;
-    cluster = NULL;
+    total_time = secondsElapsed(process_start, process_end);
+    //printf("Total: %10.4e\n", total_time);
   } else {
-    const bool kInterleaveProcessing = true;
+    const bool kInterleaveProcessing = false;
     int iterations_left = kIterations;
-    
+
     // send number of children to root
     sendNumberOfChildren(kRootRank, device_count);
     gettimeofday(&benchmark_start, NULL);
@@ -433,13 +452,13 @@ void runDistributedHotspot(const int kMyRank, const int kNumTasks, DTYPE *data,
     receiveData(kRootRank, &my_work, kInterleaveProcessing, kPyramidHeight,
             kStepDivCap, kRx, kRy, kRz);
     gettimeofday(&benchmark_end, NULL);
-    
+
     if (kInterleaveProcessing)
       iterations_left = kIterations - kPyramidHeight;
-    
+
     gettimeofday(&comp_start, NULL);
-    processWork2D(&my_work, iterations_left, kPyramidHeight, new_stencil_size,
-            kStepDivCap, kRx, kRy, kRz);
+    processWork2D(&my_work, iterations_left, kInterleaveProcessing,
+            kPyramidHeight, new_stencil_size, kStepDivCap, kRx, kRy, kRz);
     gettimeofday(&comp_end, NULL);
 
     // send my work back to the root
@@ -449,18 +468,4 @@ void runDistributedHotspot(const int kMyRank, const int kNumTasks, DTYPE *data,
     gettimeofday(&send_end, NULL);
     gettimeofday(&process_end, NULL);
   }
-  
-  total_time = secondsElapsed(process_start, process_end);
-  benchmark_time = secondsElapsed(benchmark_start, benchmark_end);
-  balance_time = secondsElapsed(balance_start, balance_end);
-  compute_time = secondsElapsed(comp_start, comp_end);
-  receive_time = secondsElapsed(rec_start, rec_end);
-  send_time = secondsElapsed(send_start, send_end);
-  fprintf(stdout, "*********\n");
-  printf("[%d]\tbalance\t\tbenchmark\tcompute\t\treceive\t\tsend\t\ttotal\n",
-          kMyRank);
-  printf("[%d]\t%.4e\t%.4e\t%.4e\t%.4e\t%.4e\t%.4e\n",
-          kMyRank, benchmark_time, balance_time, compute_time,
-          send_time, receive_time, total_time);
-  fprintf(stdout, "*********\n");
 }

@@ -1,4 +1,4 @@
-#ifndef DECOMPOSITION_H 
+#ifndef DECOMPOSITION_H
 #define DECOMPOSITION_H
 #include "Node.h"
 #include <vector>
@@ -11,10 +11,12 @@ class Decomposition{
                     const int, const int);
   void decompose3D(DTYPE*, const int, const int, const int, const int [],
                     const int, const int);
+  void decompose3DSlab(DTYPE*, const int, const int, const int, const int [],
+                    const int, const int);
   void copyBlock3D(DTYPE* , SubDomain*, const int, const int, const int);
   void copyBlock2D(DTYPE* , SubDomain*, const int, const int);
 
-  public: 
+  public:
     Decomposition();
     Decomposition(const Decomposition&);
     ~Decomposition();
@@ -23,10 +25,10 @@ class Decomposition{
     const SubDomain* getSubDomain(const int )const;
     SubDomain* getSubDomain(const int );
     SubDomain* popSubDomain();
-    size_t getNumSubDomains()const; 
+    size_t getNumSubDomains()const;
     void decompose(DTYPE* , const int , const int [],const int [], const int,
                     const int);
-};    
+};
 
 void printDecomposition(Decomposition& d);
 #endif

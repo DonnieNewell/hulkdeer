@@ -16,6 +16,7 @@ File:   cell-main.cpp     Contains a main routine to drive the pathfinder exampl
 #include<time.h>
 #endif
 #include <fstream>
+#include <boost/scoped_array.hpp>
 #include "distributedCell.h"
 #include "mpi.h"
 
@@ -28,15 +29,15 @@ File:   cell-main.cpp     Contains a main routine to drive the pathfinder exampl
 void printUsage();
 
 int J, K, L;
-int* data;
-int** space2D;
-int*** space3D;
+boost::scoped_array<int> data(0);
+boost::scoped_array<int*> space2D(0);
+boost::scoped_array<int**> space3D(0);
 #define M_SEED 9
-int pyramid_height;
-int timesteps;
-int number_blocks_per_dimension;
-bool perform_load_balancing;
-int device_configuration;
+int pyramid_height = 0;
+int timesteps = 0;
+int number_blocks_per_dimension = 0;
+bool perform_load_balancing = -1;
+int device_configuration = -1;
 // #define BENCH_PRINT
 
 void
@@ -50,25 +51,25 @@ initData(int length[3]) {
 #ifdef DEBUG
   fprintf(stderr, "allocating data[%d][%d][%d].\n", L, K, J);
 #endif
-  data = new int[J * K * L];
+  data.reset(new int[J * K * L]());
 #ifdef DEBUG
   fprintf(stderr, "allocating space2D.\n");
 #endif
-  space2D = new int*[J * K];
+  space2D.reset(new int*[J * K]());
 #ifdef DEBUG
   fprintf(stderr, "allocating space3D.\n");
 #endif
-  space3D = new int**[J];
+  space3D.reset(new int**[J]());
 #ifdef DEBUG
   fprintf(stderr, "initializing space2D only.\n");
 #endif
   for (int n = 0; n < (J * K); n++)
-    space2D[n] = data + (L * n);
+    space2D[n] = data.get() + (L * n);
 #ifdef DEBUG
   fprintf(stderr, "initializing space3D only.\n");
 #endif
   for (int n = 0; n < J; n++)
-    space3D[n] = space2D + (K * n);
+    space3D[n] = space2D.get() + (K * n);
 }
 
 void
@@ -90,13 +91,13 @@ init(int argc, char** argv, const int kMyRank) {
     exit(0);
   }
   if (kMyRank == 0) {
-    data = new int[J * K * L];
-    space2D = new int*[J * K];
-    space3D = new int**[J];
+    data.reset(new int[J * K * L]());
+    space2D.reset(new int*[J * K]());
+    space3D.reset(new int**[J]);
     for (int n = 0; n < (J * K); n++)
-      space2D[n] = data + (L * n);
+      space2D[n] = data.get() + (L * n);
     for (int n = 0; n < J; n++)
-      space3D[n] = space2D + (K * n);
+      space3D[n] = space2D.get() + (K * n);
 
     unsigned int seed = M_SEED;
     for (int i = 0; i < (J * K * L); i++)
@@ -116,6 +117,7 @@ int bornMin = 5, bornMax = 8;
 int dieMax = 3, dieMin = 10;
 
 int main(int argc, char** argv) {
+  const int kRootRank = 0;
   int return_code = 0, num_tasks = 0, my_rank = 0;
   return_code = MPI_Init(&argc, &argv);
   if (return_code != MPI_SUCCESS) {
@@ -137,20 +139,19 @@ int main(int argc, char** argv) {
             perform_load_balancing, device_configuration);
   }
 #else
-  runDistributedCell(my_rank, num_tasks, data, J, K, L, timesteps, pyramid_height,
-          bornMin, bornMax, dieMin, dieMax, number_blocks_per_dimension,
-          perform_load_balancing, device_configuration);
+  runDistributedCell(my_rank, num_tasks, data.get(), J, K, L, timesteps,
+          pyramid_height, bornMin, bornMax, dieMin, dieMax,
+          number_blocks_per_dimension, perform_load_balancing,
+          device_configuration);
 #endif
-
+  //printf("finished runDistributedCell();\n");
 #ifdef BENCH_PRINT
   if (my_rank == 0) {
     printResults(data, J, K, L);
   }
 #endif
   MPI_Finalize();
-  delete [] data;
-  delete [] space2D;
-  delete [] space3D;
+  //printf("made it past finalize()\n");
 
   return 0;
 }

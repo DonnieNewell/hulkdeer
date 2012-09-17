@@ -70,6 +70,152 @@ DTYPE OMPCellValue(dim3 input_size, int x, int y, int z, DTYPE *input,
 // only run on certain devices. This technique is older and therefore more
 // reliable across Cuda devices.
 extern "C" {
+  void runOMPCellKernelOuter(dim3 input_size, dim3 stencil_size,
+          DTYPE *input, DTYPE *output, int pyramid_height,
+          DTYPE *ro_data
+          , int bornMin, int bornMax, int dieMin, int dieMax);
+}
+
+void runOMPCellKernelOuter(dim3 input_size, dim3 stencil_size, DTYPE *input,
+        DTYPE *output, int pyramid_height, DTYPE *ro_data,
+        int bornMin, int bornMax, int dieMin, int dieMax) {
+  dim3 border;
+  border.x = border.y = border.z = 0;
+  const int kGhostZ = pyramid_height * stencil_size.z;
+  const int kGhostY = pyramid_height * stencil_size.y;
+  const int kGhostX = pyramid_height * stencil_size.x;
+  for (int iter = 0; iter < pyramid_height; ++iter) {
+    border.x += stencil_size.x;
+    border.y += stencil_size.y;
+    border.z += stencil_size.z;
+    int uidx = -1;
+    // (x, y, z) is the location in the input of this thread.
+    // TODO 6 loops to cover all of the gz faces
+    // front face
+#pragma omp parallel for private(uidx) shared(output)
+    for (int z = border.z; z < kGhostZ; ++z) {
+      for (int y = border.y; y < input_size.y - border.y; ++y) {
+        for (int x = border.x; x < input_size.x - border.x; ++x) {
+          // Get current cell value or edge value.
+          uidx = x + input_size.x * (y + z * input_size.y);
+          output[uidx] = OMPCellValue(input_size, x, y, z, input,
+                  bornMin, bornMax, dieMin, dieMax, border);
+        }
+      }
+    }
+
+    // back face
+#pragma omp parallel for private(uidx) shared(output)
+    for (int z = input_size.z - kGhostZ;
+            z < input_size.z - border.z;
+            ++z) {
+      for (int y = border.y; y < input_size.y - border.y; ++y) {
+        for (int x = border.x; x < input_size.x - border.x; ++x) {
+          // Get current cell value or edge value.
+          uidx = x + input_size.x * (y + z * input_size.y);
+          output[uidx] = OMPCellValue(input_size, x, y, z, input,
+                  bornMin, bornMax, dieMin, dieMax, border);
+        }
+      }
+    }
+
+    // top face
+#pragma omp parallel for private(uidx) shared(output)
+    for (int z = kGhostZ; z < input_size.z - kGhostZ; ++z) {
+      for (int y = input_size.y - kGhostY; y < input_size.y - border.y; ++y) {
+        for (int x = border.x; x < input_size.x - border.x; ++x) {
+          // Get current cell value or edge value.
+          uidx = x + input_size.x * (y + z * input_size.y);
+          output[uidx] = OMPCellValue(input_size, x, y, z, input,
+                  bornMin, bornMax, dieMin, dieMax, border);
+        }
+      }
+    }
+    
+    // bottom face
+#pragma omp parallel for private(uidx) shared(output)
+    for (int z = kGhostZ; z < input_size.z - kGhostZ; ++z) {
+      for (int y = border.y; y < kGhostY; ++y) {
+        for (int x = border.x; x < input_size.x - border.x; ++x) {
+          // Get current cell value or edge value.
+          uidx = x + input_size.x * (y + z * input_size.y);
+          output[uidx] = OMPCellValue(input_size, x, y, z, input,
+                  bornMin, bornMax, dieMin, dieMax, border);
+        }
+      }
+    }
+    
+    // left face
+#pragma omp parallel for private(uidx) shared(output)
+    for (int z = kGhostZ; z < input_size.z - kGhostZ; ++z) {
+      for (int y = kGhostY; y < input_size.y - kGhostY; ++y) {
+        for (int x = border.x; x < kGhostX; ++x) {
+          // Get current cell value or edge value.
+          uidx = x + input_size.x * (y + z * input_size.y);
+          output[uidx] = OMPCellValue(input_size, x, y, z, input,
+                  bornMin, bornMax, dieMin, dieMax, border);
+        }
+      }
+    }
+    
+    // right face
+#pragma omp parallel for private(uidx) shared(output)
+    for (int z = kGhostZ; z < input_size.z - kGhostZ; ++z) {
+      for (int y = kGhostY; y < input_size.y - kGhostY; ++y) {
+        for (int x = input_size.x - kGhostX; x < input_size.x - border.x; ++x) {
+          // Get current cell value or edge value.
+          uidx = x + input_size.x * (y + z * input_size.y);
+          output[uidx] = OMPCellValue(input_size, x, y, z, input,
+                  bornMin, bornMax, dieMin, dieMax, border);
+        }
+      }
+    }
+  }
+}
+
+// We need to declare it C style naming.
+// This avoids name mangling and allows us to get attributes about the kernel
+// call from Cuda. Its possible to do this with a C++ interface, but that will
+// only run on certain devices. This technique is older and therefore more
+// reliable across Cuda devices.
+extern "C" {
+  void runOMPCellKernelInner(dim3 input_size, dim3 stencil_size,
+          DTYPE *input, DTYPE *output, int pyramid_height,
+          DTYPE *ro_data
+          , int bornMin, int bornMax, int dieMin, int dieMax);
+}
+
+void runOMPCellKernelInner(dim3 input_size, dim3 stencil_size, DTYPE *input,
+        DTYPE *output, int pyramid_height, DTYPE *ro_data,
+        int bornMin, int bornMax, int dieMin, int dieMax) {
+  dim3 border;
+  border.x = border.y = border.z = 0;
+  const int kGhostZ = pyramid_height * stencil_size.z;
+  const int kGhostY = pyramid_height * stencil_size.y;
+  const int kGhostX = pyramid_height * stencil_size.x;
+  for (int iter = 0; iter < pyramid_height; ++iter) {
+    border.x += stencil_size.x;
+    border.y += stencil_size.y;
+    border.z += stencil_size.z;
+    int uidx = -1;
+    // (x, y, z) is the location in the input of this thread.
+    // TODO 6 loops to cover all of the gz faces
+    // front face
+#pragma omp parallel for private(uidx) shared(output)
+    for (int z = kGhostZ; z < input_size.z - kGhostZ; ++z) {
+      for (int y = kGhostY; y < input_size.y - kGhostY; ++y) {
+        for (int x = kGhostX; x < input_size.x - kGhostX; ++x) {
+          // Get current cell value or edge value.
+          uidx = x + input_size.x * (y + z * input_size.y);
+          output[uidx] = OMPCellValue(input_size, x, y, z, input,
+                  bornMin, bornMax, dieMin, dieMax, border);
+        }
+      }
+    }
+  }
+}
+
+extern "C" {
   void runOMPCellKernel(dim3 input_size, dim3 stencil_size,
           DTYPE *input, DTYPE *output, int pyramid_height,
           DTYPE *ro_data
@@ -116,6 +262,101 @@ static DTYPE *device_input = NULL, *device_output = NULL;
 /**
  * Function exported to do the entire stencil computation.
  */
+void runOMPCellOuter(DTYPE *host_data, int x_max, int y_max, int z_max,
+        int iterations, const int kPyramidHeight, int bornMin, int bornMax,
+        int dieMin, int dieMax) {
+  // User-specific parameters
+  dim3 input_size;
+  dim3 stencil_size;
+  dim3 border;
+  stencil_size.x = 1;
+  stencil_size.y = 1;
+  stencil_size.z = 1;
+  border.x = kPyramidHeight * stencil_size.x;
+  border.y = kPyramidHeight * stencil_size.y;
+  border.z = kPyramidHeight * stencil_size.z;
+  input_size.x = x_max + 2 * border.x;
+  input_size.y = y_max + 2 * border.y;
+  input_size.z = z_max + 2 * border.z;
+
+
+  int size = input_size.x * input_size.y * input_size.z;
+  if (NULL == device_input && NULL == device_output) {
+    device_output = new DTYPE[size]();
+    device_input = new DTYPE[size]();
+  }
+
+  copyFromHostData(device_input, host_data, input_size, border);
+
+  // Now we can calculate the pyramid height.
+  int pyramid_height = kPyramidHeight;
+
+  // Run computation
+  for (int iter = 0; iter < iterations; iter += pyramid_height) {
+    if (iter + pyramid_height > iterations)
+      pyramid_height = iterations - iter;
+    //printf("runOMPCellKernel: ph:%d iterations:%d\n", pyramid_height, iterations);
+    runOMPCellKernelOuter(input_size, stencil_size, device_input, device_output,
+            pyramid_height, global_ro_data, bornMin, bornMax,
+            dieMin, dieMax);
+    DTYPE *temp = device_input;
+    device_input = device_output;
+    device_output = temp;
+  }
+
+  copyToHostData(host_data, device_input, input_size, border);
+}
+
+/**
+ * Function exported to do the entire stencil computation.
+ */
+void runOMPCellInner(DTYPE *host_data, int x_max, int y_max, int z_max,
+        int iterations, const int kPyramidHeight, int bornMin, int bornMax,
+        int dieMin, int dieMax) {
+  // User-specific parameters
+  dim3 input_size;
+  dim3 stencil_size;
+  dim3 border;
+  stencil_size.x = 1;
+  stencil_size.y = 1;
+  stencil_size.z = 1;
+  border.x = kPyramidHeight * stencil_size.x;
+  border.y = kPyramidHeight * stencil_size.y;
+  border.z = kPyramidHeight * stencil_size.z;
+  input_size.x = x_max + 2 * border.x;
+  input_size.y = y_max + 2 * border.y;
+  input_size.z = z_max + 2 * border.z;
+
+
+  int size = input_size.x * input_size.y * input_size.z;
+  if (NULL == device_input && NULL == device_output) {
+    device_output = new DTYPE[size]();
+    device_input = new DTYPE[size]();
+  }
+
+  // TODO (donnie) create copy inner/outer to save time
+  copyFromHostData(device_input, host_data, input_size, border);
+
+  // Now we can calculate the pyramid height.
+  int pyramid_height = kPyramidHeight;
+
+  // Run computation
+  for (int iter = 0; iter < iterations; iter += pyramid_height) {
+    if (iter + pyramid_height > iterations)
+      pyramid_height = iterations - iter;
+    //printf("runOMPCellKernel: ph:%d iterations:%d\n", pyramid_height, iterations);
+    runOMPCellKernelInner(input_size, stencil_size, device_input, device_output,
+            pyramid_height, global_ro_data, bornMin, bornMax,
+            dieMin, dieMax);
+    DTYPE *temp = device_input;
+    device_input = device_output;
+    device_output = temp;
+  }
+
+  // TODO (donnie) create copy inner/outer to save time
+  copyToHostData(host_data, device_input, input_size, border);
+}
+
 void runOMPCell(DTYPE *host_data, int x_max, int y_max, int z_max,
         int iterations, const int kPyramidHeight, int bornMin, int bornMax,
         int dieMin, int dieMax) {

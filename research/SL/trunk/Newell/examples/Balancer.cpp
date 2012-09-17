@@ -2,6 +2,8 @@
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
+#include <map>
+#include <boost/scoped_array.hpp>
 
 Balancer::Balancer() {
 }
@@ -9,32 +11,100 @@ Balancer::Balancer() {
 Balancer::~Balancer() {
 }
 
-void Balancer::perfBalanceGPU(Cluster &cluster, Decomposition& decomp) {
+void Balancer::perfBalanceGPU(Cluster &cluster, Decomposition& decomp,
+        const double kTimeEstimate) {
   const int kGPUOnly = 2;
   WorkQueue work_queue;
   WorkRequest work_request;
-  if (decomp.getNumSubDomains() == 0 || cluster.getNumTotalGPUs() == 0)
+  const int kNumTotalGPUs = cluster.getNumTotalGPUs();
+  if (decomp.getNumSubDomains() == 0 || kNumTotalGPUs == 0)
     return;
-  for (int gpu_index = 0; gpu_index < cluster.getNumTotalGPUs(); ++gpu_index) {
+  for (int gpu_index = 0; gpu_index < kNumTotalGPUs; ++gpu_index) {
     Node& gpu = cluster.getGlobalGPU(gpu_index);
     // fastest gpu will have largest weight, and thus move to front of queue
-    work_request.setTimeDiff(1.0 - gpu.getTimeEst(1, kGPUOnly));
+    work_request.setTimeDiff(kTimeEstimate - gpu.getBalTimeEst(1, kGPUOnly));
     work_request.setIndex(gpu_index);
     work_queue.push(work_request);
   }
 
+  const int kNumBlocks = decomp.getNumSubDomains();
   // place data blocks on gpu's one-at-a-time
-  while (decomp.getNumSubDomains() > 0) {
+  for (int block_id = 0; block_id < kNumBlocks; ++block_id) {
     work_request = work_queue.top();
     work_queue.pop();
 
     Node& gpu = cluster.getGlobalGPU(work_request.getIndex());
-    SubDomain* block = decomp.popSubDomain();
-    gpu.addSubDomain(block);
+    gpu.incrementBalCount();
 
-    work_request.setTimeDiff(1.0 - gpu.getTimeEst(1, kGPUOnly));
+    double time_diff = gpu.getBalTimeEst(1, kGPUOnly);
+
+    work_request.setTimeDiff(time_diff);
     work_queue.push(work_request);
+    //printWorkQueue(work_queue);
   }
+
+  cluster.distributeBlocks(&decomp);
+}
+
+void Balancer::populateAdjacencies(Cluster* cluster, int* adj_indices,
+        int* adj_nodes, int* node_weights, int* adj_weights) {
+    // validate
+    if (cluster == NULL || adj_indices == NULL || adj_nodes == NULL) return;
+
+    // go through each node and record the location of each neighbor
+    const int kNumNodes = static_cast<int> (cluster->getNumNodes());
+    const int kNumNeighbors3D = 26;
+    const int kNumNeighbors2D = 8;
+
+    int current_adj_index = 0;
+    const int kNumDimensions = cluster->getBlockLinear(0)->getDimensionality();
+    int num_neighbors = (kNumDimensions == 3) ?
+                                kNumNeighbors3D :
+                                kNumNeighbors2D;
+    adj_indices[0] = current_adj_index;
+    for (int node_index = 0; node_index < kNumNodes; ++node_index) {
+        std::map<int, int> adj_map;
+        Node& node = cluster->getNode(node_index);
+        node_weights[node_index] = static_cast<int> (node.getWeight());
+        const int kNumBlocks = static_cast<int> (node.numTotalSubDomains());
+        for (int block_index = 0; block_index < kNumBlocks; ++block_index) {
+            SubDomain* block = node.globalGetSubDomain(block_index);
+            for (int neighbor_index = 0;
+                    neighbor_index < num_neighbors;
+                    ++neighbor_index) {
+                const int kNoNeighbor = -1;
+                const int kNodeRank = block->getNeighborLoc(neighbor_index);
+                if (kNodeRank != kNoNeighbor) {  // block has a neighbor
+                    adj_map[kNodeRank] = 1;
+                }
+            }
+        }
+        // transfer data from map to CSR adjacency array
+        std::map<int, int>::iterator itr;
+        for (itr = adj_map.begin();
+                itr != adj_map.end();
+                ++itr, ++current_adj_index) {
+            adj_nodes[current_adj_index] = itr->first;  // key is node rank
+            int edge_weight =
+                static_cast<int> (cluster->getNode(itr->first).getEdgeWeight());
+            adj_weights[current_adj_index] = edge_weight;
+        }
+        adj_indices[node_index + 1] = current_adj_index;
+    }
+}
+
+void Balancer::minCut(Cluster &cluster) {
+    const unsigned int kNumNodes = cluster.getNumNodes();
+    // the last element in the indices array is the upper bound for
+    //  the last list
+    boost::scoped_array<int> adj_indices (new int[kNumNodes + 1]);
+    boost::scoped_array<int> node_weights (new int[kNumNodes + 1]);
+    // We store each edge 2 times and each node is connected to itself so n * n
+    boost::scoped_array<int> adj_nodes (new int[kNumNodes * kNumNodes]);
+    boost::scoped_array<int> adj_weights (new int[kNumNodes * kNumNodes]);
+    populateAdjacencies(&cluster, adj_indices.get(), adj_nodes.get(),
+            node_weights.get(), adj_weights.get());
+
 }
 
 void Balancer::perfBalance(Cluster &cluster, Decomposition& decomp,
@@ -53,24 +123,24 @@ void Balancer::perfBalance(Cluster &cluster, Decomposition& decomp,
 
   // initialize block directory
   cluster.setNumBlocks(num_blocks);
-  
+
+  //get total iterations per second for cluster
+  for (unsigned int node = 0; node < cluster.getNumNodes(); ++node) {
+    total_weight += cluster.getNode(node).getTotalWeight(kConfig);
+    min_edge_weight += cluster.getNode(node).getMinEdgeWeight(kConfig);
+  }
+
+  // quick estimation of runtime
+  procTime = num_blocks / total_weight;
+  commTime = num_blocks / min_edge_weight;
+  timeEst = procTime + commTime;
+
   if (kGPUOnly == kConfig) {
-    perfBalanceGPU(cluster, decomp);
+    perfBalanceGPU(cluster, decomp, timeEst);
   } else {
     // perform initial task distribution
     for (size_t i = 0; i < num_blocks; ++i)
-      root.addSubDomain(decomp.popSubDomain());
-
-    //get total iterations per second for cluster
-    for (unsigned int node = 0; node < cluster.getNumNodes(); ++node) {
-      total_weight += cluster.getNode(node).getTotalWeight(kConfig);
-      min_edge_weight += cluster.getNode(node).getMinEdgeWeight(kConfig);
-    }
-
-    // quick estimation of runtime
-    procTime = num_blocks / total_weight;
-    commTime = num_blocks / min_edge_weight;
-    timeEst = procTime + commTime;
+      root.incrementBalCount();
 
     /*fprintf(stderr,
             "perfBalance: \n\ttime est: %f sec\n\tprocTime: %f sec\n\tcommTime: %f \
@@ -84,23 +154,21 @@ void Balancer::perfBalance(Cluster &cluster, Decomposition& decomp,
               cpu_index < cluster.getNumNodes();
               ++cpu_index) {
         Node& cpu_node = cluster.getNode(cpu_index);
-        int work_deficit = cpu_node.getTotalWorkNeeded(timeEst, kConfig) - cpu_node.numTotalSubDomains();
+        int work_deficit = cpu_node.getTotalWorkNeeded(timeEst, kConfig) -
+                                cpu_node.getBalCount();
         if (0 > work_deficit) { // node has extra work
           int extra_blocks = abs(work_deficit);
           for (int block_index = 0;
-                  (block_index < extra_blocks) && (0 < cpu_node.numSubDomains());
+                  (block_index < extra_blocks) &&
+                  (0 < cpu_node.getBalCount());
                   ++block_index) {
             // move block from child to parent
-            SubDomain* block = cpu_node.popSubDomain();
-            if (NULL == block) {
-              fprintf(stderr, "perfBalance: ERROR NULL subdomain pointer.\n");
-            } else {
-              root.addSubDomain(block);
-              changed = true;
-            }
+            cpu_node.decrementBalCount();
+            root.incrementBalCount();
+            changed = true;
           }
         } else if (0 < work_deficit) { //child needs more work
-          work_request.setTimeDiff(timeEst - cpu_node.getTimeEst(0, kConfig));
+          work_request.setTimeDiff(timeEst - cpu_node.getBalTimeEst(0, kConfig));
           work_request.setIndex(cpu_index);
           work_queue.push(work_request);
         }
@@ -111,23 +179,19 @@ void Balancer::perfBalance(Cluster &cluster, Decomposition& decomp,
               ++cpu_index) {
         Node& cpu_node = root.getChild(cpu_index);
         int work_deficit = cpu_node.getTotalWorkNeeded(timeEst, kConfig) -
-                cpu_node.numTotalSubDomains();
+                cpu_node.getBalCount();
         if (0 > work_deficit) { // child has extra work
           int extra_blocks = abs(work_deficit);
           for (int block_index = 0;
-                  (block_index < extra_blocks) && (0 < cpu_node.numSubDomains());
+                  (block_index < extra_blocks) && (0 < cpu_node.getBalCount());
                   ++block_index) {
             // move block from child to parent
-            SubDomain* block = cpu_node.popSubDomain();
-            if (NULL == block) {
-              fprintf(stderr, "perfBalance: ERROR NULL subdomain pointer.\n");
-            } else {
-              root.addSubDomain(block);
-              changed = true;
-            }
+            cpu_node.decrementBalCount();
+            root.incrementBalCount();
+            changed = true;
           }
         } else if (0 < work_deficit) { // child needs more work
-          work_request.setTimeDiff(timeEst - cpu_node.getTimeEst(0, kConfig));
+          work_request.setTimeDiff(timeEst - cpu_node.getBalTimeEst(0, kConfig));
           work_request.setIndex(-1 * cpu_index); // hack so I know to give to one of root's children
           work_queue.push(work_request);
         }
@@ -138,7 +202,7 @@ void Balancer::perfBalance(Cluster &cluster, Decomposition& decomp,
          that need it
        */
 
-      while (0 < root.numSubDomains() && // there are blocks left to give
+      while (0 < root.getBalCount() && // there are blocks left to give
               !work_queue.empty()) { // there are requests left to fill
 
         // get largest request
@@ -149,23 +213,15 @@ void Balancer::perfBalance(Cluster &cluster, Decomposition& decomp,
         int id = tmp.getIndex();
         if (id <= 0) { // local child
           id = -1 * id;
-          SubDomain* block = root.popSubDomain();
-          if (NULL == block) {
-            fprintf(stderr, "perfBalance: ERROR NULL subdomain pointer.\n");
-          } else {
-            root.getChild(id).addSubDomain(block);
-            newTimeDiff = timeEst - root.getChild(id).getTimeEst(0, kConfig);
+          root.decrementBalCount();
+            root.getChild(id).incrementBalCount();
+            newTimeDiff = timeEst - root.getChild(id).getBalTimeEst(0, kConfig);
             changed = true;
-          }
         } else { // request was from another node in cluster
-          SubDomain* block = root.popSubDomain();
-          if (NULL == block) {
-            fprintf(stderr, "perfBalance: ERROR NULL subdomain pointer.\n");
-          } else {
-            cluster.getNode(id).addSubDomain(block);
-            newTimeDiff = timeEst - cluster.getNode(id).getTimeEst(0, kConfig);
+          root.decrementBalCount();
+            cluster.getNode(id).incrementBalCount();
+            newTimeDiff = timeEst - cluster.getNode(id).getBalTimeEst(0, kConfig);
             changed = true;
-          }
         }
         // if there is still work left to do put it back on
         // the queue so that it will reorder correctly
@@ -181,6 +237,10 @@ void Balancer::perfBalance(Cluster &cluster, Decomposition& decomp,
       }
     } while (changed);
   }
+
+  /* now that we know where everything should go, distribute the blocks */
+  cluster.distributeBlocks(&decomp);
+
   /* the work is balanced, so we can fill the block directory */
   cluster.storeBlockLocs();
 }
@@ -251,16 +311,17 @@ bool Balancer::balanceNode(Node& node, double runtime, const int kConfig) {
           ++gpu_index) {
     Node& gpu = node.getChild(gpu_index);
     int work_deficit = gpu.getTotalWorkNeeded(runtime, kConfig) -
-            gpu.numTotalSubDomains();
+            gpu.getBalCount();
     if (0 > work_deficit) { // child has extra work
       int extra_blocks = abs(work_deficit);
       for (int block = 0; block < extra_blocks; ++block) {
         // move block from child to parent
-        node.addSubDomain(gpu.popSubDomain());
+        gpu.decrementBalCount();
+        node.incrementBalCount();
         changed = true;
       }
-    } else if (0 < work_deficit) { // child needs more work
-      work_request.setTimeDiff(runtime - gpu.getTimeEst(0, kConfig));
+    } else if (0 < work_deficit) {  // child needs more work
+      work_request.setTimeDiff(runtime - gpu.getBalTimeEst(0, kConfig));
       work_request.setIndex(gpu_index);
       work_queue.push(work_request);
     }
@@ -271,14 +332,15 @@ bool Balancer::balanceNode(Node& node, double runtime, const int kConfig) {
      now we need to distribute blocks to children
      that need it
    */
-  while (0 < node.numSubDomains() && //there are blocks left to give
-          !work_queue.empty()) { //there are requests left to fill
+  while (0 < node.getBalCount() &&  // there are blocks left to give
+          !work_queue.empty()) {  // there are requests left to fill
     double time_diff = 0.0;
     //get largest request
     WorkRequest tmp = work_queue.top();
     work_queue.pop();
-    node.getChild(tmp.getIndex()).addSubDomain(node.popSubDomain());
-    time_diff = runtime - node.getChild(tmp.getIndex()).getTimeEst(0, kConfig);
+    node.decrementBalCount();
+    node.getChild(tmp.getIndex()).incrementBalCount();
+    time_diff = runtime - node.getChild(tmp.getIndex()).getBalTimeEst(0, kConfig);
     changed = true;
 
     // if there is still work left to do put it back on

@@ -45,16 +45,19 @@ class WorkRequest {
 };
 
 typedef priority_queue< WorkRequest, vector<WorkRequest>, greater<WorkRequest> > WorkQueue;
+void printWorkQueue(WorkQueue& queue);
 /************************************************/
 
 class Node{
   double weight;
   double edgeWeight;
   int rank;
+  int balance_count;
   bool is_CPU;
   vector<SubDomain*> subD;
   vector<Node> children;
   map<int,int> linear_lookup;
+
   public:
   Node();
   Node(double);
@@ -65,14 +68,20 @@ class Node{
   void setEdgeWeight(double);
   void setWeight(double);
   void setRank(int);
+  void incrementBalCount();
+  void decrementBalCount();
+  int getBalCount() const;
   void setCPU(const bool);
   bool isCPU() const;
   void setNumChildren(const int);
   unsigned int getNumChildren() const;
   int getRank() const;
   double getTimeEst(const int, const int) const;
+  double getBalTimeEst(const int, const int) const;
   int getWorkNeeded(const double) const;
   int getTotalWorkNeeded(const double, const int) const;
+  unsigned int numTotalExternalBlockNeighbors();
+  unsigned int numExternalBlockNeighbors();
   unsigned int numTotalSubDomains() const;
   SubDomain* getSubDomain(int index) const;
   SubDomain* globalGetSubDomain(int) const;

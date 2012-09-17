@@ -2,7 +2,7 @@
 #define SUB_DOMAIN_3D_H
 
 #include <vector>
-
+// TODO (den4gr) #include <boost/scoped_array.hpp>
 /*
 NEIGHBORS 3D
 (i, j, k) is current block
@@ -98,6 +98,7 @@ class SubDomain {
     int offset[3];
     int length[3];
     int neighbors[26];//ranks of all neighbors to exchange ghost zones with
+    // TODO (den4gr) use boost::scoped_array<DTYPE> buffer
     DTYPE* buffer;
 };
 const char* neighborString(NeighborTag3D);

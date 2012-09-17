@@ -68,6 +68,7 @@ SubDomain::SubDomain(int* id, int zOffset, int zLength, int yOffset,
 }
 
 SubDomain::~SubDomain() {
+  //printf("deleting block: %d\n", getLinIndex());
   if (this->buffer != NULL) delete [] this->buffer;
   this->buffer = NULL;
 }

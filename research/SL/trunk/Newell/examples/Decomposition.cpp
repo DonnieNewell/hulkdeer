@@ -99,7 +99,7 @@ void Decomposition::copyBlock2D(DTYPE* buffer, SubDomain* s,
         if (r >= numElementsRows) r = numElementsRows - 1;
         if (c < 0) c = 0;
         if (c >= numElementsCols) c = numElementsCols - 1;
-        
+
         int newIndex =  row * s->getLength(1) + col;
         int oldIndex =  r * numElementsCols + c;
         sBuff[newIndex] = buffer[oldIndex];
@@ -146,11 +146,50 @@ void Decomposition::decompose2D(DTYPE* buffer, const int numElementsRows,
     }
 }//end decompose2D
 
+void Decomposition::decompose3DSlab(DTYPE* buffer, const int numElementsDepth,
+        const int numElementsRows, const int numElementsCols,
+        const int stencil_size[3], const int pyramidHeight,
+        const int kNumberSlabs) {
+
+  int slabDepth   = static_cast<int>((numElementsDepth /
+                                    (double)kNumberSlabs) + .5);
+
+  //calculate ghost zone
+  int border[3] = { pyramidHeight * stencil_size[0],
+                    pyramidHeight * stencil_size[1],
+                    pyramidHeight * stencil_size[2]};
+
+  domain.clear();
+  int j = 0, k = 0;
+  for (int i = 0; i < kNumberSlabs; ++i) {
+        int id[3] = {i, j, k};
+
+        // offset to account for ghost zone, may be negative
+        int depthOff  = slabDepth  * i - border[0];
+        int heightOff = -1 * border[1];
+        int widthOff  = -1 * border[2];
+
+        // length may be too large when added to offset
+        int depthLen  = slabDepth   + 2 * border[0];
+        int fakeNeighbors[26] = {0};
+        SubDomain* block = NULL;
+        block = new SubDomain(id, depthOff, depthLen, heightOff,
+                            numElementsRows, widthOff, numElementsCols,
+                            kNumberSlabs, 1, 1, fakeNeighbors);
+
+        // get data for this block from the buffer
+        copyBlock3D(buffer, block, numElementsDepth, numElementsRows,
+                    numElementsCols);
+        domain.push_back(block);
+  }
+}  // end decompose3D
+
+
 void Decomposition::decompose3D(DTYPE* buffer, const int numElementsDepth,
         const int numElementsRows, const int numElementsCols,
         const int stencil_size[3], const int pyramidHeight,
         const int kNumberBlocksPerDimension) {
-  
+
   int blockDimDepth   = static_cast<int>((numElementsDepth /
                                     (double)kNumberBlocksPerDimension) + .5);
   int blockDimHeight  = static_cast<int>((numElementsRows /
@@ -179,16 +218,15 @@ void Decomposition::decompose3D(DTYPE* buffer, const int numElementsDepth,
         int heightLen = blockDimHeight  + 2 * border[1];
         int widthLen  = blockDimWidth   + 2 * border[2];
         int fakeNeighbors[26] = {0};
-        SubDomain* s = NULL;
-        s= new SubDomain(id, depthOff, depthLen, heightOff, heightLen,
+        SubDomain* block = NULL;
+        block = new SubDomain(id, depthOff, depthLen, heightOff, heightLen,
                             widthOff, widthLen, kNumberBlocksPerDimension, kNumberBlocksPerDimension, kNumberBlocksPerDimension,
                             fakeNeighbors);
 
         //get data for this block from the buffer
-        copyBlock3D(buffer, s, numElementsDepth, numElementsRows,
+        copyBlock3D(buffer, block, numElementsDepth, numElementsRows,
                     numElementsCols);
-        domain.push_back(s);
-        s = NULL;
+        domain.push_back(block);
       }
     }
   }
@@ -201,7 +239,7 @@ void Decomposition::decompose(DTYPE* buffer, const int numDimensions,
     decompose2D(buffer, numElements[0], numElements[1], stencil_size,
             pyramidHeight, kNumberBlocksPerDimension);
   else if (3 == numDimensions)
-    decompose3D(buffer, numElements[0], numElements[1], numElements[2],
+    decompose3DSlab(buffer, numElements[0], numElements[1], numElements[2],
                 stencil_size, pyramidHeight, kNumberBlocksPerDimension);
 }
 
