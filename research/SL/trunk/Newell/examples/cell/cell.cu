@@ -1,14 +1,24 @@
 // -*- Mode: C++ ; c-file-style:"stroustrup"; indent-tabs-mode:nil; -*-
 
-#include "cell.h"
+#include "./cell.h"
+#include "../Model.cu"
 #include <stdio.h>
 #include <stdlib.h>
-#include "../Model.cu"
 #ifndef WIN32
 #include <sys/time.h>
 #else
 #include<time.h>
 #endif
+
+static double gpu_memcpy_time = 0.0;
+
+void copyData(DTYPE* src_data, enum cudaMemcpyKind kind, dim3 size, dim3 border,
+        DTYPE* dest_data);
+void copyOuterData(DTYPE* src_data, enum cudaMemcpyKind kind, dim3 size,
+        dim3 border, DTYPE* dest_data);
+void copyInnerData(DTYPE* src_data, enum cudaMemcpyKind kind, dim3 size,
+        dim3 border, DTYPE* dest_data);
+double secondsElapsed(struct timeval start, struct timeval stop);
 
 // The size of the tile is calculated at compile time by the SL processor.
 // But the data array is statically sized.
@@ -38,6 +48,9 @@ static DTYPE *global_ro_data = NULL;
  */
 static DTYPE *device_input = NULL, *device_output = NULL;
 
+double getGpuMemcpyTime() {
+  return gpu_memcpy_time;
+}
 
 __device__ DTYPE get(int x, int y, int z) {
   return shmem[threadIdx.z + z][threadIdx.y + y][threadIdx.x + x];
@@ -236,9 +249,9 @@ void runCellKernelOuter(dim3 input_size, dim3 stencil_size, DTYPE *input,
   if (ex >= input_size.x) ex = input_size.x - 1;
   if (ey >= input_size.y) ey = input_size.y - 1;
   if (ez >= input_size.z) ez = input_size.z - 1;
-  
+
   inside = ((x == ex) && (y == ey) && (z == ez));
-  
+
   // Get current cell value or edge value.
   //uidx = ez + input_size.y * (ey * input_size.x + ex);
   uidx = ex + input_size.x * (ey + ez * input_size.y);
@@ -246,12 +259,13 @@ void runCellKernelOuter(dim3 input_size, dim3 stencil_size, DTYPE *input,
 
   // Store value in shared memory for stencil calculations, and go.
   shmem[tz][ty][tx] = value;
-  
+
   const int kGhostZ = kPyramidHeight * stencil_size.z;
   const int kGhostY = kPyramidHeight * stencil_size.y;
   const int kGhostX = kPyramidHeight * stencil_size.x;
   // front and back
   in_ghost_zone = ((ez < kGhostZ) || (ez > input_size.z - kGhostZ));
+#ifndef SLAB
   // top and bottom
   in_ghost_zone = in_ghost_zone || ((ez >= kGhostZ) && (ez < input_size.z - kGhostZ) &&
           (ey >= input_size.y - kGhostY) && (ey < input_size.y - border.y) &&
@@ -266,7 +280,7 @@ void runCellKernelOuter(dim3 input_size, dim3 stencil_size, DTYPE *input,
   in_ghost_zone = in_ghost_zone || ((ez >= kGhostZ) && (ez < input_size.z - kGhostZ) &&
           (ey >= kGhostY) && (ey < input_size.y - kGhostY) &&
           (ex >= input_size.x - kGhostX) && (ex < input_size.x - border.x));
-  
+#endif
   inside = inside && in_ghost_zone;
   iter = 0;
   border.x = border.y = border.z = 0;
@@ -362,9 +376,9 @@ void runCellKernelInner(dim3 input_size, dim3 stencil_size, DTYPE *input,
   if (ex >= input_size.x) ex = input_size.x - 1;
   if (ey >= input_size.y) ey = input_size.y - 1;
   if (ez >= input_size.z) ez = input_size.z - 1;
-  
+
   inside = ((x == ex) && (y == ey) && (z == ez));
-  
+
   // Get current cell value or edge value.
   //uidx = ez + input_size.y * (ey * input_size.x + ex);
   uidx = ex + input_size.x * (ey + ez * input_size.y);
@@ -372,14 +386,19 @@ void runCellKernelInner(dim3 input_size, dim3 stencil_size, DTYPE *input,
 
   // Store value in shared memory for stencil calculations, and go.
   shmem[tz][ty][tx] = value;
-  
+
   const int kGhostZ = kPyramidHeight * stencil_size.z;
   const int kGhostY = kPyramidHeight * stencil_size.y;
   const int kGhostX = kPyramidHeight * stencil_size.x;
+
   // front and back
-  in_inner_zone = (ez >= kGhostZ) && (ez < input_size.z - kGhostZ) &&
+  in_inner_zone = (ez >= kGhostZ) && (ez < input_size.z - kGhostZ);
+#ifndef SLAB
+  in_inner_zone = in_inner_zone &&
           (ey >= kGhostY) && (ey < input_size.y - kGhostY) &&
           (ex >= kGhostX) && (ex < input_size.x - kGhostX);
+#endif
+  
   inside = inside && in_inner_zone;
   iter = 0;
   border.x = border.y = border.z = 0;
@@ -441,8 +460,6 @@ void runCell(DTYPE *host_data, int x_max, int y_max, int z_max, int iterations,
     cudaMalloc((void**) &device_output, num_bytes);
     cudaMalloc((void**) &device_input, num_bytes);
   }
-  //cudaMemset(static_cast<void*> (device_output), newValue, num_bytes);
-  cudaMemcpy(device_input, host_data, num_bytes, cudaMemcpyHostToDevice);
 
   // Setup the structure that holds parameters for the application.
   // And from that, get the block size.
@@ -470,12 +487,18 @@ void runCell(DTYPE *host_data, int x_max, int y_max, int z_max, int iterations,
           div_ceil(input_size.z, tile_data_size.z)); //*/
 
   gettimeofday(&start, NULL);
+  //cudaMemset(static_cast<void*> (device_output), newValue, num_bytes);
+  copyData(host_data, cudaMemcpyHostToDevice, input_size, border, device_input);
+  gettimeofday(&end, NULL);
+  gpu_memcpy_time += secondsElapsed(start, end);
+
+  gettimeofday(&start, NULL);
   // Run computation
   int tmp_pyramid_height = kPyramidHeight;
   for (int iter = 0; iter < iterations; iter += kPyramidHeight) {
     if (iter + kPyramidHeight > iterations)
       tmp_pyramid_height = iterations - iter;
-    runCellKernel <<<grid_dims, tile_size>>>( input_size, stencil_size,
+    runCellKernel <<<grid_dims, tile_size >>>(input_size, stencil_size,
             device_input, device_output, tmp_pyramid_height, global_ro_data,
             bornMin, bornMax, dieMin, dieMax);
 
@@ -486,7 +509,10 @@ void runCell(DTYPE *host_data, int x_max, int y_max, int z_max, int iterations,
   gettimeofday(&end, NULL);
 
   // Device to host
-  cudaMemcpy(host_data, device_input, num_bytes, cudaMemcpyDeviceToHost);
+  gettimeofday(&start, NULL);
+  copyData(device_input, cudaMemcpyDeviceToHost, input_size, border, host_data);
+  gettimeofday(&end, NULL);
+  gpu_memcpy_time += secondsElapsed(start, end);
 
   if (global_ro_data != NULL) {
     cudaFree(global_ro_data);
@@ -529,8 +555,7 @@ void runCellInner(DTYPE *host_data, int x_max, int y_max, int z_max, int iterati
     cudaMalloc((void**) &device_output, num_bytes);
     cudaMalloc((void**) &device_input, num_bytes);
   }
-  //cudaMemset(static_cast<void*> (device_output), newValue, num_bytes);
-  cudaMemcpy(device_input, host_data, num_bytes, cudaMemcpyHostToDevice);
+
 
   // Setup the structure that holds parameters for the application.
   // And from that, get the block size.
@@ -558,12 +583,18 @@ void runCellInner(DTYPE *host_data, int x_max, int y_max, int z_max, int iterati
           div_ceil(input_size.z, tile_data_size.z)); //*/
 
   gettimeofday(&start, NULL);
+  copyInnerData(host_data, cudaMemcpyHostToDevice, input_size, border,
+          device_input);
+  gettimeofday(&end, NULL);
+  gpu_memcpy_time += secondsElapsed(start, end);
+
+  gettimeofday(&start, NULL);
   // Run computation
   int tmp_pyramid_height = kPyramidHeight;
   for (int iter = 0; iter < iterations; iter += kPyramidHeight) {
     if (iter + kPyramidHeight > iterations)
       tmp_pyramid_height = iterations - iter;
-    runCellKernelInner <<<grid_dims, tile_size>>>( input_size, stencil_size,
+    runCellKernelInner << <grid_dims, tile_size >> >(input_size, stencil_size,
             device_input, device_output, tmp_pyramid_height, global_ro_data,
             bornMin, bornMax, dieMin, dieMax);
 
@@ -574,8 +605,11 @@ void runCellInner(DTYPE *host_data, int x_max, int y_max, int z_max, int iterati
   gettimeofday(&end, NULL);
 
   // Device to host
-  cudaMemcpy(host_data, device_input, num_bytes, cudaMemcpyDeviceToHost);
-
+  gettimeofday(&start, NULL);
+  copyInnerData(device_input, cudaMemcpyDeviceToHost, input_size, border,
+          host_data);
+  gettimeofday(&end, NULL);
+  gpu_memcpy_time += secondsElapsed(start, end);
   if (global_ro_data != NULL) {
     cudaFree(global_ro_data);
     global_ro_data = NULL;
@@ -588,9 +622,9 @@ void runCellInner(DTYPE *host_data, int x_max, int y_max, int z_max, int iterati
 /**
  * Function exported to do the entire stencil computation.
  */
-void runCellOuter(DTYPE *host_data, int x_max, int y_max, int z_max, int iterations,
-        const int kPyramidHeight, int bornMin, int bornMax, int dieMin,
-        int dieMax, int device) {
+void runCellOuter(DTYPE *host_data, int x_max, int y_max, int z_max,
+        int iterations, const int kPyramidHeight, int bornMin, int bornMax,
+        int dieMin, int dieMax, int device) {
   // User-specific parameters
   dim3 input_size(x_max, y_max, z_max);
   dim3 stencil_size(1, 1, 1);
@@ -617,9 +651,6 @@ void runCellOuter(DTYPE *host_data, int x_max, int y_max, int z_max, int iterati
     cudaMalloc((void**) &device_output, num_bytes);
     cudaMalloc((void**) &device_input, num_bytes);
   }
-  //cudaMemset(static_cast<void*> (device_output), newValue, num_bytes);
-  cudaMemcpy(device_input, host_data, num_bytes, cudaMemcpyHostToDevice);
-
   // Setup the structure that holds parameters for the application.
   // And from that, get the block size.
   char* KernelName = "runCellKernelOuter";
@@ -646,12 +677,18 @@ void runCellOuter(DTYPE *host_data, int x_max, int y_max, int z_max, int iterati
           div_ceil(input_size.z, tile_data_size.z)); //*/
 
   gettimeofday(&start, NULL);
+  copyOuterData(host_data, cudaMemcpyHostToDevice, input_size, border,
+          device_input);
+  gettimeofday(&end, NULL);
+  gpu_memcpy_time += secondsElapsed(start, end);
+
+  gettimeofday(&start, NULL);
   // Run computation
   int tmp_pyramid_height = kPyramidHeight;
   for (int iter = 0; iter < iterations; iter += kPyramidHeight) {
     if (iter + kPyramidHeight > iterations)
       tmp_pyramid_height = iterations - iter;
-    runCellKernelOuter <<<grid_dims, tile_size>>>( input_size, stencil_size,
+    runCellKernelOuter << <grid_dims, tile_size >> >(input_size, stencil_size,
             device_input, device_output, tmp_pyramid_height, global_ro_data,
             bornMin, bornMax, dieMin, dieMax);
 
@@ -662,7 +699,11 @@ void runCellOuter(DTYPE *host_data, int x_max, int y_max, int z_max, int iterati
   gettimeofday(&end, NULL);
 
   // Device to host
-  cudaMemcpy(host_data, device_input, num_bytes, cudaMemcpyDeviceToHost);
+  gettimeofday(&start, NULL);
+  copyOuterData(device_input, cudaMemcpyDeviceToHost, input_size, border,
+          host_data);
+  gettimeofday(&end, NULL);
+  gpu_memcpy_time += secondsElapsed(start, end);
 
   if (global_ro_data != NULL) {
     cudaFree(global_ro_data);
@@ -689,4 +730,107 @@ void runCellSetData(DTYPE *host_data, int num_elements) {
   int num_bytes = sizeof (DTYPE) * num_elements;
   cudaMalloc((void **) &global_ro_data, num_bytes);
   cudaMemcpy(global_ro_data, host_data, num_bytes, cudaMemcpyHostToDevice);
+}
+
+void copyData(DTYPE* src_data, enum cudaMemcpyKind kind, dim3 size, dim3 border,
+        DTYPE* dest_data) {
+  const int kNumElements = size.x * size.y * size.z;
+  void* dest = static_cast<void*> (dest_data);
+  void* src = static_cast<void*> (src_data);
+  size_t num_bytes = kNumElements * sizeof (src_data[0]);
+  cudaMemcpy(dest, src, num_bytes, kind);
+}
+
+void copyOuterData(DTYPE* src_data, enum cudaMemcpyKind kind, dim3 size,
+        dim3 border, DTYPE* dest_data) {
+  // front
+  DTYPE *dest_start = dest_data;
+  DTYPE *src_start = src_data;
+  int num_elements = border.z * size.y * size.x;
+  size_t num_bytes = num_elements * sizeof (src_data[0]);
+  void* dest = static_cast<void*> (dest_start);
+  void* src = static_cast<void*> (src_start);
+  cudaMemcpy(dest, src, num_bytes, kind);
+
+  // back
+  int offset = (size.z - border.z) * size.y * size.x;
+  src_start = src_data + offset;
+  dest_start = dest_data + offset;
+  dest = static_cast<void*> (dest_start);
+  src = static_cast<void*> (src_start);
+  cudaMemcpy(dest, src, num_bytes, kind);
+
+#ifndef SLAB
+  // top
+  num_elements = size.x;
+  num_bytes = num_elements * sizeof (src_data[0]);
+  int pitch = size.x * size.y * sizeof (src_data[0]);
+  offset = border.z * size.y * size.x + (size.y - border.y) * size.x;
+  src_start = src_data + offset;
+  dest_start = dest_data + offset;
+  dest = static_cast<void*> (dest_start);
+  src = static_cast<void*> (src_start);
+  cudaMemcpy2D(dest, pitch, src, pitch, num_bytes, border.y, kind);
+
+  // bottom
+  offset = border.z * size.y * size.x;
+  src_start = src_data + offset;
+  dest_start = dest_data + offset;
+  dest = static_cast<void*> (dest_start);
+  src = static_cast<void*> (src_start);
+  cudaMemcpy2D(dest, pitch, src, pitch, num_bytes, border.y, kind);
+
+  // left
+  num_elements = border.x;
+  num_bytes = num_elements * sizeof (src_data[0]);
+  pitch = size.x * sizeof (src_data[0]);
+  for (int i = border.z; i < size.z - border.z; ++i) {
+    offset = i * size.y * size.x + border.y * size.x;
+    src_start = src_data + offset;
+    dest_start = dest_data + offset;
+    dest = static_cast<void*> (dest_start);
+    src = static_cast<void*> (src_start);
+    cudaMemcpy2D(dest, pitch, src, pitch, num_bytes, size.y - 2 * border.y,
+            kind);
+  }
+
+  // right
+  for (int i = border.z; i < size.z - border.z; ++i) {
+    offset = i * size.y * size.x + border.y * size.x + size.x - border.x;
+    src_start = src_data + offset;
+    dest_start = dest_data + offset;
+    dest = static_cast<void*> (dest_start);
+    src = static_cast<void*> (src_start);
+    cudaMemcpy2D(dest, pitch, src, pitch, num_bytes, size.y - 2 * border.y,
+            kind);
+  }
+#endif
+}
+
+void copyInnerData(DTYPE* src_data, enum cudaMemcpyKind kind, dim3 size,
+        dim3 border, DTYPE* dest_data) {
+#ifndef SLAB
+  int num_elements = size.x - 2 * border.x;
+  int num_bytes = num_elements * sizeof (src_data[0]);
+  for (int i = border.z; i < size.z - border.z; ++i) {
+    int offset = i * size.y * size.x + border.y * size.x + border.x;
+    DTYPE* src_start = src_data + offset;
+    DTYPE* dest_start = dest_data + offset;
+    void* dest = static_cast<void*> (dest_start);
+    void* src = static_cast<void*> (src_start);
+    int pitch = size.x * sizeof (src_data[0]);
+    cudaMemcpy2D(dest, pitch, src, pitch, num_bytes, size.y - 2 * border.y,
+            kind);
+  }
+#else
+  int num_elements = (size.z - 2 * border.z) * size.y * size.x;
+  int num_bytes = num_elements * sizeof (src_data[0]);
+  int offset = border.z * size.y * size.x;
+  DTYPE* src_start = src_data + offset;
+  DTYPE* dest_start = dest_data + offset;
+  void* dest = static_cast<void*> (dest_start);
+  void* src = static_cast<void*> (src_start);
+  int pitch = size.x * sizeof (src_data[0]);
+  cudaMemcpy(dest, src, num_bytes, kind);
+#endif
 }

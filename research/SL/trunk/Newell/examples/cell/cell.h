@@ -11,5 +11,5 @@ void runCellOuter(DTYPE *host_data, int x_max, int y_max, int z_max, int iterati
         const int kPyramidHeight, int bornMin, int bornMax, int dieMin,
         int dieMax, int device);
 void runCellCleanup();
-
+double getGpuMemcpyTime();
 #endif

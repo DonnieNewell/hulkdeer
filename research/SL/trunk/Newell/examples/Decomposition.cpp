@@ -165,12 +165,12 @@ void Decomposition::decompose3DSlab(DTYPE* buffer, const int numElementsDepth,
         int id[3] = {i, j, k};
 
         // offset to account for ghost zone, may be negative
-        int depthOff  = slabDepth  * i - border[0];
+        int depthOff  = slabDepth * i - border[0];
         int heightOff = -1 * border[1];
         int widthOff  = -1 * border[2];
 
         // length may be too large when added to offset
-        int depthLen  = slabDepth   + 2 * border[0];
+        int depthLen  = slabDepth + 2 * border[0];
         int fakeNeighbors[26] = {0};
         SubDomain* block = NULL;
         block = new SubDomain(id, depthOff, depthLen, heightOff,

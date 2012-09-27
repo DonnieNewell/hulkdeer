@@ -32,10 +32,9 @@
 #define _DEBUG
 
 // First, give some simple math helper functions.
-double iexp(double base, int power)
-{
+double iexp(double base, int power) {
     double retval = 1;
-    for (int i=0; i<power; i++) retval *= base;
+    for (int i = 0; i < power; ++i) retval *= base;
     return retval;
 } 
 

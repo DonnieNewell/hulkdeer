@@ -8,4 +8,5 @@ void runOMPCellOuter(DTYPE*, int, int, int, int, const int kPyramidHeight,
 void runOMPCellInner(DTYPE*, int, int, int, int, const int kPyramidHeight,
                 int bornMin, int bornMax, int dieMin, int dieMax);
 void runOMPCellCleanup();
+double getMemcpyTime();
 #endif

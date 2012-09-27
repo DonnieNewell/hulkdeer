@@ -22,7 +22,9 @@ Copyright 2012 Donald Newell
 #include "./distributedCell.h"
 #include <boost/scoped_ptr.hpp>
 #include <boost/scoped_array.hpp>
+#include <omp.h>
 
+#define SPLIT_WORK
 using namespace boost;
 
 const int kCPUIndex = -1;
@@ -402,7 +404,7 @@ void processWorkSplit(Node* machine, const int kIterations,
         const int kBornMin, const int kBornMax, const int kDieMin,
         const int kDieMax) {
   int pyramid_height(kPyramidHeight), first_iter(0);
-  struct timeval start, end;
+  struct timeval start, end, t1, t2;
   double ghost_time(0.0), compute_time(0.0);
 
   first_iter = 0;
@@ -415,44 +417,64 @@ void processWorkSplit(Node* machine, const int kIterations,
       kStencilSize[1] * pyramid_height,
       kStencilSize[2] * pyramid_height};
     int num_messages_sent = 0;
+    int num_threads(0), thread_id(0);
     /* The data is initially sent with the ghost zones, but since
-        we actually process each subdomain interleaved with the communication,
-      in receiveData, we have to update the stale cells starting with the
-      first iteration. Note, this is why the number of iterations passed
-      into this function should be totalIterations - pyramidHeight, due to
-      the previously mentioned reason. */
+       we actually process each subdomain interleaved with the communication,
+       in receiveData, we have to update the stale cells starting with the
+       first iteration. Note, this is why the number of iterations passed
+       into this function should be totalIterations - pyramidHeight, due to
+       the previously mentioned reason. */
     //printf("processing outer");
+
+    // *** PROCESS GHOST ZONE ***
     gettimeofday(&start, NULL);
+    //gettimeofday(&t1, NULL);
     processGPUWorkOuter(machine, pyramid_height, kBornMin, kBornMax,
             kDieMin, kDieMax);
+    //gettimeofday(&t2, NULL);
+    //printf("GPU iter took:%f sec\n", secondsElapsed(t1, t2));
+    //gettimeofday(&t1, NULL);
     processCPUWorkOuter(machine, pyramid_height, kBornMin, kBornMax,
             kDieMin, kDieMax);
+    //gettimeofday(&t2, NULL);
+    //printf("CPU iter took:%f sec\n", secondsElapsed(t1, t2));
     gettimeofday(&end, NULL);
     compute_time += secondsElapsed(start, end);
 
-    gettimeofday(&end, NULL);
-    compute_time += secondsElapsed(start, end);
+    // *** START ASYNC GHOST ZONE UPDATE ***
+    //gettimeofday(&end, NULL);
+    //compute_time += secondsElapsed(start, end);
     gettimeofday(&start, NULL);
     updateStart(machine, stale_border, &num_messages_sent);
     gettimeofday(&end, NULL);
     ghost_time += secondsElapsed(start, end);
 
+    // *** PROCESS INNER DATA ***
     gettimeofday(&start, NULL);
+    //gettimeofday(&t1, NULL);
     processGPUWorkInner(machine, pyramid_height, kBornMin, kBornMax,
             kDieMin, kDieMax);
+    //gettimeofday(&t2, NULL);
+    //printf("GPU iter took:%f sec\n", secondsElapsed(t1, t2));
+    //gettimeofday(&t1, NULL);
     processCPUWorkInner(machine, pyramid_height, kBornMin, kBornMax,
             kDieMin, kDieMax);
+    //gettimeofday(&t2, NULL);
+    //printf("CPU iter took:%f sec\n", secondsElapsed(t1, t2));
     gettimeofday(&end, NULL);
     compute_time += secondsElapsed(start, end);
-    
+
+    // *** FINISH ASYNC GHOST ZONE UPDATE ***
     gettimeofday(&start, NULL);
     updateFinish(machine, stale_border, num_messages_sent);
     gettimeofday(&end, NULL);
     ghost_time += secondsElapsed(start, end);
   }
+
   // deallocate IO buffers and synchronization buffers
   cleanupComm(machine->numTotalSubDomains());
-  printf("[%d]exchange:%10.4e\tcompute:%10.4e\n", machine->getRank(),
+
+  printf("[%d] exchange:%10.4e\tcompute:%10.4e\n", machine->getRank(),
           ghost_time, compute_time);
 }
 
@@ -469,7 +491,7 @@ void getResultsFromCluster(Cluster* cluster) {
 
 void sendWorkToCluster(Cluster* cluster) {
   /* TODO(den4gr) needs to be parallel.
-      send the work to each node. */
+     send the work to each node. */
   for (unsigned int node = 1; node < cluster->getNumNodes(); ++node) {
     sendData(&(cluster->getNode(node)));
   }
@@ -558,10 +580,13 @@ void runDistributedCell(const int kMyRank, const int kNumTasks, DTYPE *data,
     //printf("[%d]\t%10s\t%10s\t%10s\n", kMyRank, "update", "compute", "total");
     gettimeofday(&comp_start, NULL);
     //printf("process work...\n");
+#ifdef SPLIT_WORK
     processWorkSplit(&my_work, kIterations, kPyramidHeight, new_stencil_size,
             kBornMin, kBornMax, kDieMin, kDieMax);
-    //processWork(&my_work, kIterations, false, kPyramidHeight, new_stencil_size,
-    //        kBornMin, kBornMax, kDieMin, kDieMax);
+#else
+    processWork(&my_work, kIterations, false, kPyramidHeight, new_stencil_size,
+            kBornMin, kBornMax, kDieMin, kDieMax);
+#endif
     gettimeofday(&comp_end, NULL);
 
     //printf("get results...\n");
@@ -572,6 +597,8 @@ void runDistributedCell(const int kMyRank, const int kNumTasks, DTYPE *data,
     copy_results(data, cluster.get(), kBorder, kNumElements);
     gettimeofday(&process_end, NULL);
     total_time = secondsElapsed(process_start, process_end);
+    printf("[%d] cuda_memcpy_time:%f  memcpy_time:%f\n", kMyRank,
+            getGpuMemcpyTime(), getMemcpyTime());
     printf("Total: %10.4e\n", total_time);
   } else {
     const bool kInterleaveProcessing = false;
@@ -591,10 +618,13 @@ void runDistributedCell(const int kMyRank, const int kNumTasks, DTYPE *data,
     gettimeofday(&rec_end, NULL);
 
     gettimeofday(&comp_start, NULL);
+#ifdef SPLIT_WORK
     processWorkSplit(&my_work, iterations_left, kPyramidHeight,
             new_stencil_size, kBornMin, kBornMax, kDieMin, kDieMax);
-    //processWork(&my_work, iterations_left, false, kPyramidHeight,
-    //        new_stencil_size, kBornMin, kBornMax, kDieMin, kDieMax);
+#else
+    processWork(&my_work, iterations_left, false, kPyramidHeight,
+            new_stencil_size, kBornMin, kBornMax, kDieMin, kDieMax);
+#endif
     gettimeofday(&comp_end, NULL);
 
     // send my work back to the root

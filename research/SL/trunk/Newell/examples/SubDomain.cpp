@@ -3,6 +3,7 @@
 #include <cassert>
 #include <cstdio>
 #include <cstring>
+#include <algorithm>
 const int kNumNeighbors3D = 26;
 const int kNumNeighbors2D = 8;
 
@@ -65,6 +66,9 @@ SubDomain::SubDomain(int* id, int zOffset, int zLength, int yOffset,
   this->buffer = new DTYPE[xLength * yLength * zLength]();
   memcpy(static_cast<void*> (this->neighbors), static_cast<void*> (newNeighbors),
           kNumNeighbors3D * sizeof (DTYPE));
+  int* dest_start = this->neighbors;
+  int* src_start = newNeighbors;
+  std::copy(src_start, src_start + kNumNeighbors3D, dest_start);
 }
 
 SubDomain::~SubDomain() {

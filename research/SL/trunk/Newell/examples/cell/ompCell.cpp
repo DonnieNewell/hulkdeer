@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <cstring>
+#include <algorithm>
 
 // The size of the tile is calculated at compile time by the SL processor.
 // But the data array is statically sized.
@@ -27,9 +28,15 @@ typedef struct dim {
   int z;
 } dim3;
 
-void copyFromHostData(DTYPE* dest_data, DTYPE* host_data, dim3 size, dim3 border);
-void copyToHostData(DTYPE* host_data, DTYPE* src_data, dim3 size_src,
-        dim3 border);
+static double memcpy_time = 0.0;
+void copyData(DTYPE* src_data, dim3 size, dim3 border, DTYPE* dest_data);
+void copyOuterData(DTYPE* src_data, dim3 size, dim3 border, DTYPE* dest_data);
+void copyInnerData(DTYPE* src_data, dim3 size, dim3 border, DTYPE* dest_data);
+double secondsElapsed(struct timeval start, struct timeval stop);
+
+double getMemcpyTime() {
+  return memcpy_time;
+}
 
 // Macro to read global read only data from within CellValue code.
 #define read(offset)(ro_data[offset])
@@ -119,6 +126,7 @@ void runOMPCellKernelOuter(dim3 input_size, dim3 stencil_size, DTYPE *input,
       }
     }
 
+#ifndef SLAB
     // top face
 #pragma omp parallel for private(uidx) shared(output)
     for (int z = kGhostZ; z < input_size.z - kGhostZ; ++z) {
@@ -131,7 +139,7 @@ void runOMPCellKernelOuter(dim3 input_size, dim3 stencil_size, DTYPE *input,
         }
       }
     }
-    
+
     // bottom face
 #pragma omp parallel for private(uidx) shared(output)
     for (int z = kGhostZ; z < input_size.z - kGhostZ; ++z) {
@@ -144,7 +152,7 @@ void runOMPCellKernelOuter(dim3 input_size, dim3 stencil_size, DTYPE *input,
         }
       }
     }
-    
+
     // left face
 #pragma omp parallel for private(uidx) shared(output)
     for (int z = kGhostZ; z < input_size.z - kGhostZ; ++z) {
@@ -157,7 +165,7 @@ void runOMPCellKernelOuter(dim3 input_size, dim3 stencil_size, DTYPE *input,
         }
       }
     }
-    
+
     // right face
 #pragma omp parallel for private(uidx) shared(output)
     for (int z = kGhostZ; z < input_size.z - kGhostZ; ++z) {
@@ -170,6 +178,7 @@ void runOMPCellKernelOuter(dim3 input_size, dim3 stencil_size, DTYPE *input,
         }
       }
     }
+#endif
   }
 }
 
@@ -203,8 +212,8 @@ void runOMPCellKernelInner(dim3 input_size, dim3 stencil_size, DTYPE *input,
     // front face
 #pragma omp parallel for private(uidx) shared(output)
     for (int z = kGhostZ; z < input_size.z - kGhostZ; ++z) {
-      for (int y = kGhostY; y < input_size.y - kGhostY; ++y) {
-        for (int x = kGhostX; x < input_size.x - kGhostX; ++x) {
+      for (int y = border.y; y < input_size.y - border.y; ++y) {
+        for (int x = border.x; x < input_size.x - border.x; ++x) {
           // Get current cell value or edge value.
           uidx = x + input_size.x * (y + z * input_size.y);
           output[uidx] = OMPCellValue(input_size, x, y, z, input,
@@ -265,6 +274,7 @@ static DTYPE *device_input = NULL, *device_output = NULL;
 void runOMPCellOuter(DTYPE *host_data, int x_max, int y_max, int z_max,
         int iterations, const int kPyramidHeight, int bornMin, int bornMax,
         int dieMin, int dieMax) {
+
   // User-specific parameters
   dim3 input_size;
   dim3 stencil_size;
@@ -275,9 +285,15 @@ void runOMPCellOuter(DTYPE *host_data, int x_max, int y_max, int z_max,
   border.x = kPyramidHeight * stencil_size.x;
   border.y = kPyramidHeight * stencil_size.y;
   border.z = kPyramidHeight * stencil_size.z;
+#ifdef EXTRA_GHOST
   input_size.x = x_max + 2 * border.x;
   input_size.y = y_max + 2 * border.y;
   input_size.z = z_max + 2 * border.z;
+#else
+  input_size.x = x_max;
+  input_size.y = y_max;
+  input_size.z = z_max;
+#endif
 
 
   int size = input_size.x * input_size.y * input_size.z;
@@ -286,7 +302,7 @@ void runOMPCellOuter(DTYPE *host_data, int x_max, int y_max, int z_max,
     device_input = new DTYPE[size]();
   }
 
-  copyFromHostData(device_input, host_data, input_size, border);
+  copyOuterData(host_data, input_size, border, device_input);
 
   // Now we can calculate the pyramid height.
   int pyramid_height = kPyramidHeight;
@@ -304,7 +320,7 @@ void runOMPCellOuter(DTYPE *host_data, int x_max, int y_max, int z_max,
     device_output = temp;
   }
 
-  copyToHostData(host_data, device_input, input_size, border);
+  copyOuterData(device_input, input_size, border, host_data);
 }
 
 /**
@@ -323,9 +339,15 @@ void runOMPCellInner(DTYPE *host_data, int x_max, int y_max, int z_max,
   border.x = kPyramidHeight * stencil_size.x;
   border.y = kPyramidHeight * stencil_size.y;
   border.z = kPyramidHeight * stencil_size.z;
+#ifdef EXTRA_GHOST
   input_size.x = x_max + 2 * border.x;
   input_size.y = y_max + 2 * border.y;
   input_size.z = z_max + 2 * border.z;
+#else
+  input_size.x = x_max;
+  input_size.y = y_max;
+  input_size.z = z_max;
+#endif
 
 
   int size = input_size.x * input_size.y * input_size.z;
@@ -335,7 +357,7 @@ void runOMPCellInner(DTYPE *host_data, int x_max, int y_max, int z_max,
   }
 
   // TODO (donnie) create copy inner/outer to save time
-  copyFromHostData(device_input, host_data, input_size, border);
+  copyInnerData(host_data, input_size, border, device_input);
 
   // Now we can calculate the pyramid height.
   int pyramid_height = kPyramidHeight;
@@ -354,7 +376,7 @@ void runOMPCellInner(DTYPE *host_data, int x_max, int y_max, int z_max,
   }
 
   // TODO (donnie) create copy inner/outer to save time
-  copyToHostData(host_data, device_input, input_size, border);
+  copyInnerData(device_input, input_size, border, host_data);
 }
 
 void runOMPCell(DTYPE *host_data, int x_max, int y_max, int z_max,
@@ -370,9 +392,15 @@ void runOMPCell(DTYPE *host_data, int x_max, int y_max, int z_max,
   border.x = kPyramidHeight * stencil_size.x;
   border.y = kPyramidHeight * stencil_size.y;
   border.z = kPyramidHeight * stencil_size.z;
+#ifdef EXTRA_GHOST
   input_size.x = x_max + 2 * border.x;
   input_size.y = y_max + 2 * border.y;
   input_size.z = z_max + 2 * border.z;
+#else
+  input_size.x = x_max;
+  input_size.y = y_max;
+  input_size.z = z_max;
+#endif
 
 
   int size = input_size.x * input_size.y * input_size.z;
@@ -380,9 +408,11 @@ void runOMPCell(DTYPE *host_data, int x_max, int y_max, int z_max,
     device_output = new DTYPE[size]();
     device_input = new DTYPE[size]();
   }
-
-  copyFromHostData(device_input, host_data, input_size, border);
-
+  struct timeval start, end;
+  gettimeofday(&start, NULL);
+  copyData(host_data, input_size, border, device_input);
+  gettimeofday(&end, NULL);
+  memcpy_time += secondsElapsed(start, end);
   // Now we can calculate the pyramid height.
   int pyramid_height = kPyramidHeight;
 
@@ -399,7 +429,11 @@ void runOMPCell(DTYPE *host_data, int x_max, int y_max, int z_max,
     device_output = temp;
   }
 
-  copyToHostData(host_data, device_input, input_size, border);
+  gettimeofday(&start, NULL);
+  copyData(device_input, input_size, border, host_data);
+  gettimeofday(&end, NULL);
+  memcpy_time += secondsElapsed(start, end);
+
 }
 
 void runOMPCellCleanup() {
@@ -424,65 +458,89 @@ void runOMPCellSetData(DTYPE *host_data, int num_elements) {
           num_elements * sizeof (DTYPE));
 }
 
-void copyFromHostData(DTYPE* dest_data, DTYPE* host_data, dim3 size, dim3 border) {
-  int length_y = size.y - 2 * border.y;
-  int length_x = size.x - 2 * border.x;
-  int length_z = size.z - 2 * border.z;
-  for (int i = 0; i < size.z; ++i) {
-    for (int j = 0; j < size.y; ++j) {
-      for (int k = 0; k < size.x; ++k) {
-        int src_i = i;
-        int src_j = j;
-        int src_k = k;
-
-        // set i
-        if (src_i < border.z)
-          src_i = 0;
-        else if (src_i >= border.z && src_i < (size.z - border.z - 1))
-          src_i -= border.z;
-        else
-          src_i = length_z - 1;
-
-        // set j
-        if (src_j < border.y)
-          src_j = 0;
-        else if (src_j >= border.y && src_j < (size.y - border.y - 1))
-          src_j -= border.y;
-        else
-          src_j = length_y - 1;
-
-        // set k
-        if (src_k < border.x)
-          src_k = 0;
-        else if (src_k >= border.x && src_k < (size.x - border.x - 1))
-          src_k -= border.x;
-        else
-          src_k = length_x - 1;
-
-        int src_index = (src_i * length_y + src_j) * length_x + src_k;
-        int dest_index = (i * size.y + j) * size.x + k;
-        dest_data[dest_index] = host_data[src_index];
-      }
-    }
-  }
+void copyData(DTYPE* src_data, dim3 size, dim3 border, DTYPE* dest_data) {
+  struct timeval start, stop;
+  const int kNumElements = size.x * size.y * size.z;
+  gettimeofday(&start, NULL);
+  std::copy(src_data, src_data + kNumElements, dest_data);
+  gettimeofday(&stop, NULL);
+  memcpy_time += secondsElapsed(start, stop);
 }
 
-void copyToHostData(DTYPE* host_data, DTYPE* src_data, dim3 size_src,
-        dim3 border) {
-  const int kLengthZ = size_src.z - 2 * border.z;
-  const int kLengthY = size_src.y - 2 * border.y;
-  const int kLengthX = size_src.x - 2 * border.x;
-  const int kOffsetZ = border.z;
-  const int kOffsetY = border.y;
-  const int kOffsetX = border.x;
-  for (int i = 0; i < kLengthZ; ++i) {
-    for (int j = 0; j < kLengthY; ++j) {
-      for (int k = 0; k < kLengthX; ++k) {
-        int source_index = ((kOffsetZ + i) * size_src.y + (kOffsetY + j)) *
-                size_src.x + (kOffsetX + k);
-        int destination_index = (i * kLengthY + j) * kLengthX + k;
-        host_data[destination_index] = src_data[source_index];
-      }
+void copyOuterData(DTYPE* src_data, dim3 size, dim3 border, DTYPE* dest_data) {
+  // front
+  int offset = 0;
+  DTYPE *src_start = src_data;
+  DTYPE *src_stop = src_start + border.z * size.y * size.x;
+  DTYPE *dest_start = dest_data;
+  std::copy(src_start, src_stop, dest_start);
+
+  // back
+  offset = (size.z - border.z) * size.y * size.x;
+  src_start = src_data + offset;
+  src_stop = src_start + border.z * size.y * size.x;
+  dest_start = dest_data + offset;
+  std::copy(src_start, src_stop, dest_start);
+
+#ifndef SLAB
+  // top
+  for (int i = border.z; i < size.z - border.z; ++i) {
+    offset = i * size.y * size.x + (size.y - border.y) * size.x;
+    src_start = src_data + offset;
+    src_stop = src_start + border.y * size.x;
+    dest_start = dest_data + offset;
+    std::copy(src_start, src_stop, dest_start);
+  }
+
+  // bottom
+  for (int i = border.z; i < size.z - border.z; ++i) {
+    offset = i * size.y * size.x;
+    src_start = src_data + offset;
+    src_stop = src_start + border.y * size.x;
+    dest_start = dest_data + offset;
+    std::copy(src_start, src_stop, dest_start);
+  }
+
+  // left
+  for (int i = border.z; i < size.z - border.z; ++i) {
+    for (int j = border.y; j < size.y - border.y; ++j) {
+      offset = i * size.y * size.x + j * size.x;
+      src_start = src_data + offset;
+      src_stop = src_start + border.x;
+      dest_start = dest_data + offset;
+      std::copy(src_start, src_stop, dest_start);
     }
   }
+
+  // right
+  for (int i = border.z; i < size.z - border.z; ++i) {
+    for (int j = border.y; j < size.y - border.y; ++j) {
+      offset = i * size.y * size.x + j * size.x + size.x - border.x;
+      src_start = src_data + offset;
+      src_stop = src_start + border.x;
+      dest_start = dest_data + offset;
+      std::copy(src_start, src_stop, dest_start);
+    }
+  }
+#endif
+}
+
+void copyInnerData(DTYPE* src_data, dim3 size, dim3 border, DTYPE* dest_data) {
+#ifndef SLAB
+  for (int i = border.z; i < size.z - border.z; ++i) {
+    for (int j = border.y; j < size.y - border.y; ++j) {
+      int offset = i * size.y * size.x + j * size.x + border.x;
+      DTYPE* src_start = src_data + offset;
+      DTYPE* src_stop = src_start + size.x - 2 * border.x;
+      DTYPE* dest_start = dest_data + offset;
+      std::copy(src_start, src_stop, dest_start);
+    }
+  }
+#else
+  int offset = border.z * size.y * size.x;
+  DTYPE* src_start = src_data + offset;
+  DTYPE* src_stop = src_start + (size.z - 2 * border.z) * size.y * size.x;
+  DTYPE* dest_start = dest_data + offset;
+  std::copy(src_start, src_stop, dest_start);
+#endif
 }

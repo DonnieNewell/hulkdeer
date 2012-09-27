@@ -40,6 +40,9 @@ bool compare(DTYPE* data1, DTYPE* data2, int length) {
 int main(int argc, char** argv) {
   DTYPE* ompData = NULL, *mpiData = NULL;
   const int kDataSize = 32;
+  const int kPyramidHeight = 2;
+  const int kPerformLoadBalancing = true;
+  const int kDeviceConfiguration = 0;
   int iterations = 1;
   int dieMin = 10;
   int dieMax = 3;
@@ -60,14 +63,15 @@ int main(int argc, char** argv) {
     printf("running OpenMP version.\n");
     ompData = initInput(kDataSize, kDataSize, kDataSize);
     runOMPCell(ompData, kDataSize, kDataSize, kDataSize, iterations,
-        bornMin, bornMax, dieMin, dieMax);
+        kPyramidHeight, bornMin, bornMax, dieMin, dieMax);
     runOMPCellCleanup();
 
     mpiData = initInput(kDataSize, kDataSize, kDataSize);
     printf("running MPI version.\n");
   }
   runDistributedCell(rank, numTasks, mpiData, kDataSize, kDataSize, kDataSize,
-      iterations, bornMin, bornMax, dieMin, dieMax, kNumberBlocksPerDimension);
+      iterations, kPyramidHeight, bornMin, bornMax, dieMin, dieMax,
+      kNumberBlocksPerDimension, kPerformLoadBalancing, kDeviceConfiguration);
   printf("ending correctness test.\n");
   if (0 == rank) {
     printf("mpiData:%p, ompData:%p\n", mpiData, ompData);

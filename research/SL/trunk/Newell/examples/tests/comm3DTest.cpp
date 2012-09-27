@@ -35,7 +35,7 @@ int main(int argc, char** argv) {
   id[2] = 0;
 
   node.setRank(my_rank);
-  NeighborTag3D neighbor = x3DPole6;
+  NeighborTag3D neighbor = x3DCorner7;
   if (0 == my_rank) {
     // initialize block 0
     neighbors[neighbor] = 1;
@@ -51,7 +51,7 @@ int main(int argc, char** argv) {
     printf("rank %d exchanges neighbor %s\n", my_rank, neighborString(opposite_neighbor));
     neighbors[opposite_neighbor] = 0;
     id[0] = 1;
-    id[1] = 0;
+    id[1] = 1;
     id[2] = 1;
     z_offset += length;
     block = new SubDomain(id, z_offset, length + 2 * border[0],
