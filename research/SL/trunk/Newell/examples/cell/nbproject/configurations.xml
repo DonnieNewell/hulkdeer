@@ -1,0 +1,422 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="84">
+  <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
+    <df name="cell" root=".">
+      <df name="tests">
+        <df name="CMakeFiles">
+          <df name="balancer.dir">
+            <df name="if10">
+              <df name="den4gr">
+                <df name="hulkdeer">
+                  <df name="research">
+                    <df name="SL">
+                      <df name="trunk">
+                        <df name="Newell">
+                          <df name="examples">
+                          </df>
+                        </df>
+                      </df>
+                    </df>
+                  </df>
+                </df>
+              </df>
+            </df>
+          </df>
+          <df name="cell.dir">
+            <df name="if10">
+              <df name="den4gr">
+                <df name="hulkdeer">
+                  <df name="research">
+                    <df name="SL">
+                      <df name="trunk">
+                        <df name="Newell">
+                          <df name="examples">
+                          </df>
+                        </df>
+                      </df>
+                    </df>
+                  </df>
+                </df>
+              </df>
+            </df>
+          </df>
+          <df name="cluster.dir">
+            <df name="if10">
+              <df name="den4gr">
+                <df name="hulkdeer">
+                  <df name="research">
+                    <df name="SL">
+                      <df name="trunk">
+                        <df name="Newell">
+                          <df name="examples">
+                          </df>
+                        </df>
+                      </df>
+                    </df>
+                  </df>
+                </df>
+              </df>
+            </df>
+          </df>
+          <df name="CMakeTmp">
+            <df name="CMakeFiles">
+              <df name="cmTryCompileExec.dir">
+              </df>
+            </df>
+          </df>
+          <df name="comm.dir">
+            <df name="if10">
+              <df name="den4gr">
+                <df name="hulkdeer">
+                  <df name="research">
+                    <df name="SL">
+                      <df name="trunk">
+                        <df name="Newell">
+                          <df name="examples">
+                          </df>
+                        </df>
+                      </df>
+                    </df>
+                  </df>
+                </df>
+              </df>
+            </df>
+          </df>
+          <df name="CompilerIdC">
+            <in>CMakeCCompilerId.c</in>
+          </df>
+          <df name="CompilerIdCXX">
+            <in>CMakeCXXCompilerId.cpp</in>
+          </df>
+          <df name="cudaOmpCorrectness.dir">
+          </df>
+          <df name="decomposition.dir">
+            <df name="if10">
+              <df name="den4gr">
+                <df name="hulkdeer">
+                  <df name="research">
+                    <df name="SL">
+                      <df name="trunk">
+                        <df name="Newell">
+                          <df name="examples">
+                          </df>
+                        </df>
+                      </df>
+                    </df>
+                  </df>
+                </df>
+              </df>
+            </df>
+          </df>
+          <df name="distributedCell.dir">
+            <df name="af21">
+              <df name="den4gr">
+                <df name="hulkdeer">
+                  <df name="research">
+                    <df name="SL">
+                      <df name="trunk">
+                        <df name="Newell">
+                          <df name="examples">
+                            <df name="cell">
+                            </df>
+                          </df>
+                        </df>
+                      </df>
+                    </df>
+                  </df>
+                </df>
+              </df>
+            </df>
+            <df name="if10">
+              <df name="den4gr">
+                <df name="hulkdeer">
+                  <df name="research">
+                    <df name="SL">
+                      <df name="trunk">
+                        <df name="Newell">
+                          <df name="examples">
+                            <df name="cell">
+                            </df>
+                          </df>
+                        </df>
+                      </df>
+                    </df>
+                  </df>
+                </df>
+              </df>
+            </df>
+          </df>
+          <df name="node.dir">
+            <df name="if10">
+              <df name="den4gr">
+                <df name="hulkdeer">
+                  <df name="research">
+                    <df name="SL">
+                      <df name="trunk">
+                        <df name="Newell">
+                          <df name="examples">
+                          </df>
+                        </df>
+                      </df>
+                    </df>
+                  </df>
+                </df>
+              </df>
+            </df>
+          </df>
+          <df name="ompCell.dir">
+            <df name="af21">
+              <df name="den4gr">
+                <df name="hulkdeer">
+                  <df name="research">
+                    <df name="SL">
+                      <df name="trunk">
+                        <df name="Newell">
+                          <df name="examples">
+                            <df name="cell">
+                            </df>
+                          </df>
+                        </df>
+                      </df>
+                    </df>
+                  </df>
+                </df>
+              </df>
+            </df>
+            <df name="if10">
+              <df name="den4gr">
+                <df name="hulkdeer">
+                  <df name="research">
+                    <df name="SL">
+                      <df name="trunk">
+                        <df name="Newell">
+                          <df name="examples">
+                            <df name="cell">
+                            </df>
+                          </df>
+                        </df>
+                      </df>
+                    </df>
+                  </df>
+                </df>
+              </df>
+            </df>
+          </df>
+          <df name="ompMpiCorrectness.dir">
+          </df>
+          <df name="outerInnerCorrectness.dir">
+          </df>
+          <df name="subdomain.dir">
+            <df name="if10">
+              <df name="den4gr">
+                <df name="hulkdeer">
+                  <df name="research">
+                    <df name="SL">
+                      <df name="trunk">
+                        <df name="Newell">
+                          <df name="examples">
+                          </df>
+                        </df>
+                      </df>
+                    </df>
+                  </df>
+                </df>
+              </df>
+            </df>
+          </df>
+        </df>
+        <in>cudaOmpCorrectness.cpp</in>
+        <in>ompMpiCorrectness.cpp</in>
+        <in>outerInnerCorrectness.cpp</in>
+      </df>
+      <in>cell-main-CUDA.cpp</in>
+      <in>cell-main-OMP.cpp</in>
+      <in>cell-main.cpp</in>
+      <in>cell.cu</in>
+      <in>cell.h</in>
+      <in>distributedCell.cpp</in>
+      <in>distributedCell.h</in>
+      <in>ompCell.cpp</in>
+      <in>ompCell.h</in>
+    </df>
+    <logicalFolder name="examples"
+                   displayName="examples"
+                   projectFiles="true"
+                   root="..">
+      <itemPath>../Balancer.cpp</itemPath>
+      <itemPath>../Balancer.h</itemPath>
+      <itemPath>../Cluster.cpp</itemPath>
+      <itemPath>../Cluster.h</itemPath>
+      <itemPath>../Decomposition.cpp</itemPath>
+      <itemPath>../Decomposition.h</itemPath>
+      <itemPath>../Model.cu</itemPath>
+      <itemPath>../Model.h</itemPath>
+      <itemPath>../Node.cpp</itemPath>
+      <itemPath>../Node.h</itemPath>
+      <itemPath>../Profiler.cpp</itemPath>
+      <itemPath>../Profiler.h</itemPath>
+      <itemPath>../SubDomain.cpp</itemPath>
+      <itemPath>../SubDomain.h</itemPath>
+      <itemPath>../comm.cpp</itemPath>
+      <itemPath>../comm.h</itemPath>
+    </logicalFolder>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false"
+                   kind="IMPORTANT_FILES_FOLDER">
+      <itemPath>Makefile</itemPath>
+    </logicalFolder>
+  </logicalFolder>
+  <sourceFolderFilter>^(nbproject)$</sourceFolderFilter>
+  <sourceRootList>
+    <Elem>.</Elem>
+  </sourceRootList>
+  <projectmakefile>Makefile</projectmakefile>
+  <confs>
+    <conf name="Default" type="0">
+      <toolsSet>
+        <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
+        <compilerSet>GNU|GNU</compilerSet>
+      </toolsSet>
+      <codeAssistance>
+      </codeAssistance>
+      <makefileType>
+        <makeTool>
+          <buildCommandWorkingDir>.</buildCommandWorkingDir>
+          <buildCommand>${MAKE} -f Makefile</buildCommand>
+          <cleanCommand>${MAKE} -f Makefile clean</cleanCommand>
+          <executablePath>cell</executablePath>
+        </makeTool>
+      </makefileType>
+      <item path="../Decomposition.cpp" ex="false" tool="1" flavor2="0">
+        <ccTool>
+          <incDir>
+            <pElem>C:/Users/den4gr/.netbeans/7.1/var/cache/remote-files/barracuda13.cs.virginia.edu_22_den4gr//af21/den4gr/openmpi-install/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="../Model.cu" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../comm.cpp" ex="false" tool="1" flavor2="0">
+        <ccTool>
+          <incDir>
+            <pElem>C:/Users/den4gr/.netbeans/7.1/var/cache/remote-files/barracuda13.cs.virginia.edu_22_den4gr//af21/den4gr/openmpi-install/include</pElem>
+            <pElem>C:/Users/den4gr/.netbeans/7.1/var/cache/remote-files/barracuda13.cs.virginia.edu_22_den4gr//af21/den4gr/NVIDIA_GPU_Computing_SDK/C/common/inc</pElem>
+            <pElem>C:/Users/den4gr/.netbeans/7.1/var/cache/remote-files/barracuda13.cs.virginia.edu_22_den4gr//usr/local/cuda/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="cell-main-CUDA.cpp" ex="false" tool="1" flavor2="0">
+        <ccTool>
+          <incDir>
+            <pElem></pElem>
+            <pElem>C:/Users/den4gr/.netbeans/7.1/var/cache/remote-files/barracuda13.cs.virginia.edu_22_den4gr//af21/den4gr/NVIDIA_GPU_Computing_SDK/C/common/inc</pElem>
+            <pElem>C:/Users/den4gr/.netbeans/7.1/var/cache/remote-files/barracuda13.cs.virginia.edu_22_den4gr//usr/local/cuda/include</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>DTYPE=int</Elem>
+            <Elem>SL_MPI_TYPE=MPI_INT</Elem>
+          </preprocessorList>
+        </ccTool>
+      </item>
+      <item path="cell-main-OMP.cpp" ex="false" tool="1" flavor2="0">
+        <ccTool>
+          <incDir>
+            <pElem></pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>DTYPE=int</Elem>
+            <Elem>SL_MPI_TYPE=MPI_INT</Elem>
+          </preprocessorList>
+        </ccTool>
+      </item>
+      <item path="cell-main.cpp" ex="false" tool="1" flavor2="0">
+        <ccTool>
+          <incDir>
+            <pElem></pElem>
+            <pElem>C:/Users/den4gr/.netbeans/7.1/var/cache/remote-files/barracuda13.cs.virginia.edu_22_den4gr//af21/den4gr/openmpi-install/include</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>DTYPE=int</Elem>
+            <Elem>SL_MPI_TYPE=MPI_INT</Elem>
+          </preprocessorList>
+        </ccTool>
+      </item>
+      <item path="cell.cu" ex="false" tool="1" flavor2="0">
+        <ccTool>
+          <incDir>
+            <pElem></pElem>
+            <pElem>cuda_runtime.h</pElem>
+            <pElem>C:/Users/den4gr/.netbeans/7.1/var/cache/remote-files/barracuda13.cs.virginia.edu_22_den4gr//usr/local/cuda/include/cudart</pElem>
+            <pElem>C:/Users/den4gr/.netbeans/7.1/var/cache/remote-files/barracuda13.cs.virginia.edu_22_den4gr//af21/den4gr/NVIDIA_GPU_Computing_SDK/C/common/inc</pElem>
+            <pElem>C:/Users/den4gr/.netbeans/7.1/var/cache/remote-files/barracuda13.cs.virginia.edu_22_den4gr//usr/local/cuda/include</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>CUDA_DOUBLE_MATH_FUNCTIONS</Elem>
+            <Elem>DTYPE=int</Elem>
+            <Elem>SL_MPI_TYPE=MPI_INT</Elem>
+            <Elem>__CUDACC__</Elem>
+            <Elem>__CUDA_ARCH__=200</Elem>
+          </preprocessorList>
+        </ccTool>
+      </item>
+      <item path="distributedCell.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem></pElem>
+            <pElem>C:/Users/den4gr/.netbeans/7.1/var/cache/remote-files/barracuda13.cs.virginia.edu_22_den4gr//af21/den4gr/openmpi-install/include</pElem>
+            <pElem>C:/Users/den4gr/.netbeans/7.1/var/cache/remote-files/barracuda13.cs.virginia.edu_22_den4gr//af21/den4gr/NVIDIA_GPU_Computing_SDK/C/common/inc</pElem>
+            <pElem>C:/Users/den4gr/.netbeans/7.1/var/cache/remote-files/barracuda13.cs.virginia.edu_22_den4gr//usr/local/cuda/include</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>DTYPE=int</Elem>
+            <Elem>SL_MPI_TYPE=MPI_INT</Elem>
+          </preprocessorList>
+        </ccTool>
+      </item>
+      <folder path="cell/tests">
+        <ccTool>
+          <incDir>
+            <pElem>tests</pElem>
+          </incDir>
+        </ccTool>
+      </folder>
+      <folder path="examples">
+        <ccTool>
+          <incDir>
+            <pElem></pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>DTYPE=int</Elem>
+            <Elem>SL_MPI_TYPE=MPI_INT</Elem>
+          </preprocessorList>
+        </ccTool>
+      </folder>
+      <item path="ompCell.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem></pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>DTYPE=int</Elem>
+            <Elem>SL_MPI_TYPE=MPI_INT</Elem>
+            <Elem>_OPENMP=200505</Elem>
+          </preprocessorList>
+        </ccTool>
+      </item>
+      <item path="tests/cudaOmpCorrectness.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="tests/ompMpiCorrectness.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>../../../../../../../openmpi-install/include</pElem>
+            <pElem>../../../../../../../openmpi-install/include/openmpi/ompi/mpi/cxx</pElem>
+            <pElem>../../../../../../../openmpi-install/include/openmpi</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+    </conf>
+  </confs>
+</configurationDescriptor>

@@ -20,7 +20,7 @@
 #include <math.h>
 #include <cuda.h>
 #include <cuda_runtime.h>
-#include <cutil.h>
+#include "cutil.h"
 #ifndef WIN32
 	#include <sys/time.h>
 #else

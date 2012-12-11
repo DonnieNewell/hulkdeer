@@ -1,0 +1,14 @@
+<project default="compile">
+  <target name="compile">
+    <mkdir dir="bin"/>
+    <javac fork="yes" debug="on" optimize="on" deprecation="on"
+	   srcdir="compiler" destdir="bin">
+    </javac>
+    <copy todir="bin" file="template3d.cu"/>
+    <copy todir="bin" file="template2d.cu"/>
+    <copy todir="bin" file="template1d.cu"/>
+    <copy todir="Examples" file="examples/Model.cu"/>
+    <copy todir="Examples" file="examples/Model.h"/>
+    <copy todir="Examples" file="examples/cutil.h"/>
+  </target>
+</project>

@@ -36,10 +36,10 @@ CMAKE_COMMAND = /usr/bin/cmake
 RM = /usr/bin/cmake -E remove -f
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /af21/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/tests
+CMAKE_SOURCE_DIR = /if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/tests
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /af21/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/tests
+CMAKE_BINARY_DIR = /if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/tests
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -66,9 +66,9 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /af21/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/tests/CMakeFiles /af21/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/tests/CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/tests/CMakeFiles /if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/tests/CMakeFiles/progress.marks
 	$(MAKE) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /af21/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/tests/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/tests/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -96,6 +96,19 @@ depend:
 .PHONY : depend
 
 #=============================================================================
+# Target rules for targets named balancer
+
+# Build rule for target.
+balancer: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 balancer
+.PHONY : balancer
+
+# fast build rule for target.
+balancer/fast:
+	$(MAKE) -f CMakeFiles/balancer.dir/build.make CMakeFiles/balancer.dir/build
+.PHONY : balancer/fast
+
+#=============================================================================
 # Target rules for targets named cell
 
 # Build rule for target.
@@ -107,6 +120,32 @@ cell: cmake_check_build_system
 cell/fast:
 	$(MAKE) -f CMakeFiles/cell.dir/build.make CMakeFiles/cell.dir/build
 .PHONY : cell/fast
+
+#=============================================================================
+# Target rules for targets named cluster
+
+# Build rule for target.
+cluster: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 cluster
+.PHONY : cluster
+
+# fast build rule for target.
+cluster/fast:
+	$(MAKE) -f CMakeFiles/cluster.dir/build.make CMakeFiles/cluster.dir/build
+.PHONY : cluster/fast
+
+#=============================================================================
+# Target rules for targets named comm
+
+# Build rule for target.
+comm: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 comm
+.PHONY : comm
+
+# fast build rule for target.
+comm/fast:
+	$(MAKE) -f CMakeFiles/comm.dir/build.make CMakeFiles/comm.dir/build
+.PHONY : comm/fast
 
 #=============================================================================
 # Target rules for targets named cudaOmpCorrectness
@@ -122,6 +161,19 @@ cudaOmpCorrectness/fast:
 .PHONY : cudaOmpCorrectness/fast
 
 #=============================================================================
+# Target rules for targets named decomposition
+
+# Build rule for target.
+decomposition: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 decomposition
+.PHONY : decomposition
+
+# fast build rule for target.
+decomposition/fast:
+	$(MAKE) -f CMakeFiles/decomposition.dir/build.make CMakeFiles/decomposition.dir/build
+.PHONY : decomposition/fast
+
+#=============================================================================
 # Target rules for targets named distributedCell
 
 # Build rule for target.
@@ -133,6 +185,19 @@ distributedCell: cmake_check_build_system
 distributedCell/fast:
 	$(MAKE) -f CMakeFiles/distributedCell.dir/build.make CMakeFiles/distributedCell.dir/build
 .PHONY : distributedCell/fast
+
+#=============================================================================
+# Target rules for targets named node
+
+# Build rule for target.
+node: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 node
+.PHONY : node
+
+# fast build rule for target.
+node/fast:
+	$(MAKE) -f CMakeFiles/node.dir/build.make CMakeFiles/node.dir/build
+.PHONY : node/fast
 
 #=============================================================================
 # Target rules for targets named ompCell
@@ -173,53 +238,18 @@ outerInnerCorrectness/fast:
 	$(MAKE) -f CMakeFiles/outerInnerCorrectness.dir/build.make CMakeFiles/outerInnerCorrectness.dir/build
 .PHONY : outerInnerCorrectness/fast
 
-af21/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/distributedCell.o: af21/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/distributedCell.cpp.o
-.PHONY : af21/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/distributedCell.o
+#=============================================================================
+# Target rules for targets named subdomain
 
-# target to build an object file
-af21/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/distributedCell.cpp.o:
-	$(MAKE) -f CMakeFiles/distributedCell.dir/build.make CMakeFiles/distributedCell.dir/af21/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/distributedCell.cpp.o
-.PHONY : af21/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/distributedCell.cpp.o
+# Build rule for target.
+subdomain: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 subdomain
+.PHONY : subdomain
 
-af21/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/distributedCell.i: af21/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/distributedCell.cpp.i
-.PHONY : af21/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/distributedCell.i
-
-# target to preprocess a source file
-af21/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/distributedCell.cpp.i:
-	$(MAKE) -f CMakeFiles/distributedCell.dir/build.make CMakeFiles/distributedCell.dir/af21/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/distributedCell.cpp.i
-.PHONY : af21/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/distributedCell.cpp.i
-
-af21/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/distributedCell.s: af21/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/distributedCell.cpp.s
-.PHONY : af21/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/distributedCell.s
-
-# target to generate assembly for a file
-af21/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/distributedCell.cpp.s:
-	$(MAKE) -f CMakeFiles/distributedCell.dir/build.make CMakeFiles/distributedCell.dir/af21/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/distributedCell.cpp.s
-.PHONY : af21/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/distributedCell.cpp.s
-
-af21/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/ompCell.o: af21/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/ompCell.cpp.o
-.PHONY : af21/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/ompCell.o
-
-# target to build an object file
-af21/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/ompCell.cpp.o:
-	$(MAKE) -f CMakeFiles/ompCell.dir/build.make CMakeFiles/ompCell.dir/af21/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/ompCell.cpp.o
-.PHONY : af21/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/ompCell.cpp.o
-
-af21/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/ompCell.i: af21/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/ompCell.cpp.i
-.PHONY : af21/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/ompCell.i
-
-# target to preprocess a source file
-af21/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/ompCell.cpp.i:
-	$(MAKE) -f CMakeFiles/ompCell.dir/build.make CMakeFiles/ompCell.dir/af21/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/ompCell.cpp.i
-.PHONY : af21/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/ompCell.cpp.i
-
-af21/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/ompCell.s: af21/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/ompCell.cpp.s
-.PHONY : af21/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/ompCell.s
-
-# target to generate assembly for a file
-af21/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/ompCell.cpp.s:
-	$(MAKE) -f CMakeFiles/ompCell.dir/build.make CMakeFiles/ompCell.dir/af21/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/ompCell.cpp.s
-.PHONY : af21/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/ompCell.cpp.s
+# fast build rule for target.
+subdomain/fast:
+	$(MAKE) -f CMakeFiles/subdomain.dir/build.make CMakeFiles/subdomain.dir/build
+.PHONY : subdomain/fast
 
 cudaOmpCorrectness.o: cudaOmpCorrectness.cpp.o
 .PHONY : cudaOmpCorrectness.o
@@ -244,6 +274,198 @@ cudaOmpCorrectness.s: cudaOmpCorrectness.cpp.s
 cudaOmpCorrectness.cpp.s:
 	$(MAKE) -f CMakeFiles/cudaOmpCorrectness.dir/build.make CMakeFiles/cudaOmpCorrectness.dir/cudaOmpCorrectness.cpp.s
 .PHONY : cudaOmpCorrectness.cpp.s
+
+if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Balancer.o: if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Balancer.cpp.o
+.PHONY : if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Balancer.o
+
+# target to build an object file
+if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Balancer.cpp.o:
+	$(MAKE) -f CMakeFiles/balancer.dir/build.make CMakeFiles/balancer.dir/if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Balancer.cpp.o
+.PHONY : if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Balancer.cpp.o
+
+if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Balancer.i: if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Balancer.cpp.i
+.PHONY : if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Balancer.i
+
+# target to preprocess a source file
+if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Balancer.cpp.i:
+	$(MAKE) -f CMakeFiles/balancer.dir/build.make CMakeFiles/balancer.dir/if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Balancer.cpp.i
+.PHONY : if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Balancer.cpp.i
+
+if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Balancer.s: if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Balancer.cpp.s
+.PHONY : if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Balancer.s
+
+# target to generate assembly for a file
+if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Balancer.cpp.s:
+	$(MAKE) -f CMakeFiles/balancer.dir/build.make CMakeFiles/balancer.dir/if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Balancer.cpp.s
+.PHONY : if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Balancer.cpp.s
+
+if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Cluster.o: if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Cluster.cpp.o
+.PHONY : if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Cluster.o
+
+# target to build an object file
+if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Cluster.cpp.o:
+	$(MAKE) -f CMakeFiles/cluster.dir/build.make CMakeFiles/cluster.dir/if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Cluster.cpp.o
+.PHONY : if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Cluster.cpp.o
+
+if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Cluster.i: if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Cluster.cpp.i
+.PHONY : if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Cluster.i
+
+# target to preprocess a source file
+if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Cluster.cpp.i:
+	$(MAKE) -f CMakeFiles/cluster.dir/build.make CMakeFiles/cluster.dir/if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Cluster.cpp.i
+.PHONY : if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Cluster.cpp.i
+
+if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Cluster.s: if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Cluster.cpp.s
+.PHONY : if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Cluster.s
+
+# target to generate assembly for a file
+if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Cluster.cpp.s:
+	$(MAKE) -f CMakeFiles/cluster.dir/build.make CMakeFiles/cluster.dir/if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Cluster.cpp.s
+.PHONY : if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Cluster.cpp.s
+
+if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Decomposition.o: if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Decomposition.cpp.o
+.PHONY : if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Decomposition.o
+
+# target to build an object file
+if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Decomposition.cpp.o:
+	$(MAKE) -f CMakeFiles/decomposition.dir/build.make CMakeFiles/decomposition.dir/if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Decomposition.cpp.o
+.PHONY : if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Decomposition.cpp.o
+
+if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Decomposition.i: if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Decomposition.cpp.i
+.PHONY : if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Decomposition.i
+
+# target to preprocess a source file
+if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Decomposition.cpp.i:
+	$(MAKE) -f CMakeFiles/decomposition.dir/build.make CMakeFiles/decomposition.dir/if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Decomposition.cpp.i
+.PHONY : if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Decomposition.cpp.i
+
+if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Decomposition.s: if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Decomposition.cpp.s
+.PHONY : if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Decomposition.s
+
+# target to generate assembly for a file
+if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Decomposition.cpp.s:
+	$(MAKE) -f CMakeFiles/decomposition.dir/build.make CMakeFiles/decomposition.dir/if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Decomposition.cpp.s
+.PHONY : if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Decomposition.cpp.s
+
+if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Node.o: if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Node.cpp.o
+.PHONY : if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Node.o
+
+# target to build an object file
+if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Node.cpp.o:
+	$(MAKE) -f CMakeFiles/node.dir/build.make CMakeFiles/node.dir/if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Node.cpp.o
+.PHONY : if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Node.cpp.o
+
+if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Node.i: if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Node.cpp.i
+.PHONY : if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Node.i
+
+# target to preprocess a source file
+if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Node.cpp.i:
+	$(MAKE) -f CMakeFiles/node.dir/build.make CMakeFiles/node.dir/if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Node.cpp.i
+.PHONY : if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Node.cpp.i
+
+if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Node.s: if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Node.cpp.s
+.PHONY : if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Node.s
+
+# target to generate assembly for a file
+if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Node.cpp.s:
+	$(MAKE) -f CMakeFiles/node.dir/build.make CMakeFiles/node.dir/if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Node.cpp.s
+.PHONY : if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Node.cpp.s
+
+if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/SubDomain.o: if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/SubDomain.cpp.o
+.PHONY : if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/SubDomain.o
+
+# target to build an object file
+if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/SubDomain.cpp.o:
+	$(MAKE) -f CMakeFiles/subdomain.dir/build.make CMakeFiles/subdomain.dir/if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/SubDomain.cpp.o
+.PHONY : if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/SubDomain.cpp.o
+
+if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/SubDomain.i: if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/SubDomain.cpp.i
+.PHONY : if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/SubDomain.i
+
+# target to preprocess a source file
+if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/SubDomain.cpp.i:
+	$(MAKE) -f CMakeFiles/subdomain.dir/build.make CMakeFiles/subdomain.dir/if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/SubDomain.cpp.i
+.PHONY : if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/SubDomain.cpp.i
+
+if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/SubDomain.s: if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/SubDomain.cpp.s
+.PHONY : if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/SubDomain.s
+
+# target to generate assembly for a file
+if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/SubDomain.cpp.s:
+	$(MAKE) -f CMakeFiles/subdomain.dir/build.make CMakeFiles/subdomain.dir/if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/SubDomain.cpp.s
+.PHONY : if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/SubDomain.cpp.s
+
+if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/distributedCell.o: if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/distributedCell.cpp.o
+.PHONY : if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/distributedCell.o
+
+# target to build an object file
+if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/distributedCell.cpp.o:
+	$(MAKE) -f CMakeFiles/distributedCell.dir/build.make CMakeFiles/distributedCell.dir/if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/distributedCell.cpp.o
+.PHONY : if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/distributedCell.cpp.o
+
+if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/distributedCell.i: if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/distributedCell.cpp.i
+.PHONY : if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/distributedCell.i
+
+# target to preprocess a source file
+if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/distributedCell.cpp.i:
+	$(MAKE) -f CMakeFiles/distributedCell.dir/build.make CMakeFiles/distributedCell.dir/if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/distributedCell.cpp.i
+.PHONY : if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/distributedCell.cpp.i
+
+if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/distributedCell.s: if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/distributedCell.cpp.s
+.PHONY : if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/distributedCell.s
+
+# target to generate assembly for a file
+if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/distributedCell.cpp.s:
+	$(MAKE) -f CMakeFiles/distributedCell.dir/build.make CMakeFiles/distributedCell.dir/if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/distributedCell.cpp.s
+.PHONY : if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/distributedCell.cpp.s
+
+if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/ompCell.o: if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/ompCell.cpp.o
+.PHONY : if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/ompCell.o
+
+# target to build an object file
+if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/ompCell.cpp.o:
+	$(MAKE) -f CMakeFiles/ompCell.dir/build.make CMakeFiles/ompCell.dir/if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/ompCell.cpp.o
+.PHONY : if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/ompCell.cpp.o
+
+if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/ompCell.i: if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/ompCell.cpp.i
+.PHONY : if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/ompCell.i
+
+# target to preprocess a source file
+if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/ompCell.cpp.i:
+	$(MAKE) -f CMakeFiles/ompCell.dir/build.make CMakeFiles/ompCell.dir/if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/ompCell.cpp.i
+.PHONY : if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/ompCell.cpp.i
+
+if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/ompCell.s: if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/ompCell.cpp.s
+.PHONY : if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/ompCell.s
+
+# target to generate assembly for a file
+if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/ompCell.cpp.s:
+	$(MAKE) -f CMakeFiles/ompCell.dir/build.make CMakeFiles/ompCell.dir/if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/ompCell.cpp.s
+.PHONY : if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/ompCell.cpp.s
+
+if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/comm.o: if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/comm.cpp.o
+.PHONY : if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/comm.o
+
+# target to build an object file
+if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/comm.cpp.o:
+	$(MAKE) -f CMakeFiles/comm.dir/build.make CMakeFiles/comm.dir/if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/comm.cpp.o
+.PHONY : if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/comm.cpp.o
+
+if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/comm.i: if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/comm.cpp.i
+.PHONY : if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/comm.i
+
+# target to preprocess a source file
+if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/comm.cpp.i:
+	$(MAKE) -f CMakeFiles/comm.dir/build.make CMakeFiles/comm.dir/if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/comm.cpp.i
+.PHONY : if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/comm.cpp.i
+
+if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/comm.s: if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/comm.cpp.s
+.PHONY : if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/comm.s
+
+# target to generate assembly for a file
+if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/comm.cpp.s:
+	$(MAKE) -f CMakeFiles/comm.dir/build.make CMakeFiles/comm.dir/if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/comm.cpp.s
+.PHONY : if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/comm.cpp.s
 
 ompMpiCorrectness.o: ompMpiCorrectness.cpp.o
 .PHONY : ompMpiCorrectness.o
@@ -299,23 +521,47 @@ help:
 	@echo "... all (the default if no target is provided)"
 	@echo "... clean"
 	@echo "... depend"
+	@echo "... balancer"
 	@echo "... cell"
+	@echo "... cluster"
+	@echo "... comm"
 	@echo "... cudaOmpCorrectness"
+	@echo "... decomposition"
 	@echo "... distributedCell"
 	@echo "... edit_cache"
+	@echo "... node"
 	@echo "... ompCell"
 	@echo "... ompMpiCorrectness"
 	@echo "... outerInnerCorrectness"
 	@echo "... rebuild_cache"
-	@echo "... af21/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/distributedCell.o"
-	@echo "... af21/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/distributedCell.i"
-	@echo "... af21/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/distributedCell.s"
-	@echo "... af21/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/ompCell.o"
-	@echo "... af21/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/ompCell.i"
-	@echo "... af21/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/ompCell.s"
+	@echo "... subdomain"
 	@echo "... cudaOmpCorrectness.o"
 	@echo "... cudaOmpCorrectness.i"
 	@echo "... cudaOmpCorrectness.s"
+	@echo "... if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Balancer.o"
+	@echo "... if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Balancer.i"
+	@echo "... if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Balancer.s"
+	@echo "... if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Cluster.o"
+	@echo "... if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Cluster.i"
+	@echo "... if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Cluster.s"
+	@echo "... if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Decomposition.o"
+	@echo "... if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Decomposition.i"
+	@echo "... if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Decomposition.s"
+	@echo "... if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Node.o"
+	@echo "... if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Node.i"
+	@echo "... if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Node.s"
+	@echo "... if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/SubDomain.o"
+	@echo "... if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/SubDomain.i"
+	@echo "... if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/SubDomain.s"
+	@echo "... if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/distributedCell.o"
+	@echo "... if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/distributedCell.i"
+	@echo "... if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/distributedCell.s"
+	@echo "... if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/ompCell.o"
+	@echo "... if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/ompCell.i"
+	@echo "... if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/cell/ompCell.s"
+	@echo "... if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/comm.o"
+	@echo "... if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/comm.i"
+	@echo "... if10/den4gr/hulkdeer/research/SL/trunk/Newell/examples/comm.s"
 	@echo "... ompMpiCorrectness.o"
 	@echo "... ompMpiCorrectness.i"
 	@echo "... ompMpiCorrectness.s"

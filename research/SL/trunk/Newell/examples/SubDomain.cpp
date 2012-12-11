@@ -42,7 +42,7 @@ SubDomain::SubDomain(int* id, int yOffset, int yLength, int xOffset,
   offset[2] = -1;
   length[0] = yLength;
   length[1] = xLength;
-  length[2] = -1;
+  length[2] = 1;
   this->buffer = new DTYPE[xLength * yLength]();
   memcpy(static_cast<void*> (this->neighbors), static_cast<void*> (newNeighbors),
           kNumNeighbors2D * sizeof (DTYPE));
@@ -50,7 +50,7 @@ SubDomain::SubDomain(int* id, int yOffset, int yLength, int xOffset,
 
 SubDomain::SubDomain(int* id, int zOffset, int zLength, int yOffset,
         int yLength, int xOffset, int xLength, int gridDepth, int gridHeight,
-        int gridWidth, int* newNeighbors) {
+        int gridWidth, int* new_neighbors) {
   this->gridDim[0] = gridDepth;
   this->gridDim[1] = gridHeight;
   this->gridDim[2] = gridWidth;
@@ -64,10 +64,10 @@ SubDomain::SubDomain(int* id, int zOffset, int zLength, int yOffset,
   length[1] = yLength;
   length[2] = xLength;
   this->buffer = new DTYPE[xLength * yLength * zLength]();
-  memcpy(static_cast<void*> (this->neighbors), static_cast<void*> (newNeighbors),
+  memcpy(static_cast<void*> (this->neighbors), static_cast<void*> (new_neighbors),
           kNumNeighbors3D * sizeof (DTYPE));
   int* dest_start = this->neighbors;
-  int* src_start = newNeighbors;
+  int* src_start = new_neighbors;
   std::copy(src_start, src_start + kNumNeighbors3D, dest_start);
 }
 
@@ -77,6 +77,20 @@ SubDomain::~SubDomain() {
   this->buffer = NULL;
 }
 
+void SubDomain::setId(const unsigned int kI, const unsigned int  kJ,
+        const unsigned int kK) {
+  this->id[0] = kI;
+  this->id[1] = kJ;
+  this->id[2] = kK;
+}
+
+void SubDomain::setGridDim(const unsigned int kGridDepth,
+        const unsigned int kGridHeight, const unsigned int kGridWidth) {
+  this->gridDim[0] = kGridDepth;
+  this->gridDim[1] = kGridHeight;
+  this->gridDim[2] = kGridWidth;
+}
+    
 void SubDomain::setId(int i, int j, int k, int gridDepth, int gridHeight,
         int gridWidth) {
   if (0 <= i && 0 <= j && 0 <= k &&
@@ -154,6 +168,11 @@ void SubDomain::setOffset(int dim, int off) {
 void SubDomain::setLength(int dim, int len) {
   if (0 <= dim && 3 > dim && 0 <= len)
     length[dim] = len;
+}
+
+void SubDomain::setBorder(const int kDim, const int kLen) {
+  if (0 <= kDim && 3 > kDim && 0 <= kLen)
+    border[kDim] = kLen;
 }
 
 DTYPE* SubDomain::getBuffer() const {
@@ -375,6 +394,10 @@ const int* SubDomain::getId() const {
   return id;
 }
 
+int* SubDomain::getId() {
+  return const_cast<int*>(const_cast<const SubDomain*>(this)->getId());
+}
+
 /* returns rank of node where neighbor block is located */
 int SubDomain::getNeighborLoc(const int index)const {
   return neighbors[index];
@@ -392,6 +415,14 @@ int SubDomain::getLength(int dim)const {
 
   if (0 <= dim && 3 > dim)
     return length[dim];
+  else
+    return -1;
+}
+
+int SubDomain::getBorder(const int kDim)const {
+
+  if (0 <= kDim && 3 > kDim)
+    return border[kDim];
   else
     return -1;
 }

@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="84">
+  <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
+    <logicalFolder name="examples"
+                   displayName="examples"
+                   projectFiles="true"
+                   root="..">
+      <itemPath>../Cluster.cpp</itemPath>
+      <itemPath>../Cluster.h</itemPath>
+      <itemPath>../Decomposition.cpp</itemPath>
+      <itemPath>../Decomposition.h</itemPath>
+      <itemPath>../Node.cpp</itemPath>
+      <itemPath>../Node.h</itemPath>
+      <itemPath>../SubDomain.cpp</itemPath>
+      <itemPath>../SubDomain.h</itemPath>
+      <itemPath>../comm.cpp</itemPath>
+      <itemPath>../comm.h</itemPath>
+    </logicalFolder>
+    <df name="tests" root=".">
+      <df name="build">
+      </df>
+      <df name="CMakeFiles">
+        <df name="aggregate.dir">
+        </df>
+        <df name="balancer.dir">
+          <df name="if10">
+            <df name="den4gr">
+              <df name="hulkdeer">
+                <df name="research">
+                  <df name="SL">
+                    <df name="trunk">
+                      <df name="Newell">
+                        <df name="examples">
+                        </df>
+                      </df>
+                    </df>
+                  </df>
+                </df>
+              </df>
+            </df>
+          </df>
+        </df>
+        <df name="balanceTest.dir">
+        </df>
+        <df name="cluster.dir">
+          <df name="if10">
+            <df name="den4gr">
+              <df name="hulkdeer">
+                <df name="research">
+                  <df name="SL">
+                    <df name="trunk">
+                      <df name="Newell">
+                        <df name="examples">
+                        </df>
+                      </df>
+                    </df>
+                  </df>
+                </df>
+              </df>
+            </df>
+          </df>
+        </df>
+        <df name="CMakeTmp">
+          <df name="CMakeFiles">
+            <df name="cmTryCompileExec.dir">
+            </df>
+          </df>
+        </df>
+        <df name="comm.dir">
+          <df name="if10">
+            <df name="den4gr">
+              <df name="hulkdeer">
+                <df name="research">
+                  <df name="SL">
+                    <df name="trunk">
+                      <df name="Newell">
+                        <df name="examples">
+                        </df>
+                      </df>
+                    </df>
+                  </df>
+                </df>
+              </df>
+            </df>
+          </df>
+        </df>
+        <df name="comm2DTest.dir">
+        </df>
+        <df name="comm3DTest.dir">
+        </df>
+        <df name="CompilerIdC">
+          <in>CMakeCCompilerId.c</in>
+        </df>
+        <df name="CompilerIdCXX">
+          <in>CMakeCXXCompilerId.cpp</in>
+        </df>
+        <df name="decomposition.dir">
+          <df name="if10">
+            <df name="den4gr">
+              <df name="hulkdeer">
+                <df name="research">
+                  <df name="SL">
+                    <df name="trunk">
+                      <df name="Newell">
+                        <df name="examples">
+                        </df>
+                      </df>
+                    </df>
+                  </df>
+                </df>
+              </df>
+            </df>
+          </df>
+        </df>
+        <df name="node.dir">
+          <df name="if10">
+            <df name="den4gr">
+              <df name="hulkdeer">
+                <df name="research">
+                  <df name="SL">
+                    <df name="trunk">
+                      <df name="Newell">
+                        <df name="examples">
+                        </df>
+                      </df>
+                    </df>
+                  </df>
+                </df>
+              </df>
+            </df>
+          </df>
+        </df>
+        <df name="subdomain.dir">
+          <df name="if10">
+            <df name="den4gr">
+              <df name="hulkdeer">
+                <df name="research">
+                  <df name="SL">
+                    <df name="trunk">
+                      <df name="Newell">
+                        <df name="examples">
+                        </df>
+                      </df>
+                    </df>
+                  </df>
+                </df>
+              </df>
+            </df>
+          </df>
+        </df>
+      </df>
+      <in>aggregate.cpp</in>
+      <in>balanceTest.cpp</in>
+      <in>comm2DTest.cpp</in>
+      <in>comm3DTest.cpp</in>
+      <in>profilerTest.cpp</in>
+    </df>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false"
+                   kind="IMPORTANT_FILES_FOLDER">
+      <itemPath>Makefile</itemPath>
+    </logicalFolder>
+  </logicalFolder>
+  <sourceFolderFilter>^(nbproject)$</sourceFolderFilter>
+  <sourceRootList>
+    <Elem>..</Elem>
+  </sourceRootList>
+  <projectmakefile>Makefile</projectmakefile>
+  <confs>
+    <conf name="Default" type="0">
+      <toolsSet>
+        <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
+        <compilerSet>default</compilerSet>
+      </toolsSet>
+      <codeAssistance>
+      </codeAssistance>
+      <makefileType>
+        <makeTool>
+          <buildCommandWorkingDir>.</buildCommandWorkingDir>
+          <buildCommand>${MAKE} -f Makefile</buildCommand>
+          <cleanCommand>${MAKE} -f Makefile clean</cleanCommand>
+          <executablePath></executablePath>
+          <ccTool>
+            <preprocessorList>
+              <Elem>DTYPE=int</Elem>
+              <Elem>SL_MPI_TYPE=MPI_INT</Elem>
+              <Elem>_OPENMP=200505</Elem>
+            </preprocessorList>
+          </ccTool>
+        </makeTool>
+      </makefileType>
+      <item path="comm2DTest.cpp" ex="false" tool="1" flavor2="0">
+        <ccTool>
+          <incDir>
+            <pElem></pElem>
+            <pElem>C:/Users/den4gr/.netbeans/7.1/var/cache/remote-files/barracuda13.cs.virginia.edu_22_den4gr//af21/den4gr/openmpi-install/include</pElem>
+            <pElem>C:/Users/den4gr/.netbeans/7.1/var/cache/remote-files/barracuda13.cs.virginia.edu_22_den4gr//af21/den4gr/NVIDIA_GPU_Computing_SDK/C/common/inc</pElem>
+            <pElem>C:/Users/den4gr/.netbeans/7.1/var/cache/remote-files/barracuda13.cs.virginia.edu_22_den4gr//usr/local/cuda/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="comm3DTest.cpp" ex="false" tool="1" flavor2="0">
+        <ccTool>
+          <incDir>
+            <pElem></pElem>
+            <pElem>C:/Users/den4gr/.netbeans/7.1/var/cache/remote-files/barracuda13.cs.virginia.edu_22_den4gr//af21/den4gr/openmpi-install/include</pElem>
+            <pElem>C:/Users/den4gr/.netbeans/7.1/var/cache/remote-files/barracuda13.cs.virginia.edu_22_den4gr//af21/den4gr/NVIDIA_GPU_Computing_SDK/C/common/inc</pElem>
+            <pElem>C:/Users/den4gr/.netbeans/7.1/var/cache/remote-files/barracuda13.cs.virginia.edu_22_den4gr//usr/local/cuda/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <folder path="examples">
+        <ccTool>
+          <incDir>
+            <pElem></pElem>
+            <pElem>C:/Users/den4gr/.netbeans/7.1/var/cache/remote-files/barracuda13.cs.virginia.edu_22_den4gr//af21/den4gr/openmpi-install/include</pElem>
+            <pElem>C:/Users/den4gr/.netbeans/7.1/var/cache/remote-files/barracuda13.cs.virginia.edu_22_den4gr//af21/den4gr/NVIDIA_GPU_Computing_SDK/C/common/inc</pElem>
+            <pElem>C:/Users/den4gr/.netbeans/7.1/var/cache/remote-files/barracuda13.cs.virginia.edu_22_den4gr//usr/local/cuda/include</pElem>
+          </incDir>
+        </ccTool>
+      </folder>
+      <item path="profilerTest.cpp" ex="false" tool="1" flavor2="0">
+        <ccTool>
+          <incDir>
+            <pElem>C:/af21/den4gr/NVIDIA_GPU_Computing_SDK/C/common/inc</pElem>
+            <pElem>C:/af21/den4gr/openmpi-install/include</pElem>
+            <pElem>C:/usr/local/cuda/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+    </conf>
+  </confs>
+</configurationDescriptor>

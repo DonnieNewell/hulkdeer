@@ -1,21 +1,23 @@
-HOME    = /af21/den4gr
-DBG	= -g
+HOME    = /if10/den4gr
+#DBG	= -g
 SDK 	= $(HOME)/NVIDIA_GPU_Computing_SDK
 #EMU	= -deviceemu
 #CUDA	= /localtmp/cuda
 CUDA	= $(HOME)/cuda
 F	= --compiler-options -fno-strict-aliasing
-METIS	= $(HOME)/metis-5.0.2/
-NVINCLUDES= -I$(SDK)/C/common/inc -I$(CUDA)/include
-INCLUDES = -I$(METIS)/include
+#METIS	= $(HOME)/metis-5.0.2/
+MPICH2  = /usr/include/mpich2
+#MPICH2  = /if10/den4gr/mpich2
+NVINCLUDES= -I$(SDK)/C/common/inc -I$(CUDA)/include -I$(MPICH2)
+INCLUDES = -I$(MPICH2)
 #MPIFLAGS= -rpath=/af21/den4gr/openmpi-install/lib
 WARN    = -Wall -Wextra
 DEFINES = -DDTYPE=int -DSL_MPI_TYPE=MPI_INT -DSLAB
-CFLAGS	= $(WARN) $(DEFINES) -O3 -DMPICH_IGNORE_CXX_SEEK
+CFLAGS	= $(DBG) $(WARN) $(DEFINES)  -DMPICH_IGNORE_CXX_SEEK
 LDFLAGS = -fopenmp
-CXXLIBS = -L$(METIS)/build/Linux-x86_64/libmetis
+#CXXLIBS = -L$(METIS)/build/Linux-x86_64/libmetis
 OMPFLAGS = $(CFLAGS) -fopenmp
-NVFLAGS	=  $(EMU) -arch=sm_20 -O3 --compiler-options -Wall  $(F) $(DEFINES)
+NVFLAGS	=  $(EMU) $(DBG) -arch=sm_20  --compiler-options -Wall  $(F) $(DEFINES)
 NVLIBS	= -lcudart -L$(CUDA)/lib64
 MPICXX = mpicxx
 

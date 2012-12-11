@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="84">
+  <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
+    <logicalFolder name="examples"
+                   displayName="examples"
+                   projectFiles="true"
+                   root="/net/af21/den4gr/hulkdeer/research/SL/trunk/Newell/examples">
+      <itemPath>/net/af21/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Balancer.cpp</itemPath>
+      <itemPath>/net/af21/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Balancer.h</itemPath>
+      <itemPath>/net/af21/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Cluster.cpp</itemPath>
+      <itemPath>/net/af21/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Cluster.h</itemPath>
+      <itemPath>/net/af21/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Decomposition.cpp</itemPath>
+      <itemPath>/net/af21/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Decomposition.h</itemPath>
+      <itemPath>/net/af21/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Model.cu</itemPath>
+      <itemPath>/net/af21/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Model.h</itemPath>
+      <itemPath>/net/af21/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Node.cpp</itemPath>
+      <itemPath>/net/af21/den4gr/hulkdeer/research/SL/trunk/Newell/examples/Node.h</itemPath>
+      <itemPath>/net/af21/den4gr/hulkdeer/research/SL/trunk/Newell/examples/SubDomain.cpp</itemPath>
+      <itemPath>/net/af21/den4gr/hulkdeer/research/SL/trunk/Newell/examples/SubDomain.h</itemPath>
+      <itemPath>/net/af21/den4gr/hulkdeer/research/SL/trunk/Newell/examples/comm.cpp</itemPath>
+      <itemPath>/net/af21/den4gr/hulkdeer/research/SL/trunk/Newell/examples/comm.h</itemPath>
+    </logicalFolder>
+    <df name="hotspot" root=".">
+      <df name="tests">
+        <in>cudaOmpCorrectnessHotspot.cpp</in>
+        <in>ompMpiCorrectness.cpp</in>
+      </df>
+      <in>distributedHotspot.cpp</in>
+      <in>distributedHotspot.h</in>
+      <in>hotspot-main-CUDA.cpp</in>
+      <in>hotspot-main-OMP.cpp</in>
+      <in>hotspot-main.cpp</in>
+      <in>hotspot.cu</in>
+      <in>hotspot.h</in>
+      <in>ompHotspot.cpp</in>
+      <in>ompHotspot.h</in>
+    </df>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false"
+                   kind="IMPORTANT_FILES_FOLDER">
+      <itemPath>Makefile</itemPath>
+    </logicalFolder>
+  </logicalFolder>
+  <sourceFolderFilter>^(nbproject)$</sourceFolderFilter>
+  <sourceRootList>
+    <Elem>.</Elem>
+  </sourceRootList>
+  <projectmakefile>Makefile</projectmakefile>
+  <confs>
+    <conf name="Default" type="0">
+      <toolsSet>
+        <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
+        <compilerSet>GNU|GNU</compilerSet>
+      </toolsSet>
+      <codeAssistance>
+      </codeAssistance>
+      <makefileType>
+        <makeTool>
+          <buildCommandWorkingDir>.</buildCommandWorkingDir>
+          <buildCommand>${MAKE} -f Makefile</buildCommand>
+          <cleanCommand>${MAKE} -f Makefile clean</cleanCommand>
+          <executablePath></executablePath>
+          <ccTool>
+            <preprocessorList>
+              <Elem>DTYPE=float</Elem>
+            </preprocessorList>
+          </ccTool>
+        </makeTool>
+      </makefileType>
+      <item path="/net/af21/den4gr/hulkdeer/research/SL/trunk/Newell/examples/comm.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="distributedHotspot.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>/usr/local/cuda/include</pElem>
+            <pElem>../../../../../../../openmpi-install/include</pElem>
+            <pElem>../../../../../../../openmpi-install/include/openmpi/ompi/mpi/cxx</pElem>
+            <pElem>/net/af21/den4gr/hulkdeer/research/SL/trunk/Newell/examples/hotspot</pElem>
+            <pElem>../../../../../../../openmpi-install/include/openmpi</pElem>
+            <pElem>/net/af21/den4gr/hulkdeer/research/SL/trunk/Newell/examples</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>_OPENMP=200805</Elem>
+            <Elem>_REENTRANT=1</Elem>
+            <Elem>__REGISTER_PREFIX__=</Elem>
+            <Elem>__USER_LABEL_PREFIX__=</Elem>
+          </preprocessorList>
+        </ccTool>
+      </item>
+      <folder path="examples">
+        <ccTool>
+          <incDir>
+            <pElem>/usr/local/cuda/include</pElem>
+            <pElem>../../../../../../../openmpi-install/include</pElem>
+            <pElem>/net/af21/den4gr/hulkdeer/research/SL/trunk/Newell/examples/hotspot</pElem>
+            <pElem>../../../../../../../NVIDIA_GPU_Computing_SDK/C/common/inc</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>SL_MPI_TYPE=MPI_FLOAT</Elem>
+            <Elem>_OPENMP=200505</Elem>
+          </preprocessorList>
+        </ccTool>
+      </folder>
+      <item path="hotspot-main.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>../../../../../../../openmpi-install/include</pElem>
+            <pElem>../../../../../../../openmpi-install/include/openmpi/ompi/mpi/cxx</pElem>
+            <pElem>/net/af21/den4gr/hulkdeer/research/SL/trunk/Newell/examples/hotspot</pElem>
+            <pElem>../../../../../../../openmpi-install/include/openmpi</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>_OPENMP=200805</Elem>
+            <Elem>_REENTRANT=1</Elem>
+            <Elem>__REGISTER_PREFIX__=</Elem>
+            <Elem>__USER_LABEL_PREFIX__=</Elem>
+          </preprocessorList>
+        </ccTool>
+      </item>
+      <item path="hotspot.cu" ex="false" tool="1" flavor2="0">
+        <ccTool>
+          <incDir>
+            <pElem>/usr/local/cuda/include/cudart</pElem>
+            <pElem>/usr/local/cuda/include</pElem>
+            <pElem>/net/af21/den4gr/hulkdeer/research/SL/trunk/Newell/examples/hotspot/cuda_runtime.h</pElem>
+            <pElem>../../../../../../../NVIDIA_GPU_Computing_SDK/C/common/inc</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>CUDA_DOUBLE_MATH_FUNCTIONS</Elem>
+            <Elem>__CUDACC__</Elem>
+            <Elem>__CUDA_ARCH__=200</Elem>
+          </preprocessorList>
+        </ccTool>
+      </item>
+      <item path="ompHotspot.cpp" ex="false" tool="1" flavor2="0">
+        <ccTool>
+          <incDir>
+            <pElem>/usr/local/cuda/include</pElem>
+            <pElem>../../../../../../../NVIDIA_GPU_Computing_SDK/C/common/inc</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>_OPENMP=200505</Elem>
+          </preprocessorList>
+        </ccTool>
+      </item>
+    </conf>
+  </confs>
+</configurationDescriptor>

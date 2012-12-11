@@ -1,7 +1,6 @@
 #ifndef CLUSTER_H
 #define CLUSTER_H
 
-#include "./Node.h"
 #include "./Decomposition.h"
 #include <vector>
 class Cluster{
@@ -28,5 +27,6 @@ class Cluster{
 };
 
 void printCluster(Cluster &c);
+void printClusterBalCount(Cluster &c);
 void printBlockLocations(Cluster &c);
 #endif

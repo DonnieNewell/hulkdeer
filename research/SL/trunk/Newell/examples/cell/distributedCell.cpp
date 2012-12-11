@@ -1,6 +1,7 @@
 /*
 Copyright 2012 Donald Newell
  */
+#include "./distributedCell.h"
 #include <stdlib.h>
 #include <stdio.h>
 #ifndef WIN32
@@ -12,17 +13,14 @@ Copyright 2012 Donald Newell
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <boost/scoped_ptr.hpp>
+#include <boost/scoped_array.hpp>
+#include <omp.h>
 #include "../comm.h"
-#include "../Cluster.h"
-#include "../Decomposition.h"
 #include "../Balancer.h"
 #include "../Model.h"
 #include "./cell.h"
 #include "./ompCell.h"
-#include "./distributedCell.h"
-#include <boost/scoped_ptr.hpp>
-#include <boost/scoped_array.hpp>
-#include <omp.h>
 
 #define SPLIT_WORK
 using namespace boost;
@@ -46,15 +44,7 @@ void benchmarkMyself(Node* node, SubDomain* sub_domain, int iterations,
   const int kCommIterations = 3; // multiple iterations for reliable timing
   if (sub_domain == NULL) {
     {
-      /*{
-        int i = 0;
-        char hostname[256];
-        gethostname(hostname, sizeof (hostname));
-        printf("PID %d on %s ready for attach\n", getpid(), hostname);
-        fflush(stdout);
-        while (0 == i)
-          sleep(5);
-      } // */
+
       const int kCPUIndex = -1;
       SubDomain * blocks[3];
       for (int i = 0; i < kCommIterations; ++i) {
@@ -111,6 +101,8 @@ void benchmarkMyself(Node* node, SubDomain* sub_domain, int iterations,
     delete benchmark_block;
     benchmark_block = NULL;
   }
+  runOMPCellCleanup();
+  runCellCleanup();
 }
 
 void receiveData(int rank, Node* n, bool processNow, int pyramidHeight,
@@ -149,8 +141,17 @@ void getNumberOfChildren(int* numChildren) {
   /* check to see how many NVIDIA GPU'S ARE AVAILABLE */
   cudaError_t err = cudaGetDeviceCount(numChildren);
   if (cudaSuccess != err) {
-    fprintf(stderr, "getNumberOfChildren: %s\n", cudaGetErrorString(err));
+    //fprintf(stderr, "getNumberOfChildren: %s\n", cudaGetErrorString(err));
     *numChildren = 0;
+
+    /*int runtime = -1, driver = -1;
+    err = cudaRuntimeGetVersion(&runtime);
+    if (cudaSuccess != err) fprintf(stderr, "cudaRuntimeGetVersion:%s\n",
+            cudaGetErrorString(err));
+    err = cudaDriverGetVersion(&driver);
+    if (cudaSuccess != err) fprintf(stderr, "cudaDriverGetVersion:%s\n",
+            cudaGetErrorString(err)); 
+    fprintf(stderr, "runtime:%d, driver:%d\n", runtime, driver);  // */
   }
 }
 
@@ -539,6 +540,7 @@ void runDistributedCell(const int kMyRank, const int kNumTasks, DTYPE *data,
   printf("node:%d has %d children\n", kMyRank, device_count);
 
   if (kRootRank == kMyRank) {
+
     Decomposition decomp;
     Balancer balancer;
 
@@ -601,6 +603,15 @@ void runDistributedCell(const int kMyRank, const int kNumTasks, DTYPE *data,
             getGpuMemcpyTime(), getMemcpyTime());
     printf("Total: %10.4e\n", total_time);
   } else {
+    /*{
+      int i = 0;
+      char hostname[256];
+      gethostname(hostname, sizeof (hostname));
+      printf("PID %d on %s ready for attach\n", getpid(), hostname);
+      fflush(stdout);
+      while (0 == i)
+        sleep(5);
+    } // */
     const bool kInterleaveProcessing = false;
 
     int iterations_left = kIterations;

@@ -1,8 +1,8 @@
 #!/bin/bash
 #run
 
-PROCESS_LIMIT=4
-HOME=/af21/den4gr
+PROCESS_LIMIT=3
+HOME=/if10/den4gr
 WORKING_DIR=$HOME/hulkdeer/research/SL/trunk/Newell
 CELL_DIR=$WORKING_DIR/examples/cell
 REMOTE_SCRIPT=$HOME/scripts/remote.sh
@@ -11,17 +11,17 @@ CUDA_MACHINES=$WORKING_DIR/machinefile.cuda
 MPI_MACHINES=$WORKING_DIR/machinefile
 iterations=32
 echo -e "***** BEGIN MPI *****\n" 
-for ((p=4; p <= PROCESS_LIMIT ; p++))
+for ((p=3; p <= PROCESS_LIMIT ; p++))
 do
-  for data_size in 640
+  for data_size in 64
   do
-    for pyramid_height in 1 2 4 6 8 12 18 24 32
+    for pyramid_height in 1
     do
     echo -e "data_size,num_processes,pyramid_height,blocks_per_dimension,load_balance,device_setting"
-      for blocks_per_dimension in 8 
+      for blocks_per_dimension in 4 
       do
         balance=1
-        for gpu_cpu_config in 0
+        for gpu_cpu_config in 3
         do
           echo -e "$data_size,$p,$pyramid_height,$blocks_per_dimension,$balance,$gpu_cpu_config,"
 

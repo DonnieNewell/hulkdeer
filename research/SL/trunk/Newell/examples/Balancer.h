@@ -1,7 +1,6 @@
 #ifndef BALANCER_H
 #define BALANCER_H
 
-#include "Decomposition.h"
 #include "Cluster.h"
 
 class Balancer {
@@ -15,7 +14,9 @@ public:
     void balance(Cluster&, Decomposition&, int);
     void perfBalanceGPU(Cluster&, Decomposition&, const double);
     void perfBalance(Cluster&, Decomposition&, int);
+    void perfBalanceStrongestDevice(Cluster& cluster, Decomposition& decomp);
     bool balanceNode(Node&, double, const int);
+    bool balanceNodeStrongest(Node& node);
     void minCut(Cluster&);
 };
 
