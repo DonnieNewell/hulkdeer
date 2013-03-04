@@ -1,0 +1,40 @@
+\documentclass[12pt]{article}
+% Default margins are too wide.
+\setlength{\topmargin}{-.5in}
+\setlength{\textheight}{9in}
+\setlength{\oddsidemargin}{.125in}
+\setlength{\textwidth}{6.25in}
+
+\begin{document}
+\title {Improved Image Retrieval Using Intelligent Image Descriptor Selection \\ CS6316 Project Proposal}
+
+\author{Donnie Newell - den4gr@virginia.edu}
+
+\date{February 23, 2013}
+\maketitle
+
+\section{Introduction}
+Describing the contents of an image has been an active area of research in recent years. As a result, there are many different approaches to image description, such as shape, texture, and color. The various techniques each have strengths and weaknesses when it comes to measuring the similarity between images. Photographs of country flags might be better suited to matching by color histograms than shape. Building images may be more accurately described through local descriptors that emphasize corners in the image than color. There is currently no general, scalable method for choosing which image description technique to use for a given query.
+
+Many image descriptors use histograms to describe the presence of specific features in an image. This applies to color histograms as well as the popular "Bag Of Visual Words"(BOVW) approach for local descriptors\cite{1541280}. Some features are present across all images in a variety of categories, while others are specific to a small set of images. Each algorithm will determine how effective it would be for matching by analyzing which features it detects in the query image. Each algorithm that detects useful features in the image can execute a search, and the results can be fused into a single result set using one of several ranking fusion techniques.
+
+The goal of this project is that through utilizing the algorithms that detect more useful features, the weaknesses of certain descriptors can be subsidized by the strengths of others. This should improve search results over a single-method image retrieval strategy.
+
+\section{Proposed Implementation}
+The basis for our solution is to only use algorithms that are best able to discriminate between different categories of images. Because of this, a training database of images that contains different categories of images will be used. Each algorithm is applied to the training set and the histograms are extracted. For each bin in each histogram, the information gain can be calculated for that specific feature across all of the image categories in the training set. This means that if a particular feature has a high gain value, then that feature is very effective at discriminating between different classes of images. We could alternatively use probability in place of Gain, but this will be determined during development. Once the gain for each feature is calculated, the system is ready for queries.
+
+When given a query image, each algorithm would extract its descriptor from the image. Now that the algorithm knows what features it detected, it can calculate the total gain for those features, using the gain values calculated during the training phase. Based on the total gain, the algorithm may decide whether or not to self-nominate for the search. It may be more useful for the algorithm to give the gain value to the solution planner, and then the planner can decide whether or not to include the algorithm.
+
+Each algorithm with sufficient gain will perform a search using its descriptor(s). If $k$ algorithms are chosen, then there will be $k$ different result sets, one for each technique. There are several different ways of fusing different search results. The gain values could be normalized and used as weights on the distance values between each of the result images and the query image. Alternatively, there are graph-based approaches that use techniques similar to Google's PageRank algorithm to fuse the separate algorithm result rankings.
+
+\section{Analysis}
+Using BOVW is common for many of the state-of-the-art image description techniques.\cite{Bay2008} For color histograms, each color bin can be viewed as a distinct feature or "word". For local descriptors such as Speeded-Up Robust Features (SURF) and Scale-Invariant Feature Transform (SIFT), BOVW is already a best-practice. Despite this, it is possible that relevant algorithms will not map sufficiently to this search model. It is not yet clear how to address this issue, but it should not be a major problem given the coverage of the previously mentioned algorithms.
+
+The requirement of a training set introduces the possibility of over-training. Information gain is relatively robust to noise, but it will still be important that the training data set accurately represents the search database.
+
+\section{Conclusion}
+We have presented a general, dynamic approach to self-nomination that will improve image retrieval results using state-of-the-art algorithms. Our hypothesis is that by using information gain to quantify a descriptor's usefulness for image matching, an informed decision can be made about which algorithms to use. Our next step is to validate our method using an image database that is relevant to VMR interests. There is no universal image description method, and as a result, integrating various techniques is the logical next step. Our self-nomination approach is relevant to the VMR project because it addresses both the highly-varied nature of image content, as well as the scale of the VMR mission.
+
+\bibliographystyle{plain}
+\bibliography{references.bib}
+\end{document}
