@@ -1,4 +1,4 @@
-function matches = displayMatches(img, dir, data)
+function matches = displayMatches(queryName, fileNames, binaryImages, dir, data)
 % data_name = 'data.mat';
 % category = 'building';
 figures_per_row = int32(3);
@@ -7,7 +7,7 @@ figures_per_row = int32(3);
 % load(data_name);
 num_desc_to_match = 30;
 %img = imread(img_name);
-[matches points] = CBIR_SURF(img, data, num_desc_to_match);
+[matches points] = CBIR_SURF(queryName, fileNames, binaryImages, data, num_desc_to_match);
 %[matches, windows] = CBIR_HOG(img, data);
 % display results
 %disp(matches);
