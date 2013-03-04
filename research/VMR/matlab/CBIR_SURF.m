@@ -1,8 +1,9 @@
-function [filenames, points] = CBIR_SURF(img, table, num_descriptors)
+function [filenames, points] = CBIR_SURF(file_name, fileNames, binary_img, table, num_descriptors)
 filename_table_index = 68;
 num_cooccur_imgs = 3;
 num_cooccur_desc = 15;
-descriptors = SURFMatrix(img);
+descriptors = getQueryInternalDescriptors(file_name, fileNames, binary_img);
+%descriptors = SURFMatrix(img);
 descriptors = surfNStrongest(descriptors, num_descriptors);
 
 [filenames points] = surfMatchDescriptors(descriptors, table);
