@@ -124,6 +124,22 @@ int main(int argc, char** argv) {
 		// show search results
 		displayResults(img_path.string(), filenames);
 
+	} else if (kCalcGain == mode) {
+		std::cout << "read in histograms and write gain to file.\n";
+		calculateGainForAll(p);
+	} else if (kSearchGain == mode) {
+		std::cout << "search using information gain to decide the best algorithm.\n";
+		
+		// get query image
+		if (argc != 4) { readme(); return -1; }
+		path img_path(argv[3]);
+		vector<string> filenames;
+
+		// search for the matching images
+		searchGain(p, img_path, filenames);
+	
+		// show search results
+		displayResults(img_path.string(), filenames);
 	}
 	return 0;
 }

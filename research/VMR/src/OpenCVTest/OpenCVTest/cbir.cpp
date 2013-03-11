@@ -118,6 +118,8 @@ cv::Mat extractTrainingVocabulary(path training_dir) {
 	return vocabulary;
 }
 
+
+
 std::vector<std::vector<int>> createInvertedFileList(cv::Mat histograms) {
 	std::vector<std::vector<int>> inv_list;
 	const int kVocabSize = 1000;	
@@ -171,6 +173,39 @@ cv::Mat extractVocabHistograms(path img_dir, path vocab_file) {
 		}
 	}
 	cout << endl;
+	return index_descriptors;
+}
+
+cv::Mat extractVocabHistogram(path img_path, path vocab_file) {
+	/* read in vocabulary */
+	path data_file = vocab_file;
+	std::cout << "reading vocabulary from " << data_file << std::endl;
+	cv::Mat vocabulary;
+	vocabulary = readMatFromFile(data_file, kVocab);
+
+	/* extract codeword histograms using vocabulary */
+	std::vector<cv::KeyPoint> keypoints;
+	cv::Mat response_hist;
+	cv::Mat index_descriptors;
+	cv::Mat img;
+	std::map<std::string, cv::Mat> classes_training_data;
+
+	cv::Ptr<cv::FeatureDetector> detector(new cv::SurfFeatureDetector());
+	cv::Ptr<cv::DescriptorMatcher> matcher(new cv::BFMatcher(cv::NORM_L2));
+	cv::Ptr<cv::OpponentColorDescriptorExtractor> extractor(new cv::OpponentColorDescriptorExtractor(cv::Ptr<cv::DescriptorExtractor>(new cv::SurfDescriptorExtractor())));
+	cv::Ptr<cv::BOWImgDescriptorExtractor> bow_img_desc_extrct(new cv::BOWImgDescriptorExtractor(extractor, matcher));
+
+	bow_img_desc_extrct->setVocabulary(vocabulary);
+
+	std::vector<std::string> classes_names;
+	std::cout << "extracting codewords from : " << img_path << std::endl;
+	img = cv::imread(img_path.string());
+	cout << "read in image\n";
+	detector->detect(img, keypoints);
+	cout << "detected keypoints in image\n";
+	bow_img_desc_extrct->compute(img, keypoints, response_hist);
+	cout << "created vocab histogram\n";
+	index_descriptors.push_back(response_hist);
 	return index_descriptors;
 }
 
@@ -372,29 +407,21 @@ cv::flann::Index generateSearchIndex(cv::Mat vocab_hist) {
 }
 
 std::string getClass(std::string filename) {
-	const int kNumClasses = 3;
-	const std::string kBldg = "object";
-	const std::string kRpg = "rpg";
-	const std::string kAk47 = "ak";
-	const std::string kTank = "tank";
-	const std::string kLand = "land";
-	const std::string kHeli = "heli";
-	const std::string kUnknown = "unknown";
+	const int kNumClasses = 7;
+	const char *classes_init[] =  {"object", "rpg", "ak", "tank", "land", "heli", "unknown"};
+	const vector<string> kClasses(classes_init, my_end(classes_init));
+	for (int i = 0; i < kClasses.size(); ++i) {
+		if (filename.find(kClasses[i]) != std::string::npos)
+			return kClasses[i];
+	}
+	return kClasses[kClasses.size() - 1];
+}
 
-	if (filename.find(kBldg) != std::string::npos)
-		return kBldg;
-	else if (filename.find(kRpg) != std::string::npos)
-		return kRpg;
-	else if (filename.find(kAk47) != std::string::npos)
-		return kAk47;
-	else if (filename.find(kLand) != std::string::npos)
-		return kLand;
-	else if (filename.find(kTank) != std::string::npos)
-		return kTank;
-	else if (filename.find(kHeli) != std::string::npos)
-		return kHeli;
-	else
-		return kUnknown;
+std::string getClass(const unsigned int kIndex) {
+	const int kNumClasses = 7;
+	const char *classes_init[] =  {"object", "rpg", "ak", "tank", "land", "heli", "unknown"};
+	const vector<string> kClasses(classes_init, end(classes_init));
+	return kClasses.at(kIndex);
 }
 
 void searchIndex(path index_dir, path query_filename) {
@@ -578,6 +605,8 @@ float calcEntropy(cv::Mat img) {
 	return entropy(histogram);
 }
 
+
+
 float calcLineEntropy(const std::list<int> &kLineIndices, const std::vector<cv::Vec4i> &kLines) {
 	const unsigned int kQuantizationFactor = 1;
 	const unsigned int kNumBins = 180 / kQuantizationFactor;
@@ -620,6 +649,17 @@ float entropy(const std::vector<float> &kHist) {
 	float entropy_accum = 0.0f;
 	for (int i = 0; i < kHist.size(); ++i) {
 		float val1 = kHist.at(i);
+		float log_1 = Log2(val1);
+		entropy_accum += val1 * log_1;
+	}
+	entropy_accum *= -1.0f;
+	return (entropy_accum == entropy_accum) ? entropy_accum : 0.0f;
+}
+
+float entropy(const std::map<string, float> &kHist) {
+	float entropy_accum = 0.0f;
+	for (map<string, float>::const_iterator it = kHist.begin(); it != kHist.end(); ++it) {
+		float val1 = it->second;
 		float log_1 = Log2(val1);
 		entropy_accum += val1 * log_1;
 	}
@@ -1369,4 +1409,178 @@ void buildClassifiers(path p, std::map<std::string, cv::SVM> &classifiers) {
 			}
 			std::cout << std::endl;
 	}
+}
+
+void calcHistGain(vector<path>& filenames, Mat& hists, vector<float>& gain) {
+	gain.clear();
+	gain.resize(hists.cols);
+	map<int, map<string, float>> word_to_class;
+	const int kHistSize = hists.cols;
+	map<string, float> class_probability;
+	const int kNumClasses = 7;  // TODO : This is temporary just to get initial results
+	
+	// initialize words data structure
+	cout << "initialize words data structure\n";
+	for (int i = 0; i < hists.cols; ++i) {
+		for (int j = 0; j < kNumClasses; ++j) {
+			word_to_class[i][getClass(j)] = 0.0f;
+		}
+	}
+
+	// go through each file and keep track of what words are present
+	//  also, calculate global entropy
+	cout << "calculate word counts in images and global entropy.\n";
+	for (int i = 0; i < filenames.size(); ++i) {
+		string class_ = getClass(filenames.at(i).filename().string());
+		class_probability[class_]++;
+		cout << filenames.at(i) << " : " << class_ << endl;
+		for (int word_idx = 0; word_idx < kHistSize; ++word_idx) {
+			if (0.0 < hists.row(i).at<float>(word_idx))  // if words are present
+				word_to_class[word_idx][class_]++;
+		}
+	}
+
+	// normalize class file counts
+	cout << "normalize class file counts.\n";
+	for (map<string, float>::iterator it = class_probability.begin(); it != class_probability.end(); ++it) {
+			it->second /= filenames.size();
+	}
+
+	// place probabilities in vector for entropy calculation
+	vector<float> class_probs_vec;
+	for (unsigned int i = 0; i < kNumClasses; ++i)
+		class_probs_vec.push_back(class_probability[getClass(i)]);
+
+	// calculate the entropy of the entire training set
+	const float kOriginalEntropy = entropy(class_probs_vec);
+	cout << "entropy of whole set is : " << kOriginalEntropy << endl;
+
+	// calculate the gain of each word
+	cout << "calculate gain for each word";
+	for (map<int, map<string, float>>::iterator word_it = word_to_class.begin(); word_it != word_to_class.end(); ++word_it) {
+		cout << " " << word_it->first << " ";
+		class_probs_vec.clear();
+		const int kCurrentWord = word_it->first;
+		float class_count = 0.0f;
+		for (map<string, float>::iterator class_it = word_it->second.begin(); class_it != word_it->second.end(); ++class_it) {
+			class_count += class_it->second;
+		}
+
+		// normalize class occurence counter for images that contain current word
+		// This gives us the posterior probability for each class, given the current word is detected.
+		if (0.0 < class_count) {
+			for (map<string, float>::iterator class_it = word_it->second.begin(); class_it != word_it->second.end(); ++class_it) {
+				class_it->second /= class_count;
+			}
+
+			// calculate entropy of data set where word is present
+			const float kWordEntropy = entropy(word_it->second);
+
+			// calculate reduction in entropy when word is present and store as information gain
+			gain.at(word_it->first) = kOriginalEntropy - kWordEntropy;
+		}
+	}	
+	cout << endl;
+}
+
+void calculateGainForAll(path dir) {
+	vector<path> filenames;
+	
+	// get list of images in directory
+	listImgs(dir, filenames);
+	cout << "got list of images in: " << dir << endl;
+	
+	// get histograms from file
+	//  SURF
+	Mat surf_hists = readMatFromFile(dir / "surf_hists.yml", "surf_histograms");
+	
+	//  color
+	Mat color_hists = readMatFromFile(dir / "color_histograms.yml", "color_hist");
+	cout << "read histograms from file.\n";
+	
+	// calculate information gain
+	// SURF
+	vector<float> surf_gain;
+	calcHistGain(filenames, surf_hists, surf_gain);
+	
+	// color
+	vector<float> color_gain;
+	calcHistGain(filenames, color_hists, color_gain);
+	cout << "gain calculated for all histograms.\n";
+	
+	// write gain values to file
+	// SURF
+	FileStorage fs;
+	fs.open((dir / "surf_gain.yml").string(), FileStorage::WRITE);
+	fs << "surf_gain" << surf_gain;
+	fs.release();
+
+	// color
+	fs.open((dir / "color_gain.yml").string(), FileStorage::WRITE);
+	fs << "color_gain" << color_gain;
+	fs.release();
+
+	cout << "gain written to file(s).\n";	
+}
+
+void searchGain(path search_dir, path query_img, std::vector<std::string> &results) {
+	bool use_surf = false;
+	
+	// extract structure in image
+	const float kSurfGain = getSurfGain(search_dir, query_img);
+	const float kColorGain = getColorGain(search_dir, query_img);
+
+	// decide whether to use SURF or color search
+	cout << "surf gain: " << kSurfGain << endl;
+	cout << "color gain: " << kColorGain << endl;
+	if (kSurfGain > kColorGain)
+		use_surf = true;
+	cout << "use_surf: " << use_surf << endl;
+	// perform search
+	if (use_surf)
+		searchSURFHists(search_dir, query_img, results);
+	else
+		searchColor(search_dir, query_img, results);
+}
+
+float getTotalGain(Mat hist, vector<float>& gain_values) {
+	float total_gain = 0.0f;
+	for (unsigned int i = 0; i < hist.cols; ++i) {
+		total_gain += (hist.at<float>(i) > 0.0f) ? gain_values.at(i) : 0.0f;
+	}
+	return total_gain;
+}
+
+float getSurfGain(path search_dir, path img_path) {
+	// read in gain values
+	vector<float> gain_values;
+	FileStorage fs;
+	fs.open((search_dir / "surf_gain.yml").string(), FileStorage::READ);
+	fs["surf_gain"] >> gain_values;
+
+	// extract surf vocabulary histogram
+	cout << "extracting surf histogram.\n";
+	cv::Mat hist = extractVocabHistogram(img_path, search_dir / "surf_data.yml");
+
+	// return information gain present in image histogram
+	return getTotalGain(hist, gain_values);
+}
+
+float getColorGain(path search_dir, path img_path) {
+	// read in gain values
+	vector<float> gain_values;
+	FileStorage fs;
+	fs.open((search_dir / "color_gain.yml").string(), FileStorage::READ);
+	fs["color_gain"] >> gain_values;
+
+	cv::Mat img = imread(img_path.string());
+
+	cout << "extracting color histogram from image.\n";
+	
+	// extract color histogram from query image
+	cvtColor(img, img, CV_BGR2HSV);
+	cv::Mat hist = extractHSVHistogram(img);
+
+	// return information gain present in image histogram
+	return getTotalGain(hist, gain_values);
 }

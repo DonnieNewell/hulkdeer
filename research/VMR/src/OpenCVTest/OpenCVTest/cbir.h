@@ -21,12 +21,15 @@ const std::string kBuildLineClassifier("build_line_classifier");
 const std::string kColorHistograms("color_hist");
 const std::string kSearchColor("search_color");
 const std::string kSearchSURF("search_surf");
+const std::string kSearchGain("search_gain");
 const std::string kSearchDecide("search_decide");
+const std::string kCalcGain("calc_gain");
 const std::string kTestClassifier("test_classifier");
 
 float calcHarmonicMean(cv::Mat &data);
 cv::Mat extractTrainingVocabulary(path training_dir);
 cv::Mat extractVocabHistograms(path training_dir, path vocab_file);
+cv::Mat extractVocabHistogram(path img_path, path vocab_file);
 cv::Mat extractColorHistograms(path training_dir);
 cv::Mat extractHSVHistogram(cv::Mat img);
 float extractLineDescriptor(const cv::Mat kImg, cv::Mat &desc);
@@ -38,6 +41,7 @@ CvSVM readClassifierFromFile(const path kFilepath, const std::string kKey);
 void listDir(path dir, std::vector<path>& vec);
 void listImgs(path dir, std::vector<path>& vec);
 std::string getClass(std::string filename);
+std::string getClass(const unsigned int kIndex);
 void searchIndex(path index_dir, path query_img);
 void searchInvert(path index_dir, path query_img);
 void displayResults(std::string query_filename, std::vector<std::string> &filenames);
@@ -49,6 +53,7 @@ float calcLineEntropy(const std::list<int> &kLineIndices, const std::vector<cv::
 void getEntropyMap(const cv::Mat &kImg, std::vector<cv::Vec4i> &lines, cv::Mat &map);
 float entropy(const std::vector<float> &kHist);
 float entropy(const cv::Mat kHist);
+float entropy(const std::map<std::string, float> &kHist);
 float computeShannonEntropy(const cv::Mat kHist);
 float getHistogramBinValue(cv::Mat hist, int binNum);
 float getFrequencyOfBin(cv::Mat channel);
@@ -80,4 +85,15 @@ bool intersection(cv::Vec4i line_1, cv::Vec4i line_2, cv::Point2f &r);
 void searchColor(path index_dir, path query_img, std::vector<std::string> &results);
 void searchSURFHists(path index_dir, path query_img, std::vector<std::string> &results);
 void searchDecideSURFColor(path index_dir, path query_img, const float kThreshold, std::vector<std::string> &results);
+void searchGain(path search_dir, path query_img, std::vector<std::string> &results);
+void calcHistGain(std::vector<path>& filenames, cv::Mat& hists, std::vector<float>& gain);
+template<typename T, size_t N>
+T * my_end(T (&ra)[N]) {
+    return ra + N;
+}
+void calculateGainForAll(path dir);
+float getTotalGain(cv::Mat hist, std::vector<float>& gain_values);
+float getSurfGain(path search_dir, path img_path);
+float getColorGain(path search_dir, path img_path);
+
 #endif
