@@ -2,8 +2,11 @@
 #include <omp.h>
 #include <string>
 #include <vector>
+#include <map>
 #include <queue>
 #include <algorithm>
+#include <cstdlib>
+#include <ctime>
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/nonfree/features2d.hpp>
@@ -56,6 +59,47 @@ void listDir(path dir, std::vector<path>& vec) {
 }
 
 /* lists filenames of images in a directory */
+void listSubDirectories(path dir, std::vector<path>& sub_directories) {
+	/* get all filenames in directory */
+	std::copy(directory_iterator(dir), directory_iterator(), std::back_inserter(sub_directories));
+	std::sort(sub_directories.begin(), sub_directories.end());
+
+	/* determine all non-sub-directories */
+	std::vector<path> non_sub_directories;
+	for (std::vector<path>::iterator it = sub_directories.begin(); it != sub_directories.end(); ++it) {
+			const std::string kExt = (*it).extension().string();
+			if (!is_directory(*it))
+				non_sub_directories.push_back(*it);
+	}
+
+	/* remove all non-image filenames */
+	for (std::vector<path>::const_iterator it = non_sub_directories.begin(); it != non_sub_directories.end(); ++it) {
+			sub_directories.erase(
+				std::remove(sub_directories.begin(), sub_directories.end(), *it), sub_directories.end());
+	}
+	//sub_directories.erase(std::remove(sub_directories.begin(), sub_directories.end(), dir / "index.idx"), sub_directories.end());
+	//sub_directories.erase(std::remove(sub_directories.begin(), sub_directories.end(), dir / "surf_data.yml"), sub_directories.end());
+}
+
+/* lists all images that are present in all subdirectories */
+void listSubDirImgs(path dir, std::vector<path>& vec) {
+	// get all subdirectories
+	vector<path> sub_directories;
+	listSubDirectories(dir, sub_directories);
+
+	// list all images from all sub_directories
+	for (int i = 0; i < sub_directories.size(); ++i) {
+		vector<path> images;
+		const path kDir = sub_directories.at(i);
+		listImgs(kDir, images);
+		vec.insert(vec.end(), images.begin(), images.end());
+	}
+
+	// important to note that image names are sorted within a folder, but not across
+	//  all images.
+}
+
+/* lists filenames of images in a directory */
 void listImgs(path dir, std::vector<path>& vec) {
 	/* get all filenames in directory */
 	std::copy(directory_iterator(dir), directory_iterator(), std::back_inserter(vec));
@@ -63,19 +107,14 @@ void listImgs(path dir, std::vector<path>& vec) {
 
 	/* determine all non-images */
 	std::vector<path> non_images;
-	for (std::vector<path>::iterator it = vec.begin(); 
-		it != vec.end();
-		++it) {
+	for (std::vector<path>::iterator it = vec.begin(); it != vec.end(); ++it) {
 			const std::string kExt = (*it).extension().string();
-			if (kExt != ".png" && kExt != ".jpg") {
+			if (kExt != ".png" && kExt != ".jpg")
 				non_images.push_back(*it);
-			}
 	}
 
 	/* remove all non-image filenames */
-	for (std::vector<path>::const_iterator it = non_images.begin(); 
-		it != non_images.end();
-		++it) {
+	for (std::vector<path>::const_iterator it = non_images.begin(); it != non_images.end(); ++it) {
 			vec.erase(std::remove(vec.begin(), vec.end(), *it), vec.end());
 	}
 	//vec.erase(std::remove(vec.begin(), vec.end(), dir / "index.idx"), vec.end());
@@ -85,29 +124,34 @@ void listImgs(path dir, std::vector<path>& vec) {
 cv::Mat extractTrainingVocabulary(path training_dir) {
 	/* get list of image names */
 	std::vector<path> image_names;
-	listImgs(training_dir, image_names);
+	listSubDirImgs(training_dir, image_names);
 
 	/* extract features from training images */
 	cv::Ptr<cv::OpponentColorDescriptorExtractor> extractor(new cv::OpponentColorDescriptorExtractor(cv::Ptr<cv::SurfDescriptorExtractor>(new cv::SurfDescriptorExtractor())));
 	cv::Mat training_descriptors(1, extractor->descriptorSize(), extractor->descriptorType());
 	cv::Mat descriptors(1, extractor->descriptorSize(), extractor->descriptorType());
 	std::vector<cv::KeyPoint> keypoints;
-	const int kHessianThreshold = 400;
+	//const int kHessianThreshold = 400;
 	cv::Ptr<cv::FeatureDetector> detector(new cv::SurfFeatureDetector());
 
 	std::cout << "processing : " << image_names.size() << " images" << std::endl;
-	for (std::vector<path>::const_iterator it(image_names.begin());
-		it != image_names.end(); ++it) {
-			std::cout << ".";
-			cv::Mat img = cv::imread(it->generic_string());
-			detector->detect(img, keypoints);
-			extractor->compute(img, keypoints, descriptors);
-			training_descriptors.push_back(descriptors);
+	srand(time(NULL));
+	int num_files = 0;
+	for (std::vector<path>::const_iterator it(image_names.begin()); it != image_names.end(); ++it) {
+		if ((++num_files % 200) == 0) 
+			cout << endl << num_files;
+		std::cout << ".";
+		cv::Mat img = cv::imread(it->string());
+		detector->detect(img, keypoints);
+		extractor->compute(img, keypoints, descriptors);
+		const int kStep = descriptors.rows / 10;  // only cluster 10% of descriptors to cut down on size
+		const int kStartRow = (rand() % 10) * kStep;
+		training_descriptors.push_back(descriptors.rowRange(kStartRow, kStartRow + kStep));
 	}
 	std::cout << std::endl;
 
 	/* create vocabulary */
-	const int kNumWords = 3000; 
+	const int kNumWords = 4000;
 
 	cv::BOWKMeansTrainer bow_trainer(kNumWords);
 	std::cout << "adding descriptors to trainer.\n";
@@ -135,7 +179,7 @@ std::vector<std::vector<int>> createInvertedFileList(cv::Mat histograms) {
 	return inv_list;
 }
 
-cv::Mat extractVocabHistograms(path img_dir, path vocab_file) {
+void extractVocabHistograms(path img_dir, path vocab_file, std::vector<cv::Mat>& histograms) {
 	/* read in vocabulary */
 	path data_file = img_dir / vocab_file;
 	std::cout << "reading vocabulary from " << data_file << std::endl;
@@ -145,7 +189,6 @@ cv::Mat extractVocabHistograms(path img_dir, path vocab_file) {
 	/* extract codeword histograms using vocabulary */
 	std::vector<cv::KeyPoint> keypoints;
 	cv::Mat response_hist;
-	cv::Mat index_descriptors;
 	cv::Mat img;
 	std::map<std::string, cv::Mat> classes_training_data;
 
@@ -156,24 +199,31 @@ cv::Mat extractVocabHistograms(path img_dir, path vocab_file) {
 
 	bow_img_desc_extrct->setVocabulary(vocabulary);
 
-	std::vector<path> filenames;
-	std::vector<std::string> classes_names;
-	listImgs(img_dir, filenames);
-	int total_samples = 0;
-	std::cout << "extracting codewords from : " << filenames.size() << " images" << std::endl;
-	//#pragma omp parallel for schedule(dynamic, 3)
-	for (int i = 0; i < filenames.size(); ++i) {
-		cout << ".";
-		img = cv::imread(filenames[i].string());
-		detector->detect(img, keypoints);
-		bow_img_desc_extrct->compute(img, keypoints, response_hist);
-		//#pragma omp critical
-		{
-			index_descriptors.push_back(response_hist);
+	// get list of all class subfolders
+	std::vector<path> sub_directories;
+	listSubDirectories(img_dir, sub_directories);
+
+	// go through each sub-folder, extracting histograms for all images present
+	for (int dir_idx = 0; dir_idx < sub_directories.size(); ++dir_idx) {
+		histograms.push_back(cv::Mat());
+		std::vector<path> filenames;
+		std::vector<std::string> classes_names;
+		listImgs(sub_directories.at(dir_idx), filenames);
+		int total_samples = 0;
+		std::cout << "extracting codewords from : " << filenames.size() << " images" << std::endl;
+		//#pragma omp parallel for schedule(dynamic, 3)
+		for (int i = 0; i < filenames.size(); ++i) {
+			cout << ".";
+			img = cv::imread(filenames[i].string());
+			detector->detect(img, keypoints);
+			bow_img_desc_extrct->compute(img, keypoints, response_hist);
+			//#pragma omp critical
+			{
+				histograms.at(dir_idx).push_back(response_hist);
+			}
 		}
+		cout << endl;
 	}
-	cout << endl;
-	return index_descriptors;
 }
 
 cv::Mat extractVocabHistogram(path img_path, path vocab_file) {
@@ -211,10 +261,20 @@ cv::Mat extractVocabHistogram(path img_path, path vocab_file) {
 
 void searchColor(path index_dir, path query_img, vector<string> &results) {
 	// load pre-computed histograms
-	cout << "reading color histograms from file.\n";
-	cv::Mat hists = readMatFromFile(index_dir / "color_histograms.yml", kColorHistograms);
-	if (hists.type() != CV_32F) {
-		hists.convertTo(hists, CV_32F);
+	cout << "reading color histograms from sub-directories.\n";
+	vector<path> sub_dirs;
+	listSubDirectories(index_dir, sub_dirs);
+	Mat hists(0, 24, CV_32F);
+	for (int i = 0; i < sub_dirs.size(); ++i) {
+		const path kCurrDir = sub_dirs.at(i);
+		Mat tmp = readMatFromFile(kCurrDir / "color_histograms.yml", kColorHistograms);
+		if (tmp.type() != CV_32F) {
+			tmp.convertTo(tmp, CV_32F);
+		}
+		
+		hists.push_back(tmp);
+		cout << "hists.empty() : " << hists.empty() << endl;
+		cout << "hists.rows = " << hists.rows << endl;
 	}
 	cv::Mat img = imread(query_img.string());
 
@@ -222,7 +282,9 @@ void searchColor(path index_dir, path query_img, vector<string> &results) {
 	// extract color histogram from query image
 	cvtColor(img, img, CV_BGR2HSV);
 	cv::Mat query_hist = extractHSVHistogram(img);
-
+	if (query_hist.type() != CV_32F) {
+			query_hist.convertTo(query_hist, CV_32F);
+	}
 	// match query histogram with database images
 	cerr << "adding previously extracted descriptors to matcher.\n";
 	
@@ -233,12 +295,14 @@ void searchColor(path index_dir, path query_img, vector<string> &results) {
 	const int kK = 10;
 	vector<vector<DMatch>> matches;
 	cout << "matching color histograms.\n";
+	cout << "query_hist.type() : " << query_hist.type() << ", hists.type() : " << hists.type() << endl;
+	cout << "query_hist.cols : " << query_hist.cols << ", hists.cols : " << hists.cols << endl;
 	matcher.knnMatch(query_hist, hists, matches, kK);
 	
 	cout << "getting matching image filenames.\n";
 	// get results filenames
 	vector<path> filenames;
-	listImgs(index_dir, filenames);
+	listSubDirImgs(index_dir, filenames);
 	
 	for (int i = 0; i < matches.size(); ++i) {
 		vector<DMatch> &m = matches.at(i);
@@ -253,10 +317,17 @@ void searchColor(path index_dir, path query_img, vector<string> &results) {
 
 void searchSURFHists(path index_dir, path query_img, vector<string> &results) {
 	// load pre-computed histograms
-	cout << "reading SURF histograms from file.\n";
-	cv::Mat hists = readMatFromFile(index_dir / "surf_hists.yml", kSurfHist);
-	if (hists.type() != CV_32F) {
-		hists.convertTo(hists, CV_32F);
+	cout << "reading SURF histograms from sub-directories.\n";
+	vector<path> sub_dirs;
+	listSubDirectories(index_dir, sub_dirs);
+	Mat hists;
+	for (int i = 0; i < sub_dirs.size(); ++i) {
+		const path kCurrDir = sub_dirs.at(i);
+		Mat tmp = readMatFromFile(kCurrDir / "surf_hists.yml", kSurfHist);
+		if (tmp.type() != CV_32F) {
+			tmp.convertTo(tmp, CV_32F);
+		}
+		hists.push_back(tmp);
 	}
 	
 	/* read in vocabulary */
@@ -292,7 +363,7 @@ void searchSURFHists(path index_dir, path query_img, vector<string> &results) {
 	cerr << "getting matching image filenames.\n";
 	// get results filenames
 	vector<path> filenames;
-	listImgs(index_dir, filenames);
+	listSubDirImgs(index_dir, filenames);
 	
 	for (int i = 0; i < matches.size(); ++i) {
 		vector<DMatch> &m = matches.at(i);
@@ -371,30 +442,41 @@ Mat extractHSVHistogram(Mat img) {
 		return merged_hist;
 }
 
-cv::Mat extractColorHistograms(path training_dir) {
-	vector<path> filenames;
-	listImgs(training_dir, filenames);
-	
-	cout << "extracting hsv histograms from: " << filenames.size() << " images" << endl;
+void extractColorHistograms(path training_dir, std::vector<cv::Mat>& histograms) {
+	cout << "extractColorHistograms(" << training_dir << ", histograms<Mat>);\n";
 	int hue_hist_size = 18;
 	int sat_hist_size = 3;
 	int val_hist_size = 3;
-	Mat histograms = Mat(0, hue_hist_size + sat_hist_size + val_hist_size, CV_32FC1);
-	for (vector<path>::const_iterator it = filenames.begin(); it != filenames.end(); ++it) {
-		Mat img = imread(it->string(), CV_LOAD_IMAGE_COLOR);
-		if (!img.data) {	continue;	}
-		
-		// compute hsv histogram
-		Mat img_hsv;
-		cvtColor(img, img_hsv, CV_BGR2HSV);
-		Mat hist = extractHSVHistogram(img_hsv);
-		if (histograms.rows < 10) {
-			cout << it->string() << ": " << hist << endl;
-			waitKey();
+
+
+	// get list of all class subfolders
+	std::vector<path> sub_directories;
+	listSubDirectories(training_dir, sub_directories);
+	cout << " sub_directories : " << sub_directories.size() << endl;
+	// go through each sub-folder, extracting histograms for all images present
+	for (int dir_idx = 0; dir_idx < sub_directories.size(); ++dir_idx) {
+		Mat current_histograms = Mat(0, hue_hist_size + sat_hist_size + val_hist_size, CV_32FC1);
+		vector<path> filenames;
+		cerr << "listImgs(" << training_dir / sub_directories.at(dir_idx) << ", filenames);\n";
+		listImgs(sub_directories.at(dir_idx), filenames);
+		cerr << "extracting hsv histograms from: " << filenames.size() << " images" << endl;
+	
+		for (vector<path>::const_iterator it = filenames.begin(); it != filenames.end(); ++it) {
+			Mat img = imread(it->string(), CV_LOAD_IMAGE_COLOR);
+			if (!img.data) {	continue;	}
+
+			// compute hsv histogram
+			Mat img_hsv;
+			cvtColor(img, img_hsv, CV_BGR2HSV);
+			Mat hist = extractHSVHistogram(img_hsv);
+			if (current_histograms.rows < 10) {
+				cout << it->string() << ": " << hist << endl;
+				waitKey();
+			}
+			current_histograms.push_back(hist);
 		}
-		histograms.push_back(hist);
+		histograms.push_back(current_histograms);
 	}
-	return histograms;
 }
 
 cv::flann::Index generateSearchIndex(cv::Mat vocab_hist) {
@@ -1483,50 +1565,133 @@ void calcHistGain(vector<path>& filenames, Mat& hists, vector<float>& gain) {
 	cout << endl;
 }
 
+void calcHistGainSubdirectories(/*vector<path>& sub_directories, */map<string, cv::Mat>& hists, vector<float>& gain) {
+	gain.clear();
+	map<int, map<string, float>> word_to_class;
+	const int kHistSize = hists.begin()->second.cols;
+	gain.resize(kHistSize);
+	
+	map<string, float> class_probability;
+	const int kNumClasses = hists.size();  //sub_directories.size();
+	
+	// initialize words data structure
+	cout << "initialize words data structure\n";
+	for (int i = 0; i < kHistSize; ++i) {
+		for (map<string, cv::Mat>::const_iterator class_it = hists.begin(); class_it != hists.end(); ++class_it) {  // int j = 0; j < kNumClasses; ++j) {
+			word_to_class[i][class_it->first] = 0.0f;
+		}
+	}
+
+	// go through each file and keep track of what words are present
+	//  also, calculate global entropy
+	cout << "calculate word counts in images and global entropy.\n";
+	int file_count = 0;
+	for (map<string, cv::Mat>::iterator it = hists.begin(); it != hists.end(); ++it) {
+		const string kClass = it->first;
+		class_probability[kClass] = it->second.rows;  // # images in class
+		file_count += it->second.rows;
+		cout << "class : " << kClass << endl;
+			
+		for (int i = 0; i < it->second.rows; ++i) {
+			for (int word_idx = 0; word_idx < kHistSize; ++word_idx) {
+				if (0.0 < it->second.row(i).at<float>(word_idx))  // if words are present
+					word_to_class[word_idx][kClass]++;
+			}
+		}
+	}
+
+	// normalize class file counts
+	cout << "normalize class file counts.\n";
+	cout << "  file_count = " << file_count << endl;
+	for (map<string, float>::iterator it = class_probability.begin(); it != class_probability.end(); ++it) {
+		cout << it->first << " = " << it->second << " / " << file_count << endl;
+			it->second /= file_count;
+	}
+
+	// calculate the entropy of the entire training set
+	const float kOriginalEntropy = entropy(class_probability);
+	cout << "entropy of whole set is : " << kOriginalEntropy << endl;
+
+	// calculate the gain of each word
+	cout << "calculate gain for each word";
+	for (map<int, map<string, float>>::iterator word_it = word_to_class.begin(); word_it != word_to_class.end(); ++word_it) {
+		cout << " " << word_it->first << " ";
+		const int kCurrentWord = word_it->first;
+		float class_count = 0.0f;
+		for (map<string, float>::iterator class_it = word_it->second.begin(); class_it != word_it->second.end(); ++class_it) {
+			class_count += class_it->second;
+		}
+
+		// normalize class occurence counter for images that contain current word
+		// This gives us the posterior probability for each class, given the current word is detected.
+		if (0.0 < class_count) {
+			for (map<string, float>::iterator class_it = word_it->second.begin(); class_it != word_it->second.end(); ++class_it) {
+				class_it->second /= class_count;
+			}
+
+			// calculate entropy of data set where word is present
+			const float kWordEntropy = entropy(word_it->second);
+
+			// calculate reduction in entropy when word is present and store as information gain
+			gain.at(kCurrentWord) = kOriginalEntropy - kWordEntropy;
+		}
+	}	
+	cout << endl;
+}
+
 void calculateGainForAll(path dir) {
-	vector<path> filenames;
-	
-	// get list of images in directory
-	listImgs(dir, filenames);
-	cout << "got list of images in: " << dir << endl;
-	
-	// get histograms from file
-	//  SURF
-	Mat surf_hists = readMatFromFile(dir / "surf_hists.yml", "surf_histograms");
-	
-	//  color
-	Mat color_hists = readMatFromFile(dir / "color_histograms.yml", "color_hist");
-	cout << "read histograms from file.\n";
-	
+	// get list of all class subfolders
+	std::vector<path> sub_directories;
+	listSubDirectories(dir, sub_directories);
+	cout << sub_directories.size() << " sub directories.\n";
+
+	// go through each sub-folder, reading in histograms for all images present
+	map<string, cv::Mat> surf_hists;
+	map<string, cv::Mat> color_hists;
+	for (int dir_idx = 0; dir_idx < sub_directories.size(); ++dir_idx) {
+		const path kCurrDir = sub_directories.at(dir_idx);
+		cout << "reading histograms from " << kCurrDir << endl;
+		cout << "  basename " << basename(kCurrDir) << endl;
+
+		// get histograms from file
+		//  SURF
+		surf_hists[basename(kCurrDir)] = readMatFromFile(kCurrDir / "surf_hists.yml", "surf_histograms");
+
+		//  color
+		color_hists[basename(kCurrDir)] = readMatFromFile(kCurrDir / "color_histograms.yml", "color_hist");
+	}
+
+
 	// calculate information gain
 	// SURF
+	cout << "calc SURF information gain.\n";
 	vector<float> surf_gain;
-	calcHistGain(filenames, surf_hists, surf_gain);
-	
+	calcHistGainSubdirectories(surf_hists, surf_gain);
+
 	// color
+	cout << "calc color histogram information gain.\n";
 	vector<float> color_gain;
-	calcHistGain(filenames, color_hists, color_gain);
-	cout << "gain calculated for all histograms.\n";
+	calcHistGainSubdirectories(color_hists, color_gain);
 	
 	// write gain values to file
 	// SURF
+	cout << "writing SURF gain values to " << dir / "surf_gain.yml" << endl;
 	FileStorage fs;
 	fs.open((dir / "surf_gain.yml").string(), FileStorage::WRITE);
 	fs << "surf_gain" << surf_gain;
 	fs.release();
 
 	// color
+	cout << "writing color gain values to " << dir / "color_gain.yml" << endl;
 	fs.open((dir / "color_gain.yml").string(), FileStorage::WRITE);
 	fs << "color_gain" << color_gain;
 	fs.release();
-
-	cout << "gain written to file(s).\n";	
 }
 
 void searchGain(path search_dir, path query_img, std::vector<std::string> &results) {
 	bool use_surf = false;
 	
-	// extract structure in image
+	// extract gain in image
 	const float kSurfGain = getSurfGain(search_dir, query_img);
 	const float kColorGain = getColorGain(search_dir, query_img);
 
@@ -1541,6 +1706,7 @@ void searchGain(path search_dir, path query_img, std::vector<std::string> &resul
 		searchSURFHists(search_dir, query_img, results);
 	else
 		searchColor(search_dir, query_img, results);
+	cout << "results.size() : " << results.size() << endl;
 }
 
 float getTotalGain(Mat hist, vector<float>& gain_values) {

@@ -7,6 +7,7 @@
 #include <opencv2\ml\ml.hpp>
 #include <string>
 #include <vector>
+#include <map>
 
 using namespace boost::filesystem;
 
@@ -28,9 +29,9 @@ const std::string kTestClassifier("test_classifier");
 
 float calcHarmonicMean(cv::Mat &data);
 cv::Mat extractTrainingVocabulary(path training_dir);
-cv::Mat extractVocabHistograms(path training_dir, path vocab_file);
+void extractVocabHistograms(path img_dir, path vocab_file, std::vector<cv::Mat>& histograms);
 cv::Mat extractVocabHistogram(path img_path, path vocab_file);
-cv::Mat extractColorHistograms(path training_dir);
+void extractColorHistograms(path training_dir, std::vector<cv::Mat>& histograms);
 cv::Mat extractHSVHistogram(cv::Mat img);
 float extractLineDescriptor(const cv::Mat kImg, cv::Mat &desc);
 cv::flann::Index generateSearchIndex(cv::Mat vocab_hist);
@@ -39,7 +40,9 @@ void writeMatToFile(const path kFilepath, const cv::Mat kData, const std::string
 void writeClassifierToFile(const path kFilepath, const CvSVM kSVM, const std::string kKey);
 CvSVM readClassifierFromFile(const path kFilepath, const std::string kKey);
 void listDir(path dir, std::vector<path>& vec);
+void listSubDirectories(path dir, std::vector<path>& sub_directories);
 void listImgs(path dir, std::vector<path>& vec);
+void listSubDirImgs(path dir, std::vector<path>& vec);
 std::string getClass(std::string filename);
 std::string getClass(const unsigned int kIndex);
 void searchIndex(path index_dir, path query_img);
@@ -95,5 +98,6 @@ void calculateGainForAll(path dir);
 float getTotalGain(cv::Mat hist, std::vector<float>& gain_values);
 float getSurfGain(path search_dir, path img_path);
 float getColorGain(path search_dir, path img_path);
+void calcHistGainSubdirectories(/*vector<path>& sub_directories, */std::map<std::string, cv::Mat>& hists, std::vector<float>& gain);
 
 #endif

@@ -37,10 +37,16 @@ int main(int argc, char** argv) {
 	} else if (kSurfHist == mode) {
 		std::cout << "generating surf histograms.\n";
 		path filename("surf_data.yml");
-		cv::Mat histograms = extractVocabHistograms(p, filename);
-		std::cout << "writing histograms to file.\n";
-		p /= "surf_hists.yml";
-		writeMatToFile(p, histograms, kSurfHist);
+		std::vector<cv::Mat> histograms;
+		extractVocabHistograms(p, filename, histograms);
+		
+		std::cout << "writing histograms to files in sub-directories.\n";
+		std::vector<path> sub_dirs;
+		listSubDirectories(p, sub_dirs);
+		for (int i = 0; i < sub_dirs.size(); ++i) {
+			path sub_dir = sub_dirs.at(i) / "surf_hists.yml";
+			writeMatToFile(sub_dir, histograms.at(i), kSurfHist);
+		}
 	} else if (kIndex == mode) {
 		std::cout << "generating search index.\n";
 		cv::Mat histograms = readMatFromFile(p / "surf_hists.yml", kSurfHist);
@@ -79,9 +85,15 @@ int main(int argc, char** argv) {
 		buildClassifiers(p, classifiers);
 	} else if (kColorHistograms == mode) {
 		std::cout << "extract color histograms.\n";
-		cv::Mat color_hists = extractColorHistograms(p);
-		p /= "color_histograms.yml";
-		writeMatToFile(p, color_hists, kColorHistograms);
+		std::vector<cv::Mat> histograms;
+		extractColorHistograms(p, histograms);
+		std::cout << "writing color histograms to files in sub-directories.\n";
+		std::vector<path> sub_dirs;
+		listSubDirectories(p, sub_dirs);
+		for (int i = 0; i < sub_dirs.size(); ++i) {
+			path sub_dir = sub_dirs.at(i) / "color_histograms.yml";
+			writeMatToFile(sub_dir, histograms.at(i), kColorHistograms);
+		}
 	} else if (kSearchColor == mode) {
 		std::cout << "search color histograms.\n";
 		
