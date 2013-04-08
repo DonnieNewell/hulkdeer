@@ -13,6 +13,9 @@
 #include <string>
 #include <map>
 
+// *** TEST ***
+#include <opencv2/nonfree/features2d.hpp>
+
 using namespace boost::filesystem;
 using namespace std;
 using namespace cv;
@@ -34,6 +37,13 @@ int main(int argc, char** argv) {
 		p /= "surf_data.yml";
 		std::cout << "writing vocabulary to : " << p << std::endl;
 		writeMatToFile(p, vocabulary, kVocab);
+	} else if (kLabVocab == mode) {
+		std::cout << "creating cie-lab vocabulary.\n";
+		std::cout << "img_directory : " << p << std::endl;
+		cv::Mat vocabulary = extractLabVocabulary(p);
+		p /= "lab_data.yml";
+		std::cout << "writing vocabulary to : " << p << std::endl;
+		writeMatToFile(p, vocabulary, kLabVocab);
 	} else if (kSurfHist == mode) {
 		std::cout << "generating surf histograms.\n";
 		path filename("surf_data.yml");
@@ -46,6 +56,19 @@ int main(int argc, char** argv) {
 		for (int i = 0; i < sub_dirs.size(); ++i) {
 			path sub_dir = sub_dirs.at(i) / "surf_hists.yml";
 			writeMatToFile(sub_dir, histograms.at(i), kSurfHist);
+		}
+	} else if (kLabHist == mode) {
+		std::cout << "generating CIE L*a*b* histograms.\n";
+		path filename("lab_data.yml");
+		std::vector<cv::Mat> histograms;
+		extractLabHistograms(p, filename, histograms);
+		
+		std::cout << "writing histograms to files in sub-directories.\n";
+		std::vector<path> sub_dirs;
+		listSubDirectories(p, sub_dirs);
+		for (int i = 0; i < sub_dirs.size(); ++i) {
+			path sub_dir = sub_dirs.at(i) / "lab_hists.yml";
+			writeMatToFile(sub_dir, histograms.at(i), kLabHist);
 		}
 	} else if (kIndex == mode) {
 		std::cout << "generating search index.\n";
@@ -107,6 +130,19 @@ int main(int argc, char** argv) {
 	
 		// show search results
 		displayResults(img_path.string(), filenames);
+	} else if (kSearchLab == mode) {
+		std::cout << "search CIE L*a*b* histograms.\n";
+		
+		// get query image
+		if (argc != 4) { readme(); return -1; }
+		path img_path(argv[3]);
+		vector<string> filenames;
+
+		// search for the matching images
+		searchLab(p, img_path, filenames);
+	
+		// show search results
+		displayResults(img_path.string(), filenames);
 	} else if (kSearchSURF == mode) {
 		std::cout << "search SURF histograms.\n";
 		
@@ -152,6 +188,53 @@ int main(int argc, char** argv) {
 	
 		// show search results
 		displayResults(img_path.string(), filenames);
+	} else if (mode == "fix_hists") {
+		//  load in SURF vocabulary
+		Mat vocab = readMatFromFile(p / "surf_data.yml", kVocab);
+		cv::Ptr<cv::FeatureDetector> detector(new cv::SurfFeatureDetector());
+		cv::Ptr<cv::DescriptorMatcher> matcher(new cv::BFMatcher(cv::NORM_L2));
+		cv::Ptr<cv::OpponentColorDescriptorExtractor> extractor(new cv::OpponentColorDescriptorExtractor(cv::Ptr<cv::DescriptorExtractor>(new cv::SurfDescriptorExtractor())));
+		cv::Ptr<cv::BOWImgDescriptorExtractor> bow_img_desc_extrct(new cv::BOWImgDescriptorExtractor(extractor, matcher));
+		bow_img_desc_extrct->setVocabulary(vocab);
+
+		//  loop over all subdirectories
+		vector<path> subdirs;
+		listSubDirectories(p, subdirs);
+		for (int i = 0; i < subdirs.size(); ++i) {
+			const path kDir = subdirs.at(i);
+			
+			// find out how many images in this sub-directory
+			vector<path> imagenames;
+			listImgs(kDir, imagenames);
+			const int kNumImages = imagenames.size();
+
+			// find out how many histograms for this sub-directory
+			Mat surf_hists = readMatFromFile(kDir / "surf_hists.yml", kSurfHist);
+			const int kNumHists = surf_hists.rows;
+
+			if (kNumHists != kNumImages) {
+				cout << kDir << " needs new SURF histograms.\n";
+				Mat histograms;
+				for (int j = 0; j < imagenames.size(); ++j) {
+					const path kImgName = imagenames.at(j);
+					Mat img = imread(kImgName.string(), CV_LOAD_IMAGE_COLOR);
+					vector<KeyPoint> key_points;
+					Mat response_hist;
+					detector->detect(img, key_points);
+					bow_img_desc_extrct->compute(img, key_points, response_hist);
+					if (0 == key_points.size()) 
+						response_hist = Mat::zeros(1, 4000, CV_32F);
+					histograms.push_back(response_hist);
+				}
+
+				//  write new histograms to file
+				if (kNumImages == histograms.rows)
+					writeMatToFile(kDir / "surf_hists.yml", histograms, kSurfHist);
+				else
+					cerr << "ERROR:*** problem extracting SURF histograms.\n";
+			}
+
+		}
 	}
 	return 0;
 }
