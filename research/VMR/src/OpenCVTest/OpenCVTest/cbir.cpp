@@ -1,14 +1,15 @@
 #include "cbir.h"
 #include <omp.h>
 #include <string>
+#include <sstream>
 #include <exception>
 #include <vector>
 #include <map>
 #include <queue>
 #include <algorithm>
-#include <cstdlib>
+//#include <cstdlib>
 #include <ctime>
-
+//#include <Psapi.h>
 #include <opencv2/core/core.hpp>
 #include <opencv2/nonfree/features2d.hpp>
 #include <opencv2/highgui/highgui.hpp>
@@ -18,6 +19,11 @@
 #include <boost/filesystem.hpp>
 //#define _WIN32_WINNT 0x0502
 #include <iostream>
+#include <numeric>
+//#define _CRTDBG_MAP_ALLOC
+//#include <stdlib.h>
+//#include <crtdbg.h>
+
 
 using namespace boost::filesystem;
 using namespace std;
@@ -415,7 +421,7 @@ void searchColor(path index_dir, path query_img, vector<string> &results) {
 	}
 }
 
-void searchLab(path index_dir, path query_img, vector<string> &results) {
+void searchLab(path index_dir, path query_img, const int kK, vector<string> &results) {
 	// load pre-computed histograms
 	cout << "reading CIE L*a*b* histograms from sub-directories.\n";
 	vector<path> sub_dirs;
@@ -452,7 +458,6 @@ void searchLab(path index_dir, path query_img, vector<string> &results) {
 	BFMatcher matcher(NORM_L2);
 	//matcher.add(hists);
 
-	const int kK = 10;
 	vector<vector<DMatch>> matches;
 	cout << "matching color histograms.\n";
 	matcher.knnMatch(query_hist, hists, matches, kK);
@@ -473,8 +478,157 @@ void searchLab(path index_dir, path query_img, vector<string> &results) {
 	}
 }
 
+/** search through histograms using pre-extracted query histograms */
+void searchGenericHists(cv::Mat query_hists, cv::Mat search_hists, const int kNN, vector<vector<DMatch>> &results) {
+	cv::Ptr<cv::DescriptorMatcher> matcher(new cv::BFMatcher(cv::NORM_L2));
+	
+	//  make sure the results vector is empty
+	results.clear();
 
-void searchSURFHists(path index_dir, path query_img, vector<string> &results) {
+	//  loop through all histograms querying the database
+	const int kNumQueriesPerIteration = 100;
+	for (int i = 0; i < query_hists.rows; i += kNumQueriesPerIteration) {
+		const int kNumQueriesThisIteration = min(kNumQueriesPerIteration, static_cast<int>(query_hists.rows - i));
+		cout << "processing histograms " << i << " through " << i + kNumQueriesThisIteration << endl;
+		Mat curr_query_hists = query_hists.rowRange(i, i + kNumQueriesThisIteration);
+		
+		//  match query histograms with database histograms
+		cout << "  matching...\n";
+		vector<vector<DMatch>> matches;
+		clock_t match_start = clock();
+		matcher->knnMatch(curr_query_hists, search_hists, matches, kNN);
+		cout << "match took " << ( clock() - match_start ) / (double) CLOCKS_PER_SEC << " sec.\n";
+		//  place the current iterations results onto the results vector
+		clock_t copy_start = clock();
+		results.reserve(results.size() + matches.size());
+		results.insert(results.end(), matches.begin(), matches.end());
+		cout << "copy results took " << ( clock() - copy_start ) / (double) CLOCKS_PER_SEC << " sec.\n";
+		cout << "  results.size() = " << results.size() << endl;
+	}
+}
+
+void searchLab(cv::Mat vocab, cv::Mat hists, vector<path> image_names, path query_img, const int kK, std::vector<std::string> &results) {
+	//  read in query image
+	cv::Mat img = imread(query_img.string(), CV_LOAD_IMAGE_COLOR);
+
+	//cout << "extracting Lab histogram from query image.\n";
+	
+	// extract Lab histogram from query image
+	Mat lab_img;
+	cvtColor(img, lab_img, CV_BGR2Lab);
+	cv::Mat query_hist = extractLabHistogram(lab_img, vocab);
+	if (query_hist.type() != CV_32F) {
+			query_hist.convertTo(query_hist, CV_32F);
+	}
+	// match query histogram with database images
+	//cerr << "adding previously extracted descriptors to matcher.\n";
+	
+	BFMatcher matcher(NORM_L2);
+	//matcher.add(hists);
+
+	vector<vector<DMatch>> matches;
+	//cout << "matching color histograms.\n";
+	matcher.knnMatch(query_hist, hists, matches, kK);
+	
+	//cout << "getting matching image filenames.\n";
+		
+	for (int i = 0; i < matches.size(); ++i) {
+		vector<DMatch> &m = matches.at(i);
+		for (int j = 0; j < m.size(); ++j) {
+			DMatch dm = m.at(j);
+			//printf("dmatch[%d]: dist:%f queryidx:%d trainidx:%d imgidx:%d \n", j, dm.distance, dm.queryIdx, dm.trainIdx, dm.imgIdx);
+			const int kImgIndex = dm.trainIdx;
+			results.push_back(image_names.at(kImgIndex).string());
+		}
+	}
+}
+
+ 
+void searchSURFHists(cv::Mat vocab, cv::Mat hists, std::vector<path> image_names, std::vector<path> query_imgs, const int kNN, vector<vector<DMatch>> &results) {
+	cv::Ptr<cv::FeatureDetector> detector(new cv::SurfFeatureDetector());
+	cv::Ptr<cv::DescriptorMatcher> matcher(new cv::BFMatcher(cv::NORM_L2));
+	cv::Ptr<cv::OpponentColorDescriptorExtractor> extractor(new cv::OpponentColorDescriptorExtractor(cv::Ptr<cv::DescriptorExtractor>(new cv::SurfDescriptorExtractor())));
+	cv::Ptr<cv::BOWImgDescriptorExtractor> bow_img_desc_extrct(new cv::BOWImgDescriptorExtractor(extractor, matcher));
+	
+	//  make sure the results vector is empty
+	results.clear();
+
+	bow_img_desc_extrct->setVocabulary(vocab);
+	//std::cout << "vocabulary has " << vocab.size.p[0] << " codewords.\n";
+
+	/* extract words in query image */
+	//cerr << "extracting SURF histogram from query image.\n";
+	vector<vector<KeyPoint>> key_points;
+	vector<Mat> imgs;
+	const int kNumQueriesAtOnce = 100;
+		
+	//  process images in chunks to limit memory usage
+	for (int i = 0; i < query_imgs.size(); i += kNumQueriesAtOnce) {
+		Mat query_hists(0, vocab.rows, vocab.type());
+		const int kNumQueriesCurrentItr = min(kNumQueriesAtOnce, static_cast<int>(query_imgs.size() - i));
+		if (kNumQueriesCurrentItr != imgs.size()) {
+			imgs.resize(kNumQueriesCurrentItr);
+		}
+
+		//  load the images into the vector
+		cout << "loading images " << i << " through " << i + kNumQueriesCurrentItr << endl;
+		for (int j = 0; j < kNumQueriesCurrentItr; ++j) {
+			//imgs.at(j).release();
+			imgs.at(j) = cv::imread(query_imgs.at(i + j).string(), CV_LOAD_IMAGE_COLOR);
+		}
+
+		//  detect the key points in all of the images in this working set
+		cout << "  detecting key points.\n";
+		detector->detect(imgs, key_points);
+		Mat temp_hist;
+		for (int j = 0; j < kNumQueriesCurrentItr; ++j) {
+			bow_img_desc_extrct->compute(imgs.at(j), key_points.at(j), temp_hist);
+			query_hists.push_back(temp_hist);
+		}
+		cout << "query_hist.rows = " << query_hists.rows << endl;
+		
+		//  match query histograms with database histograms
+		cout << "  matching...\n";
+		vector<vector<DMatch>> matches;
+		matcher->knnMatch(query_hists, hists, matches, kNN);
+
+		//  place the current iterations results onto the results vector
+		results.reserve(results.size() + matches.size());
+		results.insert(results.end(), matches.begin(), matches.end());
+		cout << "results.size() = " << results.size() << endl;
+	}
+}
+
+/** search through surf histograms using pre-extracted query histograms */
+void searchSURFHists(cv::Mat query_hists, cv::Mat search_hists, std::vector<path> image_names, const int kNN, vector<vector<DMatch>> &results) {
+	cv::Ptr<cv::DescriptorMatcher> matcher(new cv::BFMatcher(cv::NORM_L2));
+	
+	//  make sure the results vector is empty
+	results.clear();
+
+	//  loop through all histograms querying the database
+	const int kNumQueriesPerIteration = 100;
+	for (int i = 0; i < query_hists.rows; i += kNumQueriesPerIteration) {
+		const int kNumQueriesThisIteration = min(kNumQueriesPerIteration, static_cast<int>(query_hists.rows - i));
+		cout << "processing histograms " << i << " through " << i + kNumQueriesThisIteration << endl;
+		Mat curr_query_hists = query_hists.rowRange(i, i + kNumQueriesThisIteration);
+		
+		//  match query histograms with database histograms
+		cout << "  matching...\n";
+		vector<vector<DMatch>> matches;
+		clock_t match_start = clock();
+		matcher->knnMatch(curr_query_hists, search_hists, matches, kNN);
+		cout << "match took " << ( clock() - match_start ) / (double) CLOCKS_PER_SEC << " sec.\n";
+		//  place the current iterations results onto the results vector
+		clock_t copy_start = clock();
+		results.reserve(results.size() + matches.size());
+		results.insert(results.end(), matches.begin(), matches.end());
+		cout << "copy results took " << ( clock() - copy_start ) / (double) CLOCKS_PER_SEC << " sec.\n";
+		cout << "  results.size() = " << results.size() << endl;
+	}
+}
+
+void searchSURFHists(path index_dir, path query_img, const int kNN, vector<string> &results) {
 	// load pre-computed histograms
 	cout << "reading SURF histograms from sub-directories.\n";
 	vector<path> sub_dirs;
@@ -514,10 +668,9 @@ void searchSURFHists(path index_dir, path query_img, vector<string> &results) {
 	bow_img_desc_extrct->compute(img, key_points, query_hist);
 
 	// match query histogram with database images
-	const int kK = 10;
 	vector<vector<DMatch>> matches;
 	cerr << "matching surf histograms.\n";
-	matcher->knnMatch(query_hist, hists, matches, kK);
+	matcher->knnMatch(query_hist, hists, matches, kNN);
 	
 	cerr << "getting matching image filenames.\n";
 	// get results filenames
@@ -554,7 +707,7 @@ void searchDecideSURFColor(path index_dir, path query_img, const float kThreshol
 	cout << "use_surf: " << use_surf << endl;
 	// perform search
 	if (use_surf)
-		searchSURFHists(index_dir, query_img, results);
+		searchSURFHists(index_dir, query_img, 1000, results);
 	else
 		searchColor(index_dir, query_img, results);
 }
@@ -1906,6 +2059,7 @@ void calculateGainForAll(path dir) {
 	// go through each sub-folder, reading in histograms for all images present
 	map<string, cv::Mat> surf_hists;
 	map<string, cv::Mat> lab_hists;
+	map<string, cv::Mat> gabor_hists;
 	for (int dir_idx = 0; dir_idx < sub_directories.size(); ++dir_idx) {
 		const path kCurrDir = sub_directories.at(dir_idx);
 		cout << "reading histograms from " << kCurrDir << endl;
@@ -1917,10 +2071,18 @@ void calculateGainForAll(path dir) {
 
 		//  Lab
 		lab_hists[basename(kCurrDir)] = readMatFromFile(kCurrDir / "lab_hists.yml", kLabHist);
+		//*/
+		//  Gabor
+		gabor_hists[basename(kCurrDir)] = readMatFromFile(kCurrDir / "gabor_response.yml", kGaborResponse);
 	}
 
 
 	// calculate information gain
+	// Gabor
+	cout << "calc Gabor information gain.\n";
+	vector<float> gabor_gain;
+	calcHistGainSubdirectories(gabor_hists, gabor_gain);
+	FileStorage fs;
 	// SURF
 	cout << "calc SURF information gain.\n";
 	vector<float> surf_gain;
@@ -1934,19 +2096,25 @@ void calculateGainForAll(path dir) {
 	// write gain values to file
 	// SURF
 	cout << "writing SURF gain values to " << dir / "surf_gain.yml" << endl;
-	FileStorage fs;
+	
 	fs.open((dir / "surf_gain.yml").string(), FileStorage::WRITE);
 	fs << "surf_gain" << surf_gain;
 	fs.release();
 
-	// color
+	// Lab
 	cout << "writing Lab gain values to " << dir / "lab_gain.yml" << endl;
 	fs.open((dir / "lab_gain.yml").string(), FileStorage::WRITE);
 	fs << "lab_gain" << lab_gain;
 	fs.release();
+	//*/
+	// Gabor
+	cout << "writing Gabor gain values to " << dir / "gabor_gain.yml" << endl;
+	fs.open((dir / "gabor_gain.yml").string(), FileStorage::WRITE);
+	fs << "gabor_gain" << gabor_gain;
+	fs.release();
 }
 
-void searchGain(path search_dir, path query_img, std::vector<std::string> &results) {
+void searchGain(path search_dir, path query_img, const int kK, std::vector<std::string> &results) {
 	bool use_surf = false;
 	
 	// extract gain in image
@@ -1961,18 +2129,198 @@ void searchGain(path search_dir, path query_img, std::vector<std::string> &resul
 	cout << "use_surf: " << use_surf << endl;
 	// perform search
 	if (use_surf)
-		searchSURFHists(search_dir, query_img, results);
+		searchSURFHists(search_dir, query_img, kK, results);
 	else
-		searchLab(search_dir, query_img, results);
+		searchLab(search_dir, query_img, kK, results);
 	cout << "results.size() : " << results.size() << endl;
+}
+
+/** returns the basename of the directory that the file resides in. */
+std::string getClassFolder(const std::string kFilePath) {
+	if (kFilePath.empty()) return "";
+
+	stack<string> token_stack;
+#ifdef __linux__
+	char delim = '/';
+#else
+	char delim = '\\';
+#endif
+	string temp = kFilePath;
+	istringstream iss(temp);
+	string token;
+	while (getline(iss, token, delim))
+		token_stack.push(token);
+
+	//  second token is the class folder
+	token_stack.pop();
+	const string kClassFolder = token_stack.top();
+	return kClassFolder;
+}
+
+/** writes the precision and recall vectors as a comma separated file */
+void writePrecisionRecallCSV(const vector<float>& kPrecision, const vector<float>& kRecall, const string kFilename) {
+	if (kPrecision.size() != kRecall.size() || kPrecision.size() == 0) return;
+
+	//  open output file
+	string file_name = kFilename;
+	if (file_name.empty())
+		file_name = "precision_recall.csv";
+
+	ofstream output_file(file_name);
+	output_file << "precision, recall\n";
+	for (int i = 0; i < kPrecision.size(); ++i) {
+		output_file << kPrecision[i] << ", " << kRecall[i] << endl;
+	}
+	output_file.close();
+}
+
+/** calculates the precision vector for the search results */
+void calcPrecisionVector(const std::vector<path> &kImageNames, const int kQueryStartIdx, const int kNumQueries, const std::vector<std::vector<DMatch>>& kResults, std::vector<float>& precision) {
+	assert(kResults.front().size() == precision.size());
+
+	//  accumulate statistics for each query image
+	for (int img_idx = kQueryStartIdx; img_idx < kQueryStartIdx + kNumQueries; ++img_idx) {
+		//  loop over every possible results set
+		int class_counter = 0;
+		const string kQueryClass = getClassFolder(kImageNames.at(img_idx).string());
+		const vector<DMatch> &kResultRef = kResults.at(img_idx - kQueryStartIdx);  // subtract offset to get index into local results vector
+		for (int i = 0; i < kResultRef.size(); ++i) {
+			//  increment current class folder
+			const DMatch &kCurrentMatch = kResultRef.at(i);
+			const int kCurrImageIdx = kCurrentMatch.trainIdx;
+			const string kCurrImagePath = kImageNames.at(kCurrImageIdx).string();
+			const string kCurrImageClass = getClassFolder(kCurrImagePath);
+			if (kQueryClass == kCurrImageClass)
+				++class_counter;
+
+			// calculate precision
+			precision.at(i) += (class_counter / static_cast<float>(i + 1));
+		}
+	}
+}
+
+/** calculates the precision vector for the search results */
+void calcPrecisionVector(const std::vector<path> &kDatabaseImages, const std::vector<path> &kQueryImages, const std::vector<std::vector<DMatch>>& kResults, std::vector<float>& precision) {
+	assert(kResults.front().size() == precision.size());
+
+	const int kQueryStartIdx = 0;
+	const int kNumQueries = kQueryImages.size();
+
+	//  accumulate statistics for each query image
+	for (int img_idx = kQueryStartIdx; img_idx < kQueryStartIdx + kNumQueries; ++img_idx) {
+		//  loop over every possible results set
+		int class_counter = 0;
+		const string kQueryClass = getClassFolder(kQueryImages.at(img_idx).string());
+		const vector<DMatch> &kResultRef = kResults.at(img_idx - kQueryStartIdx);  // subtract offset to get index into local results vector
+		for (int i = 0; i < kResultRef.size(); ++i) {
+			//  increment current class folder
+			const DMatch &kCurrentMatch = kResultRef.at(i);
+			const int kCurrImageIdx = kCurrentMatch.trainIdx;
+			const string kCurrImagePath = kDatabaseImages.at(kCurrImageIdx).string();
+			const string kCurrImageClass = getClassFolder(kCurrImagePath);
+			if (kQueryClass == kCurrImageClass)
+				++class_counter;
+
+			// calculate precision
+			precision.at(i) += (class_counter / static_cast<float>(i + 1));
+		}
+	}
+}
+
+/** calculates the precision vector for the search results */
+void calcPrecisionVector(const std::string kQueryName, const std::vector<std::string>& kResults, std::vector<float>& precision) {
+	precision.clear();
+
+	//  loop over every possible results set
+	int class_counter = 0;
+	const string kQueryClass = getClassFolder(kQueryName);
+	for (int i = 0; i < kResults.size(); ++i) {
+		//  increment current class folder
+		if (kQueryClass == getClassFolder(kResults[i]))
+			++class_counter;
+
+		// calculate precision
+		precision.push_back(class_counter / static_cast<float>(i + 1));
+	}
+}
+
+/** calculates the recall vector for the search results */
+void calcRecallVector(const std::vector<path> kImageNames, const int kQueryStartIdx, const int kNumQueries, const std::vector<std::vector<DMatch>>& kResults, std::vector<float>& recall) {
+	assert(recall.size() == kResults.front().size());
+
+	//  count how many images are in each class
+	map<string, int> class_count;
+	for (int i = 0; i < kImageNames.size(); ++i)
+		class_count[getClassFolder(kImageNames.at(i).string())]++;
+
+	
+	for (int qry_idx = kQueryStartIdx; qry_idx < kQueryStartIdx + kNumQueries; ++qry_idx) {
+		int class_counter = 0;
+		
+		//  loop over every possible results set
+		const string kQueryClass = getClassFolder(kImageNames.at(qry_idx).string());
+		const float kTotalClassInstances = static_cast<float>(class_count[kQueryClass]);
+		const int kResultIdx = qry_idx - kQueryStartIdx;
+		for (int i = 0; i < kResults.at(kResultIdx).size(); ++i) {
+			//  increment current class folder
+			//  subtract the start index from the qry_idx to get a valid index into the local results vector
+			if (kQueryClass == getClassFolder(kImageNames.at(kResults.at(kResultIdx).at(i).trainIdx).string()))
+				++class_counter;
+			
+			//  calculate recall
+			recall.at(i) += class_counter / kTotalClassInstances;
+		}
+	}
+}
+
+/** calculates the recall vector for the search results */
+void calcRecallVector(const path kDir, const std::string kQueryName, const std::vector<std::string>& kResults, std::vector<float>& recall) {
+	recall.clear();
+
+	//  loop over every possible results set
+	int class_counter = 0;
+	const string kQueryClass = getClassFolder(kQueryName);
+	
+	//  find out how many images are in query's class folder
+	vector<path> filenames;
+	listImgs(kDir / kQueryClass, filenames);
+
+	for (int i = 0; i < kResults.size(); ++i) {
+		//  increment current class folder
+		if (kQueryClass == getClassFolder(kResults[i]))
+			++class_counter;
+	}
+
+	//  loop over results and calculate recall
+	const float kTotalClassInstances = static_cast<float>(filenames.size());
+	class_counter = 0;
+	for (int i = 0; i < kResults.size(); ++i) {
+		//  increment current class folder
+		if (kQueryClass == getClassFolder(kResults[i]))
+			++class_counter;
+
+		//  calculate recall
+		recall.push_back(class_counter / kTotalClassInstances);
+	}
 }
 
 float getTotalGain(Mat hist, vector<float>& gain_values) {
 	float total_gain = 0.0f;
+	const float kThresh = .005f;
+	int counter = 0;
+	vector<float> hist_gain;
 	for (unsigned int i = 0; i < hist.cols; ++i) {
-		total_gain += (hist.at<float>(i) > 0.005f) ? gain_values.at(i) : 0.0f;
+		if (0.0f < hist.at<float>(i))
+			hist_gain.push_back(gain_values.at(i));
 	}
-	return total_gain;
+	//  sort the gain values so we get the N highest
+	sort(hist_gain.begin(), hist_gain.end(), greater<float>());
+
+	const float kPercentTopValues = .01f;
+	const int kN = static_cast<int>(ceil(hist_gain.size() * kPercentTopValues));  //  This is the # of highest gain values to average
+	total_gain = std::accumulate(hist_gain.begin(), hist_gain.begin() + kN, 0.0f);
+
+	return total_gain / kN;
 }
 
 float getSurfGain(path search_dir, path img_path) {
@@ -2027,4 +2375,385 @@ float getLabGain(path search_dir, path img_path) {
 
 	// return information gain present in image histogram
 	return getTotalGain(hist, gain_values);
+}
+
+void loadHists(const path kDir, const string kFileName, const string kDataKey, cv::Mat& hists) {
+	vector<path> sub_dirs;
+	listSubDirectories(kDir, sub_dirs);
+	
+	for (vector<path>::const_iterator it = sub_dirs.begin(); it != sub_dirs.end(); ++it) {
+		Mat tmp = readMatFromFile((*it) / kFileName, kDataKey);
+		hists.push_back(tmp);
+	}
+}
+
+/** returns the name of the data file and the key to access the search data from file for the 
+		specified search mode */
+void getDataFilenameAndKey(const std::string kSearchMode, std::string &data_file, std::string &data_key) {
+	if (kSearchMode == kSearchSURF) {
+		data_file = "surf_hists.yml";
+		data_key = kSurfHist;
+	} else if (kSearchMode == kSearchLab) {
+		data_file = "lab_hists.yml";
+		data_key = kLabHist;
+	} else if (kSearchMode == kSearchGabor) {
+		data_file = "gabor_response.yml";
+		data_key = kGaborResponse;
+	}
+}
+
+/** returns the name of the data file and the key to access the search data from file for the 
+		specified search mode */
+void getGainFilenameAndKey(const std::string kSearchMode, std::string &data_file, std::string &data_key) {
+	if (kSearchMode == kSearchSURF) {
+		data_file = "surf_gain.yml";
+		data_key = "surf_gain";
+	} else if (kSearchMode == kSearchLab) {
+		data_file = "lab_gain.yml";
+		data_key = "lab_gain";
+	} else if (kSearchMode == kSearchGabor) {
+		data_file = "gabor_gain.yml";
+		data_key = "gabor_gain";
+	}
+}
+
+
+/** loads all of the histograms from the sub-directories to search */
+void loadHists(const path kDir, const std::string kSearchMode, cv::Mat& hists) {
+	//  get all class sub-directories
+	vector<path> sub_dirs;
+	listSubDirectories(kDir, sub_dirs);
+
+	// find data filenames and keys
+	string data_file, data_key;
+	getDataFilenameAndKey(kSearchMode, data_file, data_key);
+
+	//  go through all class folders loading data
+	for (vector<path>::const_iterator it = sub_dirs.begin(); it != sub_dirs.end(); ++it) {
+		Mat tmp = readMatFromFile((*it) / data_file, data_key);
+		hists.push_back(tmp);
+	}
+}
+
+/** loads all of the histograms from the sub-directories to search */
+void loadHists(const path kDir, const std::vector<std::string>& kSearchModes, std::vector<cv::Mat>& hists) {
+	hists.clear();
+	hists.resize(kSearchModes.size());
+
+	//  get all class sub-directories
+	vector<path> sub_dirs;
+	listSubDirectories(kDir, sub_dirs);
+
+	// find data filenames and keys
+	vector<string> data_files, data_keys;
+	data_files.resize(kSearchModes.size());  data_keys.resize(kSearchModes.size());
+	for (int i = 0; i < kSearchModes.size(); ++i) {
+		getDataFilenameAndKey(kSearchModes.at(i), data_files.at(i), data_keys.at(i));
+	}
+
+	//  go through all class folders loading data
+	for (int i = 0; i < data_files.size(); ++i) {
+		for (vector<path>::const_iterator it = sub_dirs.begin(); it != sub_dirs.end(); ++it) {
+			Mat tmp = readMatFromFile((*it) / data_files.at(i), data_keys.at(i));
+			hists.at(i).push_back(tmp);
+		}
+	}
+}
+
+/*void printMemInfo() {
+	PROCESS_MEMORY_COUNTERS pmc;
+		if (GetProcessMemoryInfo(GetCurrentProcess(), &pmc, sizeof(pmc))) {
+			//printf( "\tPageFaultCount: 0x%08X\n", pmc.PageFaultCount );
+			printf( "\tPeakWorkingSetSize: %08d\n", pmc.PeakWorkingSetSize );
+			printf( "\tWorkingSetSize: %08d\n", pmc.WorkingSetSize );
+			//printf( "\tQuotaPeakPagedPoolUsage: 0x%08X\n", pmc.QuotaPeakPagedPoolUsage );
+			//printf( "\tQuotaPagedPoolUsage: 0x%08X\n", pmc.QuotaPagedPoolUsage );
+			//printf( "\tQuotaPeakNonPagedPoolUsage: 0x%08X\n", pmc.QuotaPeakNonPagedPoolUsage );
+			//printf( "\tQuotaNonPagedPoolUsage: 0x%08X\n", pmc.QuotaNonPagedPoolUsage );
+			//printf( "\tPagefileUsage: 0x%08X\n", pmc.PagefileUsage ); 
+			//printf( "\tPeakPagefileUsage: 0x%08X\n", pmc.PeakPagefileUsage );
+		}
+} // */
+
+/** evaluates performance of search mode by querying using all of the images in the specified directory */
+void testSearch(const path kDir, const std::string kSearchMode, vector<float>& precision, vector<float>& recall) {
+	cout << "testSearch()\n";
+	
+	//  find all images
+	vector<path> images;
+	listSubDirImgs(kDir, images);
+	//images.resize(98);
+	const int kNumResultImages = images.size();
+	precision.clear();  recall.clear(); 
+	precision.resize(kNumResultImages);  recall.resize(kNumResultImages);
+
+	vector<string> results;
+	Mat surf_vocab, lab_vocab, surf_hists, lab_hists;
+	if (kSearchMode == kSearchSURF) {
+		surf_vocab = readMatFromFile(kDir / "surf_data.yml", kVocab);
+		loadHists(kDir, "surf_hists.yml", kSurfHist, surf_hists);
+	} else if (kSearchMode == kSearchLab) {
+		lab_vocab = readMatFromFile(kDir / "lab_data.yml", kLabVocab);
+		loadHists(kDir, "lab_hists.yml", kLabHist, lab_hists);
+	}
+
+	//  loop over all images and perform a query 
+	//  accumulate metrics for each run
+	int counter = 0;
+	if (kSearchMode == kSearchSURF) {
+		const int kImagesPerIteration = 1000;
+		const int kNumQueries = surf_hists.rows;
+		for (int img_idx = 0; img_idx < kNumQueries; img_idx += kImagesPerIteration) {
+			vector<vector<DMatch>> results_dmatch;
+			const int kNumImages = min(kImagesPerIteration, static_cast<int>(kNumQueries - img_idx));
+
+			//  create new query vector with current iteration images
+			searchSURFHists(surf_hists.rowRange(img_idx, img_idx + kNumImages), surf_hists, images, kNumResultImages, results_dmatch);
+
+			calcPrecisionVector(images, img_idx, kNumImages, results_dmatch, precision);
+			calcRecallVector(images, img_idx, kNumImages, results_dmatch, recall);
+		}
+
+		transform(precision.begin(), precision.end(), precision.begin(), bind2nd(divides<float>(), images.size()));
+		transform(recall.begin(), recall.end(), recall.begin(),	bind2nd(divides<float>(), images.size()));
+	} else {
+		for (vector<path>::const_iterator it = images.begin(); it != images.end(); ++it) {
+			cout << ++counter << " ";
+
+			results.clear();
+			if (kSearchMode == kSearchSURF) {
+				//searchSURFHists(surf_vocab, surf_hists, images, *it, kNumResultImages, results);
+			} else if (kSearchMode == kSearchLab) {
+				searchLab(lab_vocab, lab_hists, images, *it, kNumResultImages, results);
+			} else if (kSearchMode == kSearchGain) {
+				searchGain(kDir, *it, kNumResultImages, results);
+			} else {
+				// error
+				cerr << "invalid search mode.\n";
+				exit(EXIT_FAILURE);
+			}
+
+			//  evaluate performance metric(s) for this run
+			vector<float> single_run_precision, single_run_recall;
+			calcPrecisionVector(it->string(), results, single_run_precision);
+			calcRecallVector(kDir, it->string(), results, single_run_recall);
+
+			assert(precision.size() == single_run_precision.size() && recall.size() == single_run_recall.size());
+
+			for (int i = 0; i < precision.size(); ++i)
+				precision.at(i) += single_run_precision.at(i);
+			for (int i = 0; i < recall.size(); ++i)
+				recall.at(i) += single_run_recall.at(i);
+
+		}
+		//  find average metrics
+		transform(precision.begin(), precision.end(), precision.begin(),
+					bind2nd(divides<float>(), images.size()));
+		transform(recall.begin(), recall.end(), recall.begin(),
+					bind2nd(divides<float>(), images.size()));
+	}	
+}
+
+
+/** evaluates performance of search mode by querying using all of the images in the specified directory */
+void calcPrecisionAllClasses(const path kQueryDir, const path kDir, const std::string kSearchMode) {
+	//  get the list of class sub-directories
+	vector<path> sub_dirs, query_sub_dirs;
+	vector<path> all_images;
+	listSubDirectories(kDir, sub_dirs);
+	listSubDirectories(kQueryDir, query_sub_dirs);
+	listSubDirImgs(kDir, all_images);
+
+	//  load database to search
+	Mat database;
+	loadHists(kDir, kSearchMode, database);
+
+	// get data file name and the key to access the data in the file
+	string data_file, data_key;
+	getDataFilenameAndKey(kSearchMode, data_file, data_key);
+	cout << "data_file : " << data_file << "\ndata_key " << data_key << endl;
+
+	//  loop through each sub-directory calculating the precision for each one
+	for (int i = 0; i < query_sub_dirs.size(); ++i) {
+		path current_query_dir = query_sub_dirs.at(i);
+		path related_dbase_dir = sub_dirs.at(i);
+	//for (vector<path>::const_iterator it = query_sub_dirs.begin(); it != query_sub_dirs.end(); ++it) {
+		cout << current_query_dir << endl;
+		//  load the pre-extracted image histograms
+		Mat class_hists = readMatFromFile(current_query_dir / data_file, data_key);
+		if (!class_hists.data) {
+			cerr << "ERROR: class histograms were not loaded.\n";
+			return;
+		}
+
+		//  query the database for every image in this class
+		//  note: for r-precision we only care about the first n results, where n is the # of image in the class
+		vector<vector<DMatch>> results_dmatch;
+		vector<path> relevant_imgs_in_dbase;
+		listImgs(related_dbase_dir, relevant_imgs_in_dbase);
+		searchGenericHists(class_hists, database, relevant_imgs_in_dbase.size(), results_dmatch);
+
+		vector<path> image_names;
+		listImgs(current_query_dir, image_names);
+
+		//  calculate the precision values for this class
+		const int kQueryStartIdx = 0;
+		const int kNumQueries = results_dmatch.size();
+		vector<float> precision(kNumQueries);
+		calcPrecisionVector(all_images, image_names, results_dmatch, precision);
+		transform(precision.begin(), precision.end(), precision.begin(), bind2nd(divides<float>(), kNumQueries));
+
+		//  write the statistics to file
+		const path kFilename = current_query_dir / (string("precision_") + kSearchMode + ".yml");
+		const string kKey = "precision";
+		FileStorage fs(kFilename.string(), FileStorage::WRITE);
+		fs << kKey << precision;
+		fs.release();
+	}
+}
+
+
+/** evaluates performance of search mode by querying using all of the images in the specified directory */
+void calcPrecisionAllClassesGain(const path kQueryDir, const path kDir, const std::vector<std::string> kSearchModes) {
+	//  get the list of class sub-directories
+	vector<path> sub_dirs, query_sub_dirs, all_images;
+	listSubDirectories(kDir, sub_dirs);
+	listSubDirectories(kQueryDir, query_sub_dirs);
+	listSubDirImgs(kDir, all_images);
+
+	//  load database to search
+	cout << "loading databases.\n";
+	vector<Mat> databases;
+	loadHists(kDir, kSearchModes, databases);
+
+	// get data file name and the key to access the data in the file
+	vector<string> data_files, data_keys, gain_files, gain_keys;
+	data_files.resize(kSearchModes.size());  data_keys.resize(kSearchModes.size());
+	gain_files.resize(kSearchModes.size());  gain_keys.resize(kSearchModes.size());
+	for (int i = 0; i < kSearchModes.size(); ++i) {
+		getDataFilenameAndKey(kSearchModes.at(i), data_files.at(i), data_keys.at(i));
+		getGainFilenameAndKey(kSearchModes.at(i), gain_files.at(i), gain_keys.at(i));
+		cout << "data_files["<<i<<"] : " << data_files.at(i) << "\ndata_keys["<<i<< "] : " << data_keys.at(i) << endl;
+		cout << "gain_files["<<i<<"] : " << gain_files.at(i) << "\ngain_keys["<<i<< "] : " << gain_keys.at(i) << endl;
+	}
+
+	//  loop through each sub-directory calculating the precision for each one
+	for (int i = 0; i < query_sub_dirs.size(); ++i) {
+		path current_query_dir = query_sub_dirs.at(i);
+		path related_dbase_dir = sub_dirs.at(i);
+	//for (vector<path>::const_iterator it = query_sub_dirs.begin(); it != query_sub_dirs.end(); ++it) {
+		cout << current_query_dir << endl;
+		//  load the pre-extracted image histograms for each search method
+		vector<Mat> class_hists;
+		for (int i = 0; i < kSearchModes.size(); ++i) {
+			class_hists.push_back(readMatFromFile(current_query_dir / data_files.at(i), data_keys.at(i)));
+
+			if (!class_hists.at(i).data) {
+				cerr << "ERROR: class histograms were not loaded.\n";
+				return;
+			}
+		}
+
+		//  query the database for every image in this class
+		//  note: for r-precision we only care about the first n results, where n is the # of images in the class
+		vector<vector<vector<DMatch>>> results_dmatch;
+		results_dmatch.resize(kSearchModes.size());
+		vector<path> relevant_imgs_in_dbase;
+		listImgs(related_dbase_dir, relevant_imgs_in_dbase);
+		for (int i = 0; i < kSearchModes.size(); ++i) {
+			searchGenericHists(class_hists.at(i), databases.at(i), relevant_imgs_in_dbase.size(), results_dmatch.at(i));
+		}
+
+		vector<path> image_names;
+		listImgs(current_query_dir, image_names);
+
+		//  load the information gain for each method
+		vector<vector<float>> gain;
+		gain.resize(gain_files.size());
+		for (int i = 0; i < gain_files.size(); ++i) {
+			const string kGainFilePath = (kDir / gain_files.at(i)).string();
+			FileStorage gain_fs(kGainFilePath, FileStorage::READ);
+			
+			if (!gain_fs.isOpened()) {
+				cerr << "ERROR: can't open " << kGainFilePath << "\n";
+				return;
+			}
+			gain_fs[gain_keys.at(i)] >> gain.at(i);
+			gain_fs.release();
+		}
+
+		//  calculate the information gain for each search result
+		vector<vector<DMatch>> combined_results;
+		for (int row = 0; row < class_hists.at(0).rows; ++row) {
+			float max_gain = -1; int max_method = -1;	
+			for (int method_id = 0; method_id < gain.size(); ++method_id) {
+				const float kCurrentGain = getTotalGain(class_hists.at(method_id).row(row), gain.at(method_id));
+				if (kCurrentGain > max_gain) {
+					max_gain = kCurrentGain;
+					max_method = method_id;
+				}
+			}
+			//  choose the results set that has the higher information gain
+			combined_results.push_back(results_dmatch.at(max_method).at(row));
+		}
+
+		//  calculate the precision values for this class
+		const int kQueryStartIdx = 0;
+		const int kNumQueries = combined_results.size();
+		vector<float> precision(kNumQueries);
+		calcPrecisionVector(all_images, image_names, combined_results, precision);
+		transform(precision.begin(), precision.end(), precision.begin(), bind2nd(divides<float>(), kNumQueries));
+
+		//  write the statistics to file
+		const path kFilename = current_query_dir / "precision_gain.yml";
+		const string kKey = "precision";
+		FileStorage fs(kFilename.string(), FileStorage::WRITE);
+		fs << kKey << precision;
+		fs.release();
+	}
+}
+
+
+void collectRPrecisionData(const path kDir, const std::string kSearchMode, std::vector<float> &r_precision) {
+	r_precision.clear();
+
+	vector<path> sub_dirs;
+	listSubDirectories(kDir, sub_dirs);
+
+	//  since we have several search methods, we dynamically get the appropriate file name for the specified search method.
+	const string kDataFile = "precision_" + kSearchMode + ".yml";
+	const string kDataKey = "precision";
+	
+	//  go through each folder loading the appropriate precision value from the precision data file.
+	for (vector<path>::const_iterator it = sub_dirs.begin(); it != sub_dirs.end(); ++it) {
+		//  open data file
+		const string kFileName = (*it / kDataFile).string();
+		cout << kFileName << endl;
+		FileStorage fs(kFileName, FileStorage::READ);
+		if (!fs.isOpened()) {
+			cerr << "ERROR opening precision file: " << kFileName << endl;
+			return;
+		}
+		
+		//  read in precision values
+		vector<float> precision;
+		fs[kDataKey] >> precision;
+
+		//  place r-precision value for this class onto the end of the r-precision vector
+		vector<path> filenames;
+		listImgs(*it, filenames);
+		const int kRPrecisionValueIndex = filenames.size() - 1;
+		r_precision.push_back(precision.at(kRPrecisionValueIndex));
+	}
+}
+
+
+/** generic function to write a single precision vector to csv file format */
+void writeToCSV(const std::vector<float> &kData, std::string filename) {
+	ofstream ofs(filename.c_str());
+	if (!ofs.is_open())
+		cerr << "ERROR: couldn't open csv file: " << filename << endl;
+
+	for (int i = 0; i < kData.size(); ++i)
+		ofs << kData.at(i) << endl;
 }

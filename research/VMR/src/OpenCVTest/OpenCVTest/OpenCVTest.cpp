@@ -12,8 +12,6 @@
 #include <boost/filesystem.hpp>
 #include <string>
 #include <map>
-
-// *** TEST ***
 #include <opencv2/nonfree/features2d.hpp>
 
 using namespace boost::filesystem;
@@ -139,7 +137,7 @@ int main(int argc, char** argv) {
 		vector<string> filenames;
 
 		// search for the matching images
-		searchLab(p, img_path, filenames);
+		searchLab(p, img_path, 10, filenames);
 	
 		// show search results
 		displayResults(img_path.string(), filenames);
@@ -152,10 +150,21 @@ int main(int argc, char** argv) {
 		vector<string> filenames;
 
 		// search for the matching images
-		searchSURFHists(p, img_path, filenames);
+		searchSURFHists(p, img_path, 30000, filenames);
 	
+		// print class
+		vector<float> precision;
+		vector<float> recall;
+		cout << "calculate precision of results.\n";
+		calcPrecisionVector(img_path.string(), filenames, precision);
+		
+		cout << "calculate recall of results.\n";
+		calcRecallVector(p, img_path.string(), filenames, recall);
+		writePrecisionRecallCSV(precision, recall, (p / "testprcurve.csv").string());
+
 		// show search results
 		displayResults(img_path.string(), filenames);
+
 
 	} else if (kSearchDecide == mode) {
 		std::cout << "decide between SURF or color.\n";
@@ -184,57 +193,41 @@ int main(int argc, char** argv) {
 		vector<string> filenames;
 
 		// search for the matching images
-		searchGain(p, img_path, filenames);
+		searchGain(p, img_path, 20, filenames);
 	
 		// show search results
 		displayResults(img_path.string(), filenames);
-	} else if (mode == "fix_hists") {
-		//  load in SURF vocabulary
-		Mat vocab = readMatFromFile(p / "surf_data.yml", kVocab);
-		cv::Ptr<cv::FeatureDetector> detector(new cv::SurfFeatureDetector());
-		cv::Ptr<cv::DescriptorMatcher> matcher(new cv::BFMatcher(cv::NORM_L2));
-		cv::Ptr<cv::OpponentColorDescriptorExtractor> extractor(new cv::OpponentColorDescriptorExtractor(cv::Ptr<cv::DescriptorExtractor>(new cv::SurfDescriptorExtractor())));
-		cv::Ptr<cv::BOWImgDescriptorExtractor> bow_img_desc_extrct(new cv::BOWImgDescriptorExtractor(extractor, matcher));
-		bow_img_desc_extrct->setVocabulary(vocab);
+	} else if (kTestSearch == mode) {
+		if (argc < 4) { readme(); return -1; }
+		const string kSearchMode(argv[3]);
+		vector<float> precision, recall;
+		testSearch(p, kSearchMode, precision, recall);
+		if (precision.size() != 0 && precision.size() == recall.size())
+			writePrecisionRecallCSV(precision, recall, (p / (kSearchMode + "_pr.csv")).string());
+	} else if (kCalcClassPrecision == mode) {
+		if (argc < 5) { readme(); return -1; }
+		const string kSearchMode(argv[3]);
+		path query_path(argv[4]);
+		calcPrecisionAllClasses(query_path, p, kSearchMode);
+	} else if (kCalcClassPrecisionGain == mode) {
+		path query_path(argv[3]);
+		vector<string> search_modes;
+		search_modes.push_back(kSearchLab);
+		search_modes.push_back(kSearchSURF);
+		search_modes.push_back(kSearchGabor);
+		calcPrecisionAllClassesGain(query_path, p, search_modes);
+	} else if (kRPrecisionCSV == mode) {
+		if (argc < 4) { readme(); return -1; }
+		const string kSearchMode(argv[3]);
+		
+		//  collect pre-calculated data
+		vector<float> r_precision;
+		collectRPrecisionData(p, kSearchMode, r_precision);
 
-		//  loop over all subdirectories
-		vector<path> subdirs;
-		listSubDirectories(p, subdirs);
-		for (int i = 0; i < subdirs.size(); ++i) {
-			const path kDir = subdirs.at(i);
-			
-			// find out how many images in this sub-directory
-			vector<path> imagenames;
-			listImgs(kDir, imagenames);
-			const int kNumImages = imagenames.size();
-
-			// find out how many histograms for this sub-directory
-			Mat surf_hists = readMatFromFile(kDir / "surf_hists.yml", kSurfHist);
-			const int kNumHists = surf_hists.rows;
-
-			if (kNumHists != kNumImages) {
-				cout << kDir << " needs new SURF histograms.\n";
-				Mat histograms;
-				for (int j = 0; j < imagenames.size(); ++j) {
-					const path kImgName = imagenames.at(j);
-					Mat img = imread(kImgName.string(), CV_LOAD_IMAGE_COLOR);
-					vector<KeyPoint> key_points;
-					Mat response_hist;
-					detector->detect(img, key_points);
-					bow_img_desc_extrct->compute(img, key_points, response_hist);
-					if (0 == key_points.size()) 
-						response_hist = Mat::zeros(1, 4000, CV_32F);
-					histograms.push_back(response_hist);
-				}
-
-				//  write new histograms to file
-				if (kNumImages == histograms.rows)
-					writeMatToFile(kDir / "surf_hists.yml", histograms, kSurfHist);
-				else
-					cerr << "ERROR:*** problem extracting SURF histograms.\n";
-			}
-
-		}
+		//  write data to CSV
+		const string kRPrecisionFilename = (p / (string("r_precision_") + kSearchMode + ".csv")).string();
+		cout << "*****\n\nwriting r-precision data to " << kRPrecisionFilename << "\n\n*****\n";
+		writeToCSV(r_precision, kRPrecisionFilename);
 	}
 	return 0;
 }

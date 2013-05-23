@@ -5,6 +5,7 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2\flann\flann.hpp>
 #include <opencv2\ml\ml.hpp>
+#include <opencv2\features2d\features2d.hpp>
 #include <string>
 #include <vector>
 #include <map>
@@ -19,16 +20,23 @@ const std::string kIndex("index");
 const std::string kHist("histograms");
 const std::string kSurfHist("surf_histograms");
 const std::string kLabHist("lab_histograms");
+const std::string kGaborResponse("gabor_response");
 const std::string kCountLines("count_lines");
 const std::string kBuildLineClassifier("build_line_classifier");
 const std::string kColorHistograms("color_hist");
 const std::string kSearchColor("search_color");
 const std::string kSearchLab("search_lab");
 const std::string kSearchSURF("search_surf");
+const std::string kSearchGabor("search_gabor");
 const std::string kSearchGain("search_gain");
 const std::string kSearchDecide("search_decide");
 const std::string kCalcGain("calc_gain");
 const std::string kTestClassifier("test_classifier");
+const std::string kTestSearch("test_search");
+const std::string kCalcClassPrecision("calc_class_precision");
+const std::string kCalcClassPrecisionGain("calc_class_precision_gain");
+const std::string kRPrecisionCSV("r_precision_csv");
+
 
 float calcHarmonicMean(cv::Mat &data);
 cv::Mat extractTrainingVocabulary(path training_dir);
@@ -94,20 +102,39 @@ void buildClassifiers(path p, std::map<std::string, cv::SVM> &classifiers);
 void removeNoisyLines(const cv::Mat &kImg, std::vector<cv::Vec4i> &lines);
 bool intersection(cv::Vec4i line_1, cv::Vec4i line_2, cv::Point2f &r);
 void searchColor(path index_dir, path query_img, std::vector<std::string> &results);
-void searchLab(path index_dir, path query_img, std::vector<std::string> &results);
-void searchSURFHists(path index_dir, path query_img, std::vector<std::string> &results);
+void searchLab(path index_dir, path query_img, const int kK, std::vector<std::string> &results);
+void searchLab(cv::Mat vocab, cv::Mat hists, std::vector<path> image_names, path query_img, const int kK, std::vector<std::string> &results);
+void searchSURFHists(path index_dir, path query_img, const int kNN, std::vector<std::string> &results);
+void searchSURFHists(cv::Mat vocab, cv::Mat hists, std::vector<path> image_names, std::vector<path> query_imgs, const int kNN, std::vector<std::vector<cv::DMatch>> &results);
+void searchSURFHists(cv::Mat query_hists, cv::Mat search_hists, std::vector<path> image_names, const int kNN, std::vector<std::vector<cv::DMatch>> &results);
 void searchDecideSURFColor(path index_dir, path query_img, const float kThreshold, std::vector<std::string> &results);
-void searchGain(path search_dir, path query_img, std::vector<std::string> &results);
+void searchGain(path search_dir, path query_img, const int kK, std::vector<std::string> &results);
 void calcHistGain(std::vector<path>& filenames, cv::Mat& hists, std::vector<float>& gain);
 template<typename T, size_t N>
 T * my_end(T (&ra)[N]) {
     return ra + N;
 }
+std::string getClassFolder(const std::string kFilePath);
 void calculateGainForAll(path dir);
+void calcPrecisionVector(const std::vector<path> &kImageNames, const int kQueryStartIdx, const int kNumQueries, const std::vector<std::vector<cv::DMatch>>& kResults, std::vector<float>& precision);
+void calcPrecisionVector(const std::string kQueryName, const std::vector<std::string>& kResults, std::vector<float>& precision);
+void calcPrecisionVector(const std::vector<path> &kDatabaseImages, const std::vector<path> &kQueryImages, const std::vector<std::vector<cv::DMatch>>& kResults, std::vector<float>& precision);
+void calcRecallVector(const std::vector<path> kImageNames, const int kQueryStartIdx, const int kNumQueries, const std::vector<std::vector<cv::DMatch>>& kResults, std::vector<float>& recall);
+void calcRecallVector(const path kDir, const std::string kQueryName, const std::vector<std::string>& kResults, std::vector<float>& recall);
 float getTotalGain(cv::Mat hist, std::vector<float>& gain_values);
 float getSurfGain(path search_dir, path img_path);
 float getHSVGain(path search_dir, path img_path);
 float getLabGain(path search_dir, path img_path);
 void calcHistGainSubdirectories(/*vector<path>& sub_directories, */std::map<std::string, cv::Mat>& hists, std::vector<float>& gain);
-
+void writePrecisionRecallCSV(const std::vector<float>& kPrecision, const std::vector<float>& kRecall, const std::string kFilename);
+void testSearch(const path kDir, const std::string kSearchMode, std::vector<float>& precision, std::vector<float>& recall);
+void loadHists(const path kDir, const std::string kFileName, const std::string kDataKey, cv::Mat& hists);
+void loadHists(const path kDir, const std::vector<std::string>& kSearchModes, std::vector<cv::Mat>& hists);
+void calcPrecisionAllClasses(const path kQueryDir, const path kDir, const std::string kSearchMode);
+void calcPrecisionAllClassesGain(const path kQueryDir, const path kDir, const std::vector<std::string> kSearchModes);
+void getDataFilenameAndKey(const std::string kSearchMode, std::string &data_file, std::string &data_key);
+void searchGenericHists(cv::Mat query_hists, cv::Mat database, const int kNN, std::vector<std::vector<cv::DMatch>> &results);
+void collectRPrecisionData(const path kDir, const std::string kSearchMode, std::vector<float> &r_precision);
+void writeToCSV(const std::vector<float> &kData, std::string filename);
+void getGainFilenameAndKey(const std::string kSearchMode, std::string &data_file, std::string &data_key);
 #endif
