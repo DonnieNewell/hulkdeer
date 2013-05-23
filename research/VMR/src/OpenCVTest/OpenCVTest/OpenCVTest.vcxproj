@@ -152,7 +152,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>opencv_core242.lib;opencv_highgui242.lib;opencv_video242.lib;opencv_ml242.lib;opencv_legacy242.lib;opencv_flann242.lib;opencv_imgproc242.lib;opencv_features2d242.lib;opencv_nonfree242.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opencv_core242.lib;opencv_highgui242.lib;opencv_video242.lib;opencv_ml242.lib;opencv_legacy242.lib;opencv_flann242.lib;opencv_imgproc242.lib;opencv_features2d242.lib;opencv_nonfree242.lib;Psapi.Lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalOptions>/VERBOSE:LIB %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <ProjectReference>
       <UseLibraryDependencyInputs>true</UseLibraryDependencyInputs>
