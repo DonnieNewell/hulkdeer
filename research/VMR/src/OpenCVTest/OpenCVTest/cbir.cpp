@@ -2714,20 +2714,25 @@ void calcPrecisionAllClassesGain(const path kQueryDir, const path kDir, const st
 }
 
 
-void collectRPrecisionData(const path kDir, const std::string kSearchMode, std::vector<float> &r_precision) {
+void collectRPrecisionData(const path kQueryDir, const path kDir, const std::string kSearchMode, std::vector<float> &r_precision) {
 	r_precision.clear();
 
-	vector<path> sub_dirs;
+	vector<path> sub_dirs, query_sub_dirs;
 	listSubDirectories(kDir, sub_dirs);
+	listSubDirectories(kQueryDir, query_sub_dirs);
 
 	//  since we have several search methods, we dynamically get the appropriate file name for the specified search method.
 	const string kDataFile = "precision_" + kSearchMode + ".yml";
 	const string kDataKey = "precision";
 	
 	//  go through each folder loading the appropriate precision value from the precision data file.
-	for (vector<path>::const_iterator it = sub_dirs.begin(); it != sub_dirs.end(); ++it) {
+	for (int i = 0; i < sub_dirs.size(); ++i) {
+		//for (vector<path>::const_iterator it = sub_dirs.begin(); it != sub_dirs.end(); ++it) {
+		path current_dir = sub_dirs.at(i);
+		path current_query_dir = query_sub_dirs.at(i);
+
 		//  open data file
-		const string kFileName = (*it / kDataFile).string();
+		const string kFileName = (current_query_dir / kDataFile).string();
 		cout << kFileName << endl;
 		FileStorage fs(kFileName, FileStorage::READ);
 		if (!fs.isOpened()) {

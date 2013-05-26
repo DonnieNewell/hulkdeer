@@ -24,25 +24,28 @@ void readme();
 int main(int argc, char** argv) {
 	if( argc < 3 )	{ readme(); return -1; }
 	
+	/** path to the image database */
 	path p(argv[1]);
+
+	/** execution mode */
 	std::string mode(argv[2]);
 
 	if (!exists(p) || !is_directory(p)) { readme(); return -1; }
-	if (kVocab == mode) {
+	if (kVocab == mode) {  /// generate SURF vocabulary
 		std::cout << "creating vocabulary.\n";
 		std::cout << "img_directory : " << p << std::endl;
 		cv::Mat vocabulary = extractTrainingVocabulary(p);
 		p /= "surf_data.yml";
 		std::cout << "writing vocabulary to : " << p << std::endl;
 		writeMatToFile(p, vocabulary, kVocab);
-	} else if (kLabVocab == mode) {
+	} else if (kLabVocab == mode) {  /// generate CIE-Lab vocabulary
 		std::cout << "creating cie-lab vocabulary.\n";
 		std::cout << "img_directory : " << p << std::endl;
 		cv::Mat vocabulary = extractLabVocabulary(p);
 		p /= "lab_data.yml";
 		std::cout << "writing vocabulary to : " << p << std::endl;
 		writeMatToFile(p, vocabulary, kLabVocab);
-	} else if (kSurfHist == mode) {
+	} else if (kSurfHist == mode) {  /// extract SURF histograms
 		std::cout << "generating surf histograms.\n";
 		path filename("surf_data.yml");
 		std::vector<cv::Mat> histograms;
@@ -55,7 +58,7 @@ int main(int argc, char** argv) {
 			path sub_dir = sub_dirs.at(i) / "surf_hists.yml";
 			writeMatToFile(sub_dir, histograms.at(i), kSurfHist);
 		}
-	} else if (kLabHist == mode) {
+	} else if (kLabHist == mode) {  /// extract CIE-Lab histograms
 		std::cout << "generating CIE L*a*b* histograms.\n";
 		path filename("lab_data.yml");
 		std::vector<cv::Mat> histograms;
@@ -68,7 +71,7 @@ int main(int argc, char** argv) {
 			path sub_dir = sub_dirs.at(i) / "lab_hists.yml";
 			writeMatToFile(sub_dir, histograms.at(i), kLabHist);
 		}
-	} else if (kIndex == mode) {
+	} else if (kIndex == mode) {  
 		std::cout << "generating search index.\n";
 		cv::Mat histograms = readMatFromFile(p / "surf_hists.yml", kSurfHist);
 		cv::flann::Index index = generateSearchIndex(histograms);
@@ -217,12 +220,12 @@ int main(int argc, char** argv) {
 		search_modes.push_back(kSearchGabor);
 		calcPrecisionAllClassesGain(query_path, p, search_modes);
 	} else if (kRPrecisionCSV == mode) {
-		if (argc < 4) { readme(); return -1; }
+		if (argc < 5) { readme(); return -1; }
 		const string kSearchMode(argv[3]);
-		
+		path query_dir(argv[4]);
 		//  collect pre-calculated data
 		vector<float> r_precision;
-		collectRPrecisionData(p, kSearchMode, r_precision);
+		collectRPrecisionData(query_dir, p, kSearchMode, r_precision);
 
 		//  write data to CSV
 		const string kRPrecisionFilename = (p / (string("r_precision_") + kSearchMode + ".csv")).string();
