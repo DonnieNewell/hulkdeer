@@ -291,12 +291,26 @@ void searchColor(path index_dir, path query_img, std::vector<std::string> &resul
 /** search the specified directory  using the query image and return the k closest matches. */
 void searchLab(path index_dir, path query_img, const int kK, std::vector<std::string> &results);
 
+/** searches through the pre-extracted histograms in the CIE-Lab color space, using bag-of-colors */
 void searchLab(cv::Mat vocab, cv::Mat hists, std::vector<path> image_names, path query_img, const int kK, std::vector<std::string> &results);
+
+/** loads the surf histograms and vocabulary from the directory, extracts the surf histogram from the query image, and stores the K nearest neighbors in the results vector. */
 void searchSURFHists(path index_dir, path query_img, const int kNN, std::vector<std::string> &results);
+
+/** uses the supplied vocabulary to extract the surf histograms from the specified images, and then search through the histograms for the closest matches. */
 void searchSURFHists(cv::Mat vocab, cv::Mat hists, std::vector<path> image_names, std::vector<path> query_imgs, const int kNN, std::vector<std::vector<cv::DMatch>> &results);
+
+/** uses all of the pre-extracted histograms to find the K closest images for each search histogram and stores it in the results vector. */
 void searchSURFHists(cv::Mat query_hists, cv::Mat search_hists, std::vector<path> image_names, const int kNN, std::vector<std::vector<cv::DMatch>> &results);
+
+/** Uses the structure metric to decide whether to search with SURF or Lab color histograms, using the specified threshold. */
 void searchDecideSURFColor(path index_dir, path query_img, const float kThreshold, std::vector<std::string> &results);
+
+/** loads the histograms, vocabularies, and gain values from the search directory.
+Extracts the histograms from the query image, and then uses the sum of the gain values for the 
+detected features/colors to determine which descriptor technique provides the most information. */
 void searchGain(path search_dir, path query_img, const int kK, std::vector<std::string> &results);
+
 void calcHistGain(std::vector<path>& filenames, cv::Mat& hists, std::vector<float>& gain);
 template<typename T, size_t N>
 T * my_end(T (&ra)[N]) {
